@@ -1,0 +1,33 @@
+# 운영체제
+.DS_Store
+Thumbs.db
+
+# 에디터·IDE
+.vscode/
+.idea/
+*.swp
+
+# Node
+node_modules/
+dist/
+build/
+*.log
+npm-debug.log*
+pnpm-debug.log*
+
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+.uv/
+
+# 환경·비밀
+.env
+.env.*
+secrets/
+*.key
+*.pem
+
+# Claude Code 로컬
+.claude/settings.local.json
