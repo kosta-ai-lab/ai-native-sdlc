@@ -1,0 +1,14 @@
+{
+  "name": "web-task-system",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "AI Native SDLC 레퍼런스 앱 — 사내 업무 관리 시스템 (03~06 관통 실증)",
+  "scripts": {
+    "test": "vitest run"
+  },
+  "devDependencies": {
+    "typescript": "^5.7.2",
+    "vitest": "^3.2.4"
+  }
+}
