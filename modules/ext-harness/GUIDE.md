@@ -11,7 +11,47 @@
 완성하면 이렇게 동작합니다. 여러분이 "커밋해 줘"라고 하면 Claude가 스킬을 읽고 팀 규칙에 맞는 커밋 메시지를 만들고, "방금 바꾼 코드 리뷰해 줘"라고 하면 별도의 리뷰 전문 에이전트가 격리된 공간에서 코드를 검토한 뒤 결과만 보고합니다. 코딩 지식이 거의 없어도 따라 할 수 있도록 모든 명령어를 그대로 복사해 쓸 수 있게 적었습니다.
 
 
-# 단계
+# 1 단계: .claude 폴더 만들기 및 skills 폴더 만들기
+
+```bash
+git add .
+git commit -m "initial commit"
+git push
+```
+
+## 목적
+
+## 입력
+
+## 산출물
+
+## 체크리스트
+
+
+# 1 단계: .claude 폴더 만들기 및 skills 폴더 만들기
+
+```bash
+git add .
+git commit -m "initial commit"
+git push
+```
+
+## 목적
+
+## 입력
+
+## 산출물
+
+##체크리스트
+
+
+# 1 단계: .claude 폴더 만들기 및 skills 폴더 만들기
+
+```bash
+git add .
+git commit -m "initial commit"
+git push
+```
 
 ## 목적
 
