@@ -13,10 +13,12 @@
 
 # 1 단계: .claude 폴더 만들기 및 skills 폴더 만들기
 
+연습용 프로젝트 폴더에 하네스의 뼈대가 될 폴더 구조를 만들자. 연습용 프로젝트 이름은 my-harness-demo라고 할 수 있다.
+
 ```bash
-git add .
-git commit -m "initial commit"
-git push
+# 하네스의 핵심: .claude 폴더와 하위 폴더 만들기
+mkdir -p .claude/agents
+mkdir -p .claude/skills/commit-helper
 ```
 
 ## 목적
