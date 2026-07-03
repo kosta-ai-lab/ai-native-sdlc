@@ -31,7 +31,7 @@ my-harness-demo/
 └── .claude/
     ├── agents/                  ← 서브에이전트 정의 파일(.md)이 들어갈 곳
     └── skills/
-        └── commit-helper/       ← 스킬 하나당 폴더 하나
+        └── commit-message/       ← 스킬 하나당 폴더 하나
             └── SKILL.md         ← (다음 단계에서 만들 파일)
 ```
 
