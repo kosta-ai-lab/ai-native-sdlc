@@ -13,19 +13,27 @@
 
 # 1 단계: .claude 폴더 만들기 및 skills 폴더 만들기
 
-연습용 프로젝트 폴더에 하네스의 뼈대가 될 폴더 구조를 만들자. 연습용 프로젝트 이름은 my-harness-demo라고 할 수 있다.
+연습용 프로젝트 폴더에 하네스의 뼈대가 될 폴더 구조를 만들자. 연습용 프로젝트 이름은 my-harness-demo로 만들고 그 안에 다음 폴더를 만들 수 있다.
 
 ```bash
 # 하네스의 핵심: .claude 폴더와 하위 폴더 만들기
 mkdir -p .claude/agents
-mkdir -p .claude/skills/commit-helper
+mkdir -p .claude/skills/commit-message
 ```
+## 규칙
 
-## 목적
-
-## 입력
+핵심 규칙은 두 가지입니다. 에이전트는 .claude/agents/ 안에 마크다운 파일 하나로 정의하고, 스킬은 .claude/skills/스킬이름/ 폴더 안에 반드시 SKILL.md라는 이름의 파일로 정의합니다. 이 폴더들은 git으로 커밋되므로 팀원과 공유하면 모두가 같은 하네스를 쓰게 됩니다.
 
 ## 산출물
+
+```bash
+my-harness-demo/
+└── .claude/
+    ├── agents/                  ← 서브에이전트 정의 파일(.md)이 들어갈 곳
+    └── skills/
+        └── commit-helper/       ← 스킬 하나당 폴더 하나
+            └── SKILL.md         ← (다음 단계에서 만들 파일)
+```
 
 ## 체크리스트
 
