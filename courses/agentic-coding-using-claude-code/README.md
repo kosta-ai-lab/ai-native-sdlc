@@ -5,9 +5,9 @@
 제목: Agentic Coding using Claud Code  
 대상: Agentic Coding을 처음하는 개발자  
 선수 지식: SW 개발에 대한 기본적인 이해와 1년 이상 개발 경험, 윈도우즈 터미널 사용 경험  
-학습 목표: Claude Code를 이용해 작은 기능부터 프로덕션 시스템까지 구현할 수 있다
-학습 방법: Learning in the Flow of Work(LIFOW)
-분량: 4 시간 짜리 과목의 10개 시리즈
+학습 목표: Claude Code를 이용해 작은 기능부터 프로덕션 시스템까지 구현할 수 있다  
+학습 방법: Learning in the Flow of Work(LIFOW)  
+분량: 4 시간 짜리 과목의 10개 시리즈  
 강사: 박준성 박사
 
 <h3>커리큘럼</h3>
