@@ -14,6 +14,7 @@
 Claude Code 설치, 프로젝트 생성부터 프로덕션 시스템 구축을 위한 SW 공학 기반의 에이전트 코딩 기법까지 마스터하는 실습 위주 훈련 프로그램
 
 과정 1: Install Claude Code, Create a Project, Create a .env File with an API Key, Configure Claude Code, Sessions and Context, Permissions, Docker Sandboxes.
+
 과정 2: Write a Description for the APP to Build, Generate a Spec using an LLM, Create a Project with a Spec Markdown, Install Necessary Packages, Initialize the Project, Plan Your Build, Build Your APP.
 
 
