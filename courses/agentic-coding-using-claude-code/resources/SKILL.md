@@ -1,5 +1,5 @@
 ---
-name: modern-best-practice-react-components
+name: build-react-components
 description: Build clean, modern React components that apply common best practices and avoid common pitfalls like unnecessary state management or useEffect usage
 ---
 
