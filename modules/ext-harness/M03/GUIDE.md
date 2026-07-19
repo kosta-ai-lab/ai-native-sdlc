@@ -45,7 +45,7 @@ mkdir my-research
 cd my-research
 ```
 
-## 규칙 및 산출물
+## 규칙
 
 폴더 이름은 자유롭게 작성 가능합니다. 하지만 에이전트에서 해당 폴더명을 참조할 수도 있습니다.
 
@@ -57,46 +57,60 @@ my-research
 ## 체크리스트
 [ ] 폴더명이 만들어졌는지 확인한다.
 
-# 3 단계: code-reviewer.md 파일로 첫 번째 에이전트 만들기
+# 3 단계: 참조 깃허브 싸이트에서 하네스 다운로드받기
 
-서브에이전트는 자기만의 독립된 대화 공간(컨텍스트)과 시스템 프롬프트, 도구 권한을 가진 별도의 Claude입니다. 메인 대화를 어지럽히지 않고 일을 맡긴 뒤 결과만 돌려받을 수 있습니다. .claude/agents/code-reviewer.md 파일을 만들고 아래 내용을 붙여 넣으세요.
+### 방법 A — Git으로 받기 (권장)
+
+저장소 전체가 아니라 필요한 하네스 하나만 가볍게 받아옵니다.
 
 ```bash
----
-name: code-reviewer
-description: 코드 변경 사항을 검토한다. 사용자가 코드 리뷰, 검토,
-  review를 요청하거나 커밋 직전 품질 확인이 필요할 때 사용한다.
-tools: Read, Grep, Glob, Bash
----
- 
-당신은 꼼꼼한 시니어 코드 리뷰어입니다.
- 
-호출되면 다음 순서로 작업하세요.
- 
-1. `git diff HEAD` 를 실행해 최근 변경 사항을 확인한다.
-2. 다음 관점에서 문제를 찾는다.
-   - 버그 가능성 (오타, 잘못된 조건문, null 처리 누락)
-   - 보안 문제 (비밀번호/키 하드코딩, 입력값 검증 누락)
-   - 가독성 (모호한 변수명, 중복 코드)
-3. 발견한 문제를 심각도(높음/중간/낮음)로 나눠 보고한다.
-   각 항목에 파일명과 줄 번호를 포함한다.
-4. 각 문제에 대해 최소한의 수정 방법을 제안한다.
- 
-중요: 파일을 직접 수정하지 말고 보고서만 작성하세요.
+# 1) 임시 폴더에 저장소를 얕게 클론
+git clone --depth 1 https://github.com/revfactory/harness-100.git /tmp/harness-100
+
+# 2) research-assistant 하네스의 .claude 폴더를 내 프로젝트로 복사
+cp -r /tmp/harness-100/ko/63-research-assistant/.claude ./
+
+# 3) 임시 폴더 정리 (선택)
+rm -rf /tmp/harness-100
+```
+
+### 방법 B — Git 없이 받기
+
+1. 브라우저에서 https://github.com/revfactory/harness-100 접속
+2. 초록색 **Code** 버튼 → **Download ZIP** 클릭
+3. 압축을 풀고 `ko/63-research-assistant/` 안에 있는 **`.claude` 폴더**를 내 작업 폴더(`my-research/`)로 복사
+
+> 💡 `.claude`는 점(.)으로 시작하는 **숨김 폴더**입니다. 파일 탐색기에서 안 보이면 "숨김 파일 표시"를 켜세요 (macOS: `Cmd+Shift+.`).
+
+### 잘 복사됐는지 확인
+
+```bash
+ls -R .claude
 ```
 
 ## 규칙
 
-스킬과 형식이 거의 같지만 결정적 차이가 하나 있습니다. 바로 tools 항목입니다. 이 에이전트에게는 읽기(Read), 검색(Grep, Glob), 명령 실행(Bash)만 허용하고 파일 쓰기/수정 도구(Write, Edit)는 주지 않았습니다. 리뷰어가 실수로 코드를 고쳐버리는 일을 구조적으로 막은 것이죠. 이것이 하네스 엔지니어링의 핵심 사고방식입니다. "하지 마"라고 부탁하는 대신, 애초에 할 수 없게 설계합니다.
-
-프런트매터 아래의 본문은 이 에이전트의 시스템 프롬프트가 됩니다. 에이전트는 메인 대화 내용을 전혀 모르는 상태로 시작하므로, 본문에 '호출되면 무엇부터 할지'를 스스로 알아낼 수 있게 적어야 합니다. 위 예제에서 1번 단계가 git diff HEAD 실행인 이유가 바로 이것입니다.
+참조 깃허브 싸이트에 있는 내용을 그대로 받아오는 작업으로, 특별한 규칙이 없습니다.
 
 ## 산출물
 
-```bash
-code-reviwer.md
+아래와 같은 구조가 보이면 성공입니다. 내가 만든 폴더 아래에 다음이 보여야 합니다.
+
+```
+.claude/
+├── CLAUDE.md
+├── agents/
+│   ├── literature-searcher.md
+│   ├── note-taker.md
+│   ├── critic-synthesizer.md
+│   ├── reference-manager.md
+│   └── research-coordinator.md
+└── skills/
+    ├── research-assistant/skill.md          ← 오케스트레이터(팀 지휘자)
+    ├── systematic-review-protocol/skill.md  ← PRISMA·PICO·Boolean 검색 지원
+    └── citation-formatter/skill.md          ← APA/MLA/Chicago·BibTeX 변환
 ```
 
 ## 체크리스트
-[ ] code-reviewer.md가 상기의 내용을 가지고 있는지 확인한다.
-[ ] code-reviewer.md가 agents 폴더 아래 있는지 확인한다.
+[ ] 내가 만든 폴더명이 존재하는지 확인한다.
+[ ] 특정 선택한 하네스가 내가 만든 폴더명 아래 존재하는지 확인한다.
