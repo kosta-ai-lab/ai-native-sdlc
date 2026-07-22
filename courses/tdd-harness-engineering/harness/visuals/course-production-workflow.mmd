@@ -1,0 +1,24 @@
+flowchart LR
+  P["Planning<br/>brief and questions"]
+  R["Research<br/>inbox, wiki, synthesis"]
+  D["Design<br/>blueprint and units"]
+  B["Manuscript<br/>self-contained textbook"]
+  M["Materials<br/>slides, demos, labs, assessment"]
+  L["Deliveries<br/>requirements and adaptations"]
+
+  H["Course Production Harness<br/>intent, manifest, validation"]
+  F["Feedback and experiment results"]
+
+  P --> R
+  R --> D
+  D --> B
+  B --> M
+  M --> L
+  L --> F
+  F --> R
+
+  H -. "checks questions and sources" .-> R
+  H -. "checks alignment" .-> D
+  H -. "checks claims and citations" .-> B
+  H -. "checks usability" .-> M
+  H -. "checks adaptation integrity" .-> L

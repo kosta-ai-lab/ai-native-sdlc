@@ -1,0 +1,25 @@
+{
+  "schemaVersion": 3,
+  "course": {
+    "id": "COURSE-TDD-HARNESS",
+    "status": "planning",
+    "brief": "01-planning/brief.md",
+    "questions": "01-planning/questions.md",
+    "intentLedger": "01-planning/intent-ledger.md",
+    "researchIndex": "02-research/README.md",
+    "designIndex": "03-design/README.md",
+    "manuscriptIndex": "04-manuscript/README.md",
+    "materialsIndex": "05-materials/README.md",
+    "deliveriesIndex": "06-deliveries/README.md",
+    "archiveIndex": "archive/README.md"
+  },
+  "workflow": {
+    "facilitation": "harness/FACILITATION.md",
+    "stageGuides": "harness/STAGE-GUIDES.md",
+    "terminology": "02-research/wiki/harness-terminology.md"
+  },
+  "sources": [],
+  "knowledge": [],
+  "units": [],
+  "deliveries": []
+}
