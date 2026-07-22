@@ -11,7 +11,7 @@
 - **개발 하니스(Development Harness)**: 강의에서 가르치고 수강생이 구축하는 대상입니다. AI 개발 과정의 명세, test, eval, 권한, 실행 증거와 완료 조건을 통제합니다.
 - **과정 제작 하니스(Course Production Harness)**: 이 강의를 만드는 운영 환경입니다. 사용자의 의도를 수집하고 Planning부터 Delivery까지의 작업과 품질을 통제합니다.
 
-문서에서는 수식어 없는 `하니스` 사용을 피합니다. 자세한 기준은 [하니스 용어 경계](02-research/wiki/harness-terminology.md)를 따릅니다.
+문서에서는 수식어 없는 `하니스` 사용을 피합니다. 과정 내용의 개념은 [개발 하니스](02-research/wiki/development-harness.md), 제작 운영의 기준은 [과정개발 하네스 용어 경계](harness/terminology.md)를 따릅니다.
 
 ## 과정 제작 workflow
 
@@ -38,13 +38,12 @@
 ### Planning
 
 - [과정 Brief](01-planning/brief.md)
-- [조사·설계 질문](01-planning/questions.md)
-- [Intent Ledger](01-planning/intent-ledger.md)
-- [과정 제작 결정 기록](01-planning/decisions.md)
+- [과정 조사 질문](01-planning/research-questions.md)
+- [TDD 과정 의도](01-planning/intent.md)
 
 ### Research
 
-- [하니스 용어 경계](02-research/wiki/harness-terminology.md)
+- [개발 하니스](02-research/wiki/development-harness.md)
 
 ### 과정 제작 하니스
 
@@ -52,6 +51,8 @@
 - [단계별 유도 질문과 승인 계약](harness/STAGE-GUIDES.md)
 - [근거·인용 규칙](harness/EVIDENCE-GUIDE.md)
 - [정성 검토 체크리스트](harness/review-checklist.md)
+- [과정개발 하네스 의도](harness/production-intent.md)
+- [과정개발 하네스 결정 기록](harness/decisions.md)
 
 ## 기존 자료 아카이브
 

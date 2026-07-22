@@ -76,9 +76,10 @@ Guide → Capture → Reflect → Decide → Gate
 
 사용자의 자연어 답은 세 군데에 선택적으로 반영한다.
 
-- `01-planning/intent-ledger.md`: 의도 상태와 결정 근거
+- `01-planning/intent.md`: TDD 과정의 대상·내용·수행에 관한 의도
+- `harness/production-intent.md`: 과정 제작 방식에 관한 의도
 - 해당 단계의 정식 산출물: brief, blueprint, Unit, delivery 등
-- `01-planning/decisions.md`: 다른 단계에도 영향을 주는 장기 결정
+- `harness/decisions.md`: 제작 workflow의 다른 단계에도 영향을 주는 장기 결정
 
 모든 대화를 보존하지 않는다. 이후 작업에 영향을 주는 의도와 결정만 남긴다.
 
@@ -102,4 +103,3 @@ Guide → Capture → Reflect → Decide → Gate
 | Facilitator | 의도를 발견하는 질문과 선택의 영향 제시 | 사용자가 말하지 않은 목적 확정 |
 | Editor | 답을 일관된 설계 문서로 변환 | 답을 원문 그대로 쌓기 |
 | Gatekeeper | 필수 결정과 증거가 없으면 전이 보류 | 형식적 체크만으로 승인 대체 |
-

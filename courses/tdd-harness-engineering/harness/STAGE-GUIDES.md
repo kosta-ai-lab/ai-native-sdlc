@@ -22,8 +22,8 @@
 ### 산출물
 
 - `brief.md`
-- `questions.md`
-- `intent-ledger.md`
+- `research-questions.md`
+- `intent.md`
 
 ### 전이 전 사용자 확인
 
@@ -166,4 +166,3 @@
 ### 전이 전 사용자 확인
 
 표준 과정의 핵심 수행이 보존됐는지, 기관별 변경과 위험을 수용하는지 확인한다.
-

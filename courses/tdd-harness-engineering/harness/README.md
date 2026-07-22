@@ -1,8 +1,16 @@
 # TDD 과정 제작 하니스 — 최소 실행안
 
+> 이 폴더는 TDD 강의의 학습 내용이 아니라, 과정을 만드는 규칙·운영 상태·검사기를 담습니다. TDD 과정 산출물은 `01-planning/`부터 `06-deliveries/`에서 관리합니다.
+
 ## 목적
 
 이 하니스는 문서 형식을 많이 만드는 것이 아니라, 앞 단계의 산출물이 다음 단계에서 실제로 사용되는지를 확인한다. 규칙은 샘플 제작과 리허설에서 효용이 확인된 것만 유지한다.
+
+## 운영 기록
+
+- [`production-intent.md`](production-intent.md): 과정 제작 방식에 대한 사용자 의도와 가정
+- [`decisions.md`](decisions.md): 폴더, 저작 순서, gate와 아카이브에 관한 장기 결정
+- [`terminology.md`](terminology.md): 개발 하니스와 과정 제작 하니스의 운영상 경계
 
 하니스는 검사기만이 아니다. [`FACILITATION.md`](FACILITATION.md)의 대화 루프로 사용자의 의도를 발견·반영하고, [`STAGE-GUIDES.md`](STAGE-GUIDES.md)의 단계별 유도 질문과 승인 계약으로 작업을 진행한다.
 

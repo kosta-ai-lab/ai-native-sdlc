@@ -4,8 +4,8 @@
     "id": "COURSE-TDD-HARNESS",
     "status": "planning",
     "brief": "01-planning/brief.md",
-    "questions": "01-planning/questions.md",
-    "intentLedger": "01-planning/intent-ledger.md",
+    "questions": "01-planning/research-questions.md",
+    "intentLedger": "01-planning/intent.md",
     "researchIndex": "02-research/README.md",
     "designIndex": "03-design/README.md",
     "manuscriptIndex": "04-manuscript/README.md",
@@ -16,7 +16,9 @@
   "workflow": {
     "facilitation": "harness/FACILITATION.md",
     "stageGuides": "harness/STAGE-GUIDES.md",
-    "terminology": "02-research/wiki/harness-terminology.md"
+    "terminology": "harness/terminology.md",
+    "productionIntent": "harness/production-intent.md",
+    "decisions": "harness/decisions.md"
   },
   "sources": [],
   "knowledge": [],
