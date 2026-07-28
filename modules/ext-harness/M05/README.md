@@ -21,3 +21,23 @@
 - 샘플은 가이드에서 만든 결과를 활용할 수 있는 재현 가능한 프롬프트가 반드시 첨부되어야 하며, 따라 하면 되는 수준이어야 한다.
 - 자동화는 활용 폴더에 이미 올려 둔다.
  
+## 팁과 문제 해결
+
+### 추천 사용 팁
+
+- 처음에는 소규모 주제로 하네스를 한 번 만들어보고 익숙해진 뒤, 점점 더 복잡한 팀 구성으로 확장하는 것을 권장합니다.
+- 동일한 프로젝트 폴더에서 여러 번 '하네스 구성해줘'를 실행하면 기존 `.claude/agents`, `.claude/skills` 파일이 갱신될 수 있으므로, 다른 용도의 팀은 별도 폴더에서 구성하는 것이 안전합니다.
+- 공식 저장소의 revfactory/harness-100 에는 100개의 완성된 하네스 예제(연구/콘텐츠/개발 등 10개 도메인)가 공개되어 있어 구조를 참고하기 좋습니다.
+- Harness가 만들어주는 것은 '팀 설계도'이므로, 실제 리서치 품질은 각 에이전트에게 얼마나 구체적인 지시(조사 범위, 기간, 원하는 목차 등)를 주는지에 따라 달라집니다.
+
+### 자주 발생하는 문제
+
+- "harness@harness-marketplace 를 찾을 수 없다" → `harness@harness`로 재시도 (마켓플레이스/플러그인 이름이 harness로 동일)
+- 에이전트들이 서로 메시지를 주고받지 못하고 멈춤 → `CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS=1` 환경변수가 설정된 상태로 Claude Code를 재시작했는지 확인
+- 생성된 스킬이 원하는 시점에 트리거되지 않음 → 각 SKILL.md의 트리거 조건(description) 문구를 더 구체적으로 수정 요청
+
+## 참고 자료
+
+- GitHub 저장소: github.com/revfactory/harness
+- 완성 예제 모음: github.com/revfactory/harness-100
+- Agent Teams 공식 문서: code.claude.com/docs/en/agent-teams
