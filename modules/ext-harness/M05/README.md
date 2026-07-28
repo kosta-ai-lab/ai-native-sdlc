@@ -10,7 +10,7 @@
 
 - [x] 가이드 — GUIDE.md 단계 목적·입력·산출물·체크리스트
 - [ ] 규칙 — CLAUDE.md 조각 (이 단계에서 AI가 지킬 규칙)
-- [x] 자동화 — commit-message 스킬· code-reviewer 서브에이전트
+- [ ] 자동화 — 없음
 - [x] 샘플 — SAMPLE.md 동작 스텝·프롬프트
 
 ## 품질 기준
