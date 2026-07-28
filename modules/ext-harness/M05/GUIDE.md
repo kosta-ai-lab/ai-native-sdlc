@@ -73,10 +73,10 @@ Claude Code를 실행한 상태에서 아래 슬래시 명령어를 순서대로
 ### Step 2. 플러그인 설치
 
 ```
-/plugin install harness@harness
+/plugin install harness@harness-marketplace
 ```
 
-> ⚠ 공식 저장소(README) 기준 설치 명령은 `harness@harness` 입니다. 마켓플레이스 이름과 플러그인 이름이 동일(harness)하기 때문입니다. 만약 `harness@harness-marketplace`로 입력했을 때 플러그인을 찾지 못한다는 오류가 나오면, 위 명령(`harness@harness`)으로 다시 시도해 보세요. `/plugin` 명령을 인자 없이 입력하면 설치 가능한 마켓플레이스/플러그인 목록을 확인할 수 있습니다.
+> ⚠ 만약 `harness@harness-marketplace`로 입력했을 때 플러그인을 찾지 못한다는 오류가 나오면, 위 명령(`harness@harness`)으로 다시 시도해 보세요. `/plugin` 명령을 인자 없이 입력하면 설치 가능한 마켓플레이스/플러그인 목록을 확인할 수 있습니다.
 
 ## 체크리스트
 [ ] harness 플러그인이 설치되었는지 확인한다.
