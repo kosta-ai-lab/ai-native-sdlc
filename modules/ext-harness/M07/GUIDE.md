@@ -135,7 +135,11 @@ moai init
 
 ## 산출물
 
-`moai init` 실행 후 다음과 같은 구조가 생성됩니다.
+`moai init` 실행 후 다음과 같은 구조가 생성됩니다. 해당 구조 확인은 맥이나 리눅스라면 다음 명령어로 확인 가능합니다.
+
+```bash
+treee -a -L 3
+```
 
 ```
 my-first-project/
