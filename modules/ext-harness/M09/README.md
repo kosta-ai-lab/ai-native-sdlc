@@ -13,10 +13,30 @@
 - [ ] 자동화 — commit-message 스킬· code-reviewer 서브에이전트
 - [x] 샘플 — SAMPLE.md 동작 스텝·프롬프트
 
-## 품질 기준
+## 샘플과 가이드를 실횅한 다음 단계
 
-동작하는 샘플 또는 재현 가능한 프롬프트가 반드시 첨부되어야 하며, 문서는 따라 하면 되는 수준이어야 한다.
+| 시점 | 할 일 |
+|---|---|
+| 1주차 마지막 | `loop audit . --suggest` 재실행 → L1(점수 40+대) 목표 |
+| 2주차 | 검증(verifier) 스킬 추가, 워크트리에서 보조 수정(L2) 한 번 시도 |
+| 무인 실행(L3) 전 | `loop-budget.md`, `loop-run-log.md` 채우기 + `LOOP.md`에 휴먼 게이트 명시 + 검증된 실행 이력 확보 |
+| 패턴 선택이 고민될 때 | [pattern-picker.md](https://github.com/cobusgreyling/loop-engineering/blob/main/docs/pattern-picker.md), [loop-design-checklist.md](https://github.com/cobusgreyling/loop-engineering/blob/main/docs/loop-design-checklist.md) 참고 |
+| 뭔가 잘못됐을 때 | [failure-modes.md](https://github.com/cobusgreyling/loop-engineering/blob/main/docs/failure-modes.md), [stories/](https://github.com/cobusgreyling/loop-engineering/blob/main/stories) 참고 |
 
-- 가이드에서는 이론적인 내용을 포함하여 개념과 따라가기가 함께 되는 수준이어야 한다.
-- 샘플은 가이드에서 만든 결과를 활용할 수 있는 재현 가능한 프롬프트가 반드시 첨부되어야 하며, 따라 하면 되는 수준이어야 한다.
-- 자동화는 활용 폴더에 이미 올려 둔다.
+## 안전 관련 유의사항 (반드시 읽기)
+루프 엔지니어링은 여러분의 판단력을 "증폭"시킵니다. 좋은 판단도, 나쁜 판단도 그대로 확대됩니다.
+
+- **토큰 비용이 폭증할 수 있습니다.** 서브에이전트와 장시간 루프를 쓸수록 비용이 커집니다.
+- **검증은 여전히 사람의 몫입니다.** 무인(unattended) 루프는 무인 상태로 실수도 저지릅니다.
+- **이해 부채(comprehension debt)** 가 빠르게 쌓입니다 — 루프가 만든 결과물을 읽지 않으면 무슨 일이 벌어졌는지 모르게 됩니다.
+- 같은 루프를 두 사람이 돌려도 정반대 결과가 나올 수 있습니다. 루프는 그 차이를 모릅니다. **여러분이 알아야 합니다.**
+
+> "Build the loop. But build it like someone who intends to stay the engineer, not just the person who presses go." — Addy Osmani
+
+## 참고 자료
+
+- 원본 저장소: [github.com/cobusgreyling/loop-engineering](https://github.com/cobusgreyling/loop-engineering)
+- 공식 5분 퀵스타트: [docs/QUICKSTART.md](https://github.com/cobusgreyling/loop-engineering/blob/main/docs/QUICKSTART.md)
+- 개념 원문 에세이: [Cobus Greyling – Loop Engineering (Substack)](https://cobusgreyling.substack.com/p/loop-engineering)
+- [Addy Osmani – Loop Engineering](https://addyosmani.com/blog/loop-engineering/)
+- 인터랙티브 패턴 선택기: [쇼케이스 사이트](https://cobusgreyling.github.io/loop-engineering/#interactive)
