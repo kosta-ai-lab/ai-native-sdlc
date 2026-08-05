@@ -22,8 +22,6 @@
 
 즉, 루프 엔지니어링에서 여러분의 역할은 "프롬프트 작성자"가 아니라 **"루프(제어 시스템) 설계자"** 입니다.
 
----
-
 ## 2. 핵심 구성 요소 (5가지 + 메모리)
 
 | 구성 요소 | 루프에서의 역할 |
@@ -45,31 +43,128 @@
         └─ 위험하면 → 사람에게 에스컬레이션 → (다시 처음으로)
 ```
 
-# 1 단계: 
+## 3. 복사해서 바로 쓰는 치트시트
 
-## 규칙
+다음이 전체적인 흐름이며, 각 단계를 통해 자세히 설명한다.
 
-## 산출물
+```bash
+# 1) 스캐폴드 생성
+npx @cobusgreyling/loop init . --pattern daily-triage --tool grok
+
+# 2) 비용 확인
+npx @cobusgreyling/loop cost --pattern daily-triage --level L1 --cadence 1d
+
+# 3) 준비 상태 점검 + 개선 제안
+npx @cobusgreyling/loop audit . --suggest
+
+# 4) (선택) README용 배지 생성
+npx @cobusgreyling/loop audit . --badge
+
+# 5) 상태 대시보드 확인
+npx @cobusgreyling/loop status .
+
+# 6) 종합 헬스체크 (audit + sync + 파일 점검 → 상위 3개 액션 제안)
+npx @cobusgreyling/loop doctor .
+```
+
+# 1 단계: 시작 전 준비하기.
+시작하기 전에 아래 항목을 준비하세요.
+- **Node.js** (npx 명령을 쓰기 위해 필요, LTS 버전 권장)
+- **Git 저장소** — 루프를 적용할 프로젝트 (git 초기화가 된 폴더)
+- AI 코딩 에이전트 중 하나: **Grok**, **Claude Code**, **Codex** 등 (튜토리얼에서는 Claude Code 예시를 다룹니다)
+- 별도 클론(clone) 불필요 — 모든 도구는 `npx`로 바로 실행됩니다.
 
 ## 체크리스트
-[ ] 상기 
+[ ] 사전 준비가 되었는지 체크한다.
 
-# 2 단계: 
+# 2 단계: 어떤 루프를 먼저 만들지 정하기
+
+이 저장소는 7가지 검증된 패턴을 제공합니다.
+
+| 패턴 | 주기 | 1주차 목표 | 토큰 비용 |
+|---|---|---|---|
+| Daily Triage | 1일~2시간 | L1 리포트 | 낮음 |
+| PR Babysitter | 5~15분 | L1 감시 | 높음 |
+| CI Sweeper | 5~15분 | L2 신중 처리 | 매우 높음 |
+| Dependency Sweeper | 6시간~1일 | L2 패치만 | 중간 |
+| Changelog Drafter | 1일 또는 태그 시 | L1 초안 작성 | 낮음 |
+| Post-Merge Cleanup | 1일~6시간 | L1 비피크 시간 | 낮음 |
+| Issue Triage | 2시간~1일 | L1 제안만 | 낮음 |
+
+처음이라면 **Daily Triage**로 시작하는 것을 추천합니다. 위험도가 낮고 루프의 기본 동작 방식을 익히기 좋습니다.
 
 ## 규칙
-
-## 산출물
+> **1주차 원칙:** 처음에는 "리포트만" 생성하도록 합니다. 자동 수정(auto-fix)·자동 병합(auto-merge)은 아직 켜지 마세요. 루프가 무엇을 기록하는지 먼저 사람이 확인하는 습관을 들이는 것이 중요합니다.
 
 ## 체크리스트
-[ ] SKILL.md 파일에 
+[ ] Daily Triage에 대해서 이해한다.
 
-# 3 단계: 
+# 3 단계: 프로젝트에 루프 뼈대(scaffold) 만들기
+작업할 git 프로젝트의 루트 폴더에서 아래 명령을 실행합니다. (클론 필요 없음)
+```bash
+npx @cobusgreyling/loop init . --pattern daily-triage --tool grok
+```
+- `--tool` 옵션은 `grok`, `claude`, `codex` 중 사용하는 에이전트에 맞게 바꿉니다.
+- 이 명령은 스킬, 상태 파일, 예산 파일을 자동 생성하고 **Loop Ready 점수**와 첫 실행 명령을 출력해 줍니다.
+- 생성되는 파일 예시: `STATE.md`, `LOOP.md`, `loop-budget.md`, `loop-run-log.md`
 
 ## 규칙
-
-
-## 산출물
-
+> 참고: 예전 방식인 `npx @cobusgreyling/loop-init .` 도 동일하게 계속 지원됩니다.
 
 ## 체크리스트
-[ ] code-
+[ ] 루프가 실행되는지 확인한다.
+
+# 4 단계: 실행 전 토큰 비용 확인하기
+
+루프를 스케줄에 올리기 전에 예상 비용을 확인합니다.
+```bash
+npx @cobusgreyling/loop cost --pattern daily-triage --level L1 --cadence 1d
+```
+- `--level`은 자동화 단계를 의미합니다: `L1`(리포트만) → `L2`(보조 수정) → `L3`(완전 무인 실행)
+- `--cadence`(주기)는 실제로 계획한 주기로 맞춰서 확인하세요. CI Sweeper처럼 5분마다 도는 루프는 토큰을 빠르게 소모할 수 있습니다.
+
+## 체크리스트
+[ ] 예산 비용을 확인한다.
+
+# 5 단계: 준비 상태 점검하기 (Audit)
+```bash
+npx @cobusgreyling/loop audit . --suggest
+```
+- 0~100점으로 루프의 준비 상태를 채점하고, 구체적인 개선 제안을 함께 보여줍니다.
+- 개선할 때마다 다시 실행해서 점수 변화를 확인하세요.
+
+점수에 자신 있으면 README용 배지도 만들 수 있습니다.
+```bash
+npx @cobusgreyling/loop audit . --badge
+```
+
+## 체크리스트
+[ ] 준비 상태를 점검한다.
+
+# 6 단계: 첫 루프 실행하기 (리포트 전용)
+사용하는 에이전트 안에서 아래 명령어를 입력합니다.
+**Claude Code 사용 시:**
+```
+/loop 1d Run $loop-triage. Read STATE.md. Merge findings into High Priority and Watch List. Update Last run. Do not edit code.
+```
+## 규칙
+**Grok 사용 시:**
+```
+/loop 1d Run loop-triage. Update STATE.md. No auto-fix in week one.
+```
+**Codex 사용 시:**
+- `loop init` 실행 시 출력된 패턴 전용 첫 실행 명령을 그대로 사용합니다. 1주차에는 트리아지와 상태 업데이트만 하도록 합니다.
+**Cursor/Windsurf 사용 시:**
+- 아직 `--tool cursor` 전용 스캐폴드는 없습니다. 다른 스타터에서 스킬과 상태 파일을 복사한 뒤, 에디터의 Automations/Workflows 기능에 스케줄링을 연결하세요.
+
+## 체크리스트
+[ ] 루프가 실행되는지 확인한다.
+
+# 7 단계: 결과 확인 및 상태 커밋하기
+1. `STATE.md` 파일을 열어 루프가 실제로 유효한 우선순위를 파악했는지 확인합니다.
+2. 잘못된 내용이 있으면 직접 수정합니다 — **최종 판단은 여전히 사람 몫**입니다.
+3. 뼈대 파일 + 첫 실행 결과를 git commit 합니다. (다음 `loop audit` 때 활동 기록으로 인식됩니다)
+
+
+
+
