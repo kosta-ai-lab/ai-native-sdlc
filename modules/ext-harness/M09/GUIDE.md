@@ -178,7 +178,7 @@ npx @cobusgreyling/loop audit . --badge
 [ ] 준비 상태를 점검한다.
 
 # 6 단계: 첫 루프 실행하기 (리포트 전용)
-사용하는 에이전트 안에서 아래 명령어를 입력합니다.
+코딩 에이전트(클로드)를 사용하는 에이전트 안에서 아래 명령어를 입력합니다.
 **Claude Code 사용 시:**
 ```
 /loop 1d Run $loop-triage. Read STATE.md. Merge findings into High Priority and Watch List. Update Last run. Do not edit code.
