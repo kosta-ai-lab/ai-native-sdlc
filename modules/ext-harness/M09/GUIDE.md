@@ -111,8 +111,21 @@ npx @cobusgreyling/loop init . --pattern daily-triage --tool claude
 ## 규칙
 > 참고: 예전 방식인 `npx @cobusgreyling/loop-init .` 도 동일하게 계속 지원됩니다.
 
+## 산출물
+
+```bash
+my-loop-demo/
+└── .claude/
+    ├── AGENTS.md
+    ├── loop-budget.md
+    ├── loop-constraints.md
+    ├── loop-run-log.md
+    ├── LOOP.md          
+    └── STATE.md     
+```
+
 ## 체크리스트
-[ ] 루프가 실행되는지 확인한다.
+[ ] 루프가 실행되어 산출물이 생성되었는지 확인한다.
 
 # 4 단계: 실행 전 토큰 비용 확인하기
 
