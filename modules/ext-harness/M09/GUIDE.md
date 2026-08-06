@@ -102,7 +102,7 @@ npx @cobusgreyling/loop doctor .
 # 3 단계: 프로젝트에 루프 뼈대(scaffold) 만들기
 작업할 git 프로젝트의 루트 폴더에서 아래 명령을 실행합니다. (클론 필요 없음)
 ```bash
-npx @cobusgreyling/loop init . --pattern daily-triage --tool grok
+npx @cobusgreyling/loop init . --pattern daily-triage --tool claude
 ```
 - `--tool` 옵션은 `grok`, `claude`, `codex` 중 사용하는 에이전트에 맞게 바꿉니다.
 - 이 명령은 스킬, 상태 파일, 예산 파일을 자동 생성하고 **Loop Ready 점수**와 첫 실행 명령을 출력해 줍니다.
