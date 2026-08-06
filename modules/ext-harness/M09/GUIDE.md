@@ -133,8 +133,31 @@ my-loop-demo/
 ```bash
 npx @cobusgreyling/loop cost --pattern daily-triage --level L1 --cadence 1d
 ```
+## 규칙
 - `--level`은 자동화 단계를 의미합니다: `L1`(리포트만) → `L2`(보조 수정) → `L3`(완전 무인 실행)
 - `--cadence`(주기)는 실제로 계획한 주기로 맞춰서 확인하세요. CI Sweeper처럼 5분마다 도는 루프는 토큰을 빠르게 소모할 수 있습니다.
+
+## 산출물
+다음과 같은 예측이 출력됩니다.
+
+```bash
+Loop Cost Estimate — Daily Triage (daily-triage)
+══════════════════════════════════════════════════
+Cadence: 1d  →  1 runs/day
+Level: L1  ·  Registry tier: low
+Suggested daily cap: 100k tokens
+
+Daily token estimates:
+  Early-exit / no-op:  5k  (5k/run)
+  Full triage:         50k  (50k/run)
+  Action every run:    200k  (200k/run)
+  Realistic blend:     23k  (L1: 60% no-op, 40% full triage)
+
+Warnings:
+  ! Worst case (action every run) exceeds suggested cap (100k/day).
+
+Docs: docs/operating-loops.md · Scaffold: npx @cobusgreyling/loop-init    
+```
 
 ## 체크리스트
 [ ] 예산 비용을 확인한다.
