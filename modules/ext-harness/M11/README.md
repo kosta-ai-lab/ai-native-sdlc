@@ -13,10 +13,8 @@ ADE로 좀 더 쉽게 Claude와 같은 코드 에이전트를 사용하기 위�
 - [ ] 자동화 — 없음
 - [x] 샘플 — SAMPLE.md 동작 스텝·프롬프트
 
-## 품질 기준
-
-동작하는 샘플 또는 재현 가능한 프롬프트가 반드시 첨부되어야 하며, 문서는 따라 하면 되는 수준이어야 한다.
-
-- 가이드에서는 이론적인 내용을 포함하여 개념과 따라가기가 함께 되는 수준이어야 한다.
-- 샘플은 가이드에서 만든 결과를 활용할 수 있는 재현 가능한 프롬프트가 반드시 첨부되어야 하며, 따라 하면 되는 수준이어야 한다.
-- 자동화는 활용 폴더에 이미 올려 둔다.
+## 참고 링크
+- Orca 공식 사이트: https://www.onorca.dev
+- 첫 3-에이전트 세션 공식 가이드: https://www.onorca.dev/docs/first-session
+- 설치 가이드: https://www.onorca.dev/docs/install
+- "세 에이전트 경쟁시키기" 레시피: https://www.onorca.dev/docs/recipes/parallel-agents
