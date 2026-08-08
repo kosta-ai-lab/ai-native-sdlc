@@ -59,11 +59,8 @@
    nvm alias default 22
    cat ~/.nvm/alias/default
    ```
-
-## 산출물
-
 ## 체크리스트
-[ ] 
+[ ] CLI가 런타임으로 통신되는지를 확인한다.
 
 # 2 단계: Graph Engineering의 핵심 개념 이해하기
 
