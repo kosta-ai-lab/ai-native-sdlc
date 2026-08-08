@@ -160,10 +160,6 @@ orca orchestration send \
   --json
 ```
 
-## 규칙
-
-## 산출물
-
 ## 체크리스트
 [ ] 
 
@@ -197,10 +193,6 @@ orca orchestration ask \
   --json
 ```
 
-## 규칙
-
-## 산출물
-
 ## 체크리스트
 [ ] 
 
@@ -214,10 +206,6 @@ orca orchestration reset --messages --json  # 메시지만 초기화
 orca orchestration reset --all --json       # 전체 초기화
 ```
 
-## 규칙
-
-## 산출물
-
 ## 체크리스트
 [ ] 
 
@@ -229,11 +217,6 @@ orca orchestration reset --all --json       # 전체 초기화
 | 완료 추적/소유권 없이 그냥 통째로 맡길 때 | worktree + terminal 명령 (2단계 방식) |
 | **작업 완료 추적, 여러 Task 간 의존관계(DAG), 여러 에이전트 협업**이 필요할 때 | **`orca orchestration run-create` + task + worker (Graph Engineering)** |
 
-
-## 규칙
-
-## 산출물
-
 ## 체크리스트
 [ ] 
 
@@ -243,10 +226,6 @@ Orca 설치 후 에이전트에게 아래 명령을 실행시키면, 최신 오�
 ```bash
 orca skills get orchestration --full
 ```
-
-## 규칙
-
-## 산출물
 
 ## 체크리스트
 [ ] 
