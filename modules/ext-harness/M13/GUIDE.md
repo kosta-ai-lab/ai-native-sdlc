@@ -135,9 +135,12 @@ orca orchestration worker-start \
 # 5 단계: 완료 메시지 기다리기 (그래프 진행 상황 확인)
 
 코디네이터(당신, 혹은 상위 에이전트) 입장에서는 아래 명령으로 완료/에스컬레이션/질문 메시지를 기다립니다.
-
 ```bash
 orca orchestration check --wait --types worker_done,escalation,question --timeout-ms 900000 --json
+```
+또한 아래 명령어와 같이 반드시 ack(확인 처리) 해야 다음 메시지로 넘어갑니다. 이 때 deliveryId는 delivery_...로 시작합니다.
+```bash
+orca orchestration check --ack <deliveryId> --wait --types worker_done,escalation,question --timeout-ms 900000 --json
 ```
 
 ## 규칙
@@ -152,11 +155,6 @@ orca orchestration send \
   --outcome succeeded \
   --files-modified "src/app/settings/Billing.tsx" \
   --json
-```
-또한 받는 쪽에서는 아래 명령어와 같이 반드시 ack(확인 처리) 해야 다음 메시지로 넘어갑니다. 이 때 deliveryId는 delivery_...로 시작한다.
-
-```bash
-orca orchestration check --ack <deliveryId> --wait --types worker_done,escalation,question --timeout-ms 900000 --json
 ```
 
 ## 체크리스트
