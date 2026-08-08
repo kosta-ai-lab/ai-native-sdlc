@@ -38,11 +38,11 @@ Run (그래프 전체)
 ## 요약 다이어그램 (개념도)
 
 ```
-[Run: "체크아웃 QA 나누고 블로커 요약"]
+[Run: "블로그 QA 나누고 블로커 요약"]
    │
-   ├── Task 1: 결제 설정 감사 ──(worker-start: codex)──▶ Dispatch ──▶ worker_done
+   ├── Task 1: 모바일 UI 감사 ──(worker-start: codex)──▶ Dispatch ──▶ worker_done
    │
-   ├── Task 2: 프로모코드 검증 ──(worker-start: claude)─▶ Dispatch ──▶ worker_done
+   ├── Task 2: 링크, 이미지 무결성 감사 ──(worker-start: claude)─▶ Dispatch ──▶ worker_done
    │                                                              │
    │                                                     [Decision Gate: 병합 여부?]
    │                                                              │
