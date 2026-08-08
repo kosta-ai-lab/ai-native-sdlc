@@ -85,7 +85,7 @@ Run (그래프 전체)
 이 명령이 반환하는 `runId`를 이후 명령들에서 사용하게 됩니다 (Orca가 대부분 자동 바인딩해줍니다).
 
 ```bash
-orca orchestration run-create --objective "체크아웃 QA를 나누고 블로커 요약하기" --json
+orca orchestration run-create --objective "블로그 QA를 나누고 블로커 요약하기" --json
 ```
 
 ## 규칙
