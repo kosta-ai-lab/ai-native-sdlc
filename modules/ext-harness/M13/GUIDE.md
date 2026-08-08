@@ -88,19 +88,15 @@ Run (그래프 전체)
 orca orchestration run-create --objective "블로그 QA를 나누고 블로커 요약하기" --json
 ```
 
-## 규칙
-
-## 산출물
-
 ## 체크리스트
-[ ] 
+[ ] 해당 명령의 결과로 JSON 포맷의 응답이 있는지 확인한다.
 
 # 3 단계: Task(노드) 만들기
 
 ```bash
 orca orchestration task-create \
-  --spec "모바일 레이아웃에서 결제 설정을 감사(audit)하기" \
-  --task-title "결제 설정 감사" \
+  --spec "블로그 내 모든 내부/외부 링크와 이미지 경로가 깨지지 않았는지 감사하기" \
+  --task-title "링크·이미지 무결성 감사" \
   --json
 ```
 
@@ -111,32 +107,22 @@ orca orchestration task-create \
 Task 사이에 의존관계(예: "B는 A가 끝나야 시작 가능")를 설정하면
 그것이 곧 그래프의 **엣지(edge)** 가 됩니다.
 
-## 규칙
-
-## 산출물
-
 ## 체크리스트
-[ ] 
+[ ] 해당 명령의 결과로 JSON 포맷의 응답이 있는지 확인한다.
 
 # 4 단계: Worker(에이전트) 배치해서 노드 실행하기
+다음 명령을 실행하여 지정한 Task(노드)가 실제 에이전트에게 "디스패치"되어 작업이 시작되도록 합니다.
+여러 Task에 대해 이 명령을 반복하면, 여러 에이전트가 **그래프의 여러 노드를 동시에 처리**하게 됩니다 — 이것이 병렬 Graph Engineering의 실체입니다.
 
 ```bash
 # 현재 worktree에서 실행
-orca orchestration worker-start --task <taskId> --worktree current --agent codex --json
+orca orchestration worker-start --task <taskId> --worktree current --agent clause --json
 
 # 또는 새 worktree를 만들어 실행
 orca orchestration worker-start \
   --task <taskId> --worktree new-child --name billing-audit \
   --agent codex --setup run --json
 ```
-
-이 명령이 실행되면 지정한 Task(노드)가 실제 에이전트에게 "디스패치"되어 작업이 시작됩니다.
-여러 Task에 대해 이 명령을 반복하면, 여러 에이전트가 **그래프의 여러 노드를 동시에 처리**하게 됩니다 — 이것이 병렬 Graph Engineering의 실체입니다.
-
-
-## 규칙
-
-## 산출물
 
 ## 체크리스트
 [ ] 
