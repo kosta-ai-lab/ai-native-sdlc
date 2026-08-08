@@ -111,8 +111,11 @@ Task 사이에 의존관계(예: "B는 A가 끝나야 시작 가능")를 설정�
 [ ] 해당 명령의 결과로 JSON 포맷의 응답이 있는지 확인한다.
 
 # 4 단계: Worker(에이전트) 배치해서 노드 실행하기
-다음 명령을 실행하여 지정한 Task(노드)가 실제 에이전트에게 "디스패치"되어 작업이 시작되도록 합니다.
-여러 Task에 대해 이 명령을 반복하면, 여러 에이전트가 **그래프의 여러 노드를 동시에 처리**하게 됩니다 — 이것이 병렬 Graph Engineering의 실체입니다.
+1. 현재의 실행에 어떤 task들이 있는지 확인하고, 실행시킬 테스크의 id를 확인한다. task_...으로 시작한다.
+```bash
+   orca orchestration task-list --json
+```
+2. 확인한 태스크의 id를 대입하여 다음 명령을 실행하여 지정한 Task(노드)가 실제 에이전트에게 "디스패치"되어 작업이 시작되도록 한다.
 
 ```bash
 # 현재 worktree에서 실행
@@ -123,9 +126,11 @@ orca orchestration worker-start \
   --task <taskId> --worktree new-child --name billing-audit \
   --agent codex --setup run --json
 ```
+## 규칙
+여러 Task에 대해 이 명령을 반복하면, 여러 에이전트가 **그래프의 여러 노드를 동시에 처리**하게 됩니다 — 이것이 병렬 Graph Engineering의 실체입니다.
 
 ## 체크리스트
-[ ] 
+[ ] JSON 응답이 false가 아닌 true가 되는지 확인한다.
 
 # 5 단계: 완료 메시지 기다리기 (그래프 진행 상황 확인)
 
