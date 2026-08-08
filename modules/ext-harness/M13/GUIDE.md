@@ -140,14 +140,13 @@ orca orchestration worker-start \
 orca orchestration check --wait --types worker_done,escalation,question --timeout-ms 900000 --json
 ```
 
-메시지를 확인했으면 반드시 ack(확인 처리) 해야 다음 메시지로 넘어갑니다.
+메시지를 확인했으면, 해당 메시지를 참조하여 deliveryId를 찾아서 아래 명령어에 반드시 ack(확인 처리) 해야 다음 메시지로 넘어갑니다. 이 때 deliveryId는 delivery_...로 시작한다.
 
 ```bash
 orca orchestration check --ack <deliveryId> --wait --types worker_done,escalation,question --timeout-ms 900000 --json
 ```
-
+## 규칙
 워커(에이전트) 쪽에서는 작업이 끝나면 아래처럼 완료 보고를 보냅니다 (자동으로 처리되는 경우가 많습니다).
-
 ```bash
 orca orchestration send \
   --type worker_done \
@@ -161,7 +160,7 @@ orca orchestration send \
 ```
 
 ## 체크리스트
-[ ] 
+[ ] 응답으로의 JSON 결과가 제대로 오는지 확인한다.
 
 # 6 단계: 그래프에 "판단 지점" 추가하기: Decision Gate
 
