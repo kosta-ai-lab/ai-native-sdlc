@@ -116,7 +116,7 @@ Task 사이에 의존관계(예: "B는 A가 끝나야 시작 가능")를 설정�
 
 ```bash
 # 현재 worktree에서 실행
-orca orchestration worker-start --task <taskId> --worktree current --agent clause --json
+orca orchestration worker-start --task <taskId> --worktree current --agent claude --json
 
 # 또는 새 worktree를 만들어 실행
 orca orchestration worker-start \
