@@ -204,10 +204,7 @@ orca orchestration reset --all --json       # 전체 초기화
 ```
 
 ## 체크리스트
-[ ] 다음의 명령으로 초기화가 task가 초기화 되었는지 확인한다.
-```bash
-   orca orchestration task-list --json
-```
+[ ] 초기화 요청 후 JSON 응답이 오는지 확인한다.
 
 # 8 단계: 더 깊이 배우기
 Orca 설치 후 에이전트에게 아래 명령을 실행시키면, 최신 오케스트레이션 전체 가이드를 CLI가 직접 보여줍니다 (문서 UI보다 최신 상태를 반영합니다).
