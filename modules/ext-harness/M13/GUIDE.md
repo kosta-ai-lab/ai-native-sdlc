@@ -206,20 +206,12 @@ orca orchestration reset --all --json       # 전체 초기화
 ```
 
 ## 체크리스트
-[ ] 
+[ ] 다음의 명령으로 초기화가 task가 초기화 되었는지 확인한다.
+```bash
+   orca orchestration task-list --json
+```
 
-# 8 단계: 언제 이 방식(Graph Engineering)을 써야 할까?
-
-| 상황 | 추천 방법 |
-|---|---|
-| 에이전트 하나에게 가벼운 지시 하나만 내리면 될 때 | `orca terminal send` |
-| 완료 추적/소유권 없이 그냥 통째로 맡길 때 | worktree + terminal 명령 (2단계 방식) |
-| **작업 완료 추적, 여러 Task 간 의존관계(DAG), 여러 에이전트 협업**이 필요할 때 | **`orca orchestration run-create` + task + worker (Graph Engineering)** |
-
-## 체크리스트
-[ ] 
-
-# 9 단계: 더 깊이 배우기
+# 8 단계: 더 깊이 배우기
 Orca 설치 후 에이전트에게 아래 명령을 실행시키면, 최신 오케스트레이션 전체 가이드를 CLI가 직접 보여줍니다 (문서 UI보다 최신 상태를 반영합니다).
 
 ```bash
@@ -227,4 +219,16 @@ orca skills get orchestration --full
 ```
 
 ## 체크리스트
-[ ] 
+[ ] 최신 오케스트레이션 전체 가이드가 잘 나오는지 확인한다.
+
+# 참조: Orca가 에이전트를 다룰 때의 3가지 방식
+Orca가 에이전트를 다룰 때의 3가지 방식이 있습니다.
+
+| 상황 | 추천 방법 |
+|---|---|
+| 에이전트 하나에게 가벼운 지시 하나만 내리면 될 때 | `orca terminal send` |
+| 완료 추적/소유권 없이 그냥 통째로 맡길 때 | worktree + terminal 명령 (2단계 방식) |
+| **작업 완료 추적, 여러 Task 간 의존관계(DAG), 여러 에이전트 협업**이 필요할 때 | **`orca orchestration run-create` + task + worker (Graph Engineering)** |
+
+앞에서 보인 Graph Engineering은 해당 방식 중 마지막 방식입니다. 여러 에이전트 협업, 작업 간의 의존 관계, 완료 추적이 필요할 때 고려할 수 있습니다.
+
