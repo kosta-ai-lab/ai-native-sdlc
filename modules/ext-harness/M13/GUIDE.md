@@ -38,8 +38,7 @@
 
 # 1 단계: Orca에서 Graph Engineering 활성화하기
 오케스트레이션(=그래프 엔지니어링) 기능은 실험적 기능이므로 먼저 켜야 합니다.
-
-1. **Settings → Experimental**로 이동해 Orchestration을 활성화합니다.
+1. **Settings → AI기능**로 이동해 Orchestration의 스킬을 설치합니다.
 2. 터미널에서 CLI가 런타임과 통신되는지 확인합니다.
    ```bash
    orca status --json
