@@ -4,8 +4,7 @@
 > 그 작업들을 **의존관계 그래프(DAG)** 로 연결한 뒤, 여러 AI 코딩 에이전트에게
 > 병렬 또는 순차적으로 분배해서 실행시키는 작업 방식을 말합니다.
 
-## 0. 사전 지식: Orca로 구현하는 그래프 엔지니어링
-
+## Orca로 구현하는 그래프 엔지니어링
 핵심 개념 3가지만 먼저 알고 가면 됩니다.
 
 | 개념 | 설명 |
@@ -17,6 +16,24 @@
 즉 "Graph Engineering"은 Orca 안에서 **여러 개의 Task 노드(node)를 만들고,
 그 Task들 사이의 의존관계(edge)를 정의해서, 이 그래프를 여러 에이전트에게
 분배 실행**시키는 작업이라고 이해하면 됩니다.
+
+## Graph Engineering의 핵심 개념 이해하기
+
+Orca의 오케스트레이션은 다음 5가지 요소로 이루어진 그래프 모델입니다.
+
+- **Run** — 그래프 전체를 담는 "네임스페이스"이자 코디네이터의 받은편지함(inbox). 스스로 작업을 스케줄링하지는 않습니다.
+- **Task** — 그래프의 "노드(node)"입니다. 명세(spec), 의존관계, 상태(`pending` → `ready` → `dispatched` → `completed`/`failed`/`blocked`)를 가집니다.
+- **Dispatch** — 하나의 Task를 특정 터미널(에이전트)에 실행시킨 "한 번의 시도"입니다.
+- **Message** — Run의 inbox로 오가는 메일 (`status`, `dispatch`, `worker_done`, `escalation`, `question`, `heartbeat` 등)
+- **Decision gate** — 그래프 흐름 중 사람(코디네이터)의 판단이 필요할 때 Task를 막아두는 "게이트"입니다.
+
+즉:
+```
+Run (그래프 전체)
+ └─ Task A (노드) ──depends on──> Task B (노드)
+      └─ Dispatch (Task A를 codex 에이전트에게 실행 지시)
+           └─ Message: worker_done (완료 보고)
+```
 
 ## 요약 다이어그램 (개념도)
 
@@ -62,32 +79,7 @@
 ## 체크리스트
 [ ] CLI가 런타임으로 통신되는지를 확인한다.
 
-# 2 단계: Graph Engineering의 핵심 개념 이해하기
-
-Orca의 오케스트레이션은 다음 5가지 요소로 이루어진 그래프 모델입니다.
-
-- **Run** — 그래프 전체를 담는 "네임스페이스"이자 코디네이터의 받은편지함(inbox). 스스로 작업을 스케줄링하지는 않습니다.
-- **Task** — 그래프의 "노드(node)"입니다. 명세(spec), 의존관계, 상태(`pending` → `ready` → `dispatched` → `completed`/`failed`/`blocked`)를 가집니다.
-- **Dispatch** — 하나의 Task를 특정 터미널(에이전트)에 실행시킨 "한 번의 시도"입니다.
-- **Message** — Run의 inbox로 오가는 메일 (`status`, `dispatch`, `worker_done`, `escalation`, `question`, `heartbeat` 등)
-- **Decision gate** — 그래프 흐름 중 사람(코디네이터)의 판단이 필요할 때 Task를 막아두는 "게이트"입니다.
-
-즉:
-```
-Run (그래프 전체)
- └─ Task A (노드) ──depends on──> Task B (노드)
-      └─ Dispatch (Task A를 codex 에이전트에게 실행 지시)
-           └─ Message: worker_done (완료 보고)
-```
-
-## 규칙
-
-## 산출물
-
-## 체크리스트
-[ ] 
-
-# 3 단계: 첫 그래프 만들기: Run 생성
+# ㅂ 단계: 첫 그래프 만들기: Run 생성
 
 ```bash
 orca orchestration run-create --objective "체크아웃 QA를 나누고 블로커 요약하기" --json
