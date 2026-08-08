@@ -38,7 +38,7 @@
 
 # 1 단계: Orca에서 Graph Engineering 활성화하기
 오케스트레이션(=그래프 엔지니어링) 기능은 실험적 기능이므로 먼저 켜야 합니다.
-1. **Settings → AI기능**로 이동해 Orchestration의 스킬을 설치합니다.
+1. **Settings → AI기능**로 이동해 Orchestration 스킬을 설치합니다.
 2. 터미널에서 CLI가 런타임과 통신되는지 확인합니다.
    ```bash
    orca status --json
@@ -46,6 +46,14 @@
    이 명령이 정상적으로 응답하면 준비가 끝난 것입니다.
 
 ## 규칙
+1. 만약 Orchestration 스킬에서 에러가 난다면 node의 버전이 22.20 버전보다 낮아서 생기는 일일 수 있다.
+   이 경우 다음을 실행힌다.
+   
+   ```bash
+   nvm install 22
+   nvm use 22
+   node --version   # confirm it's 22.20+
+   ```
 
 ## 산출물
 
