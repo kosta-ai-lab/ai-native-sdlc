@@ -54,6 +54,11 @@
    nvm use 22
    node --version   # confirm it's 22.20+
    ```
+2. node의 버전을 설치한 후에 버전이 안 잡히는 경우 다음과 같이 디폴트 값을 바꾸어 해결할 수 있다.
+   ```bash
+   nvm alias default 22
+   cat ~/.nvm/alias/default
+   ```
 
 ## 산출물
 
