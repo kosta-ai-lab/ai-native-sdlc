@@ -20,3 +20,10 @@
 - 가이드에서는 이론적인 내용을 포함하여 개념과 따라가기가 함께 되는 수준이어야 한다.
 - 샘플은 가이드에서 만든 결과를 활용할 수 있는 재현 가능한 프롬프트가 반드시 첨부되어야 하며, 따라 하면 되는 수준이어야 한다.
 - 자동화는 활용 폴더에 이미 올려 둔다.
+
+## 참고 자료
+
+- [snarktank/ralph GitHub 저장소](https://github.com/snarktank/ralph)
+- [Ralph 인터랙티브 플로우차트](https://snarktank.github.io/ralph/)
+- [Geoffrey Huntley의 원조 Ralph 패턴 글](https://ghuntley.com/ralph/)
+- [Claude Code 공식 문서](https://docs.anthropic.com/en/docs/claude-code)
