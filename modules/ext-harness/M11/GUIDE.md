@@ -123,37 +123,83 @@ EOF
 ## 규칙
 > 실제 프로젝트에서는 `prd.json.example` 파일(Ralph 저장소에 포함되어 있음)을 참고해서 형식을 맞추면 됩니다.
 
-## 산출물
-
 ## 체크리스트
-[ ] 
+[ ] `prd.json` 파일을 프로젝트 루트에 있는지 확인한다.
 
 
 # 4 단계: 
 
-## 규칙
+이제 실제로 루프를 돌립니다. 
 
-## 산출물
+```bash
+./scripts/ralph/ralph.sh --tool claude 3
+```
+
+- `--tool claude` : Claude Code를 AI 엔진으로 사용
+- `3` : 최대 3번까지만 반복 (기본값은 10)
+
+실행하면 내부적으로 다음이 반복됩니다.
+
+1. `prd.json`의 `branchName`으로 새 git 브랜치 생성
+2. `passes: false`인 항목 중 우선순위가 가장 높은 것 선택 (여기선 subtract 함수)
+3. Claude Code 인스턴스를 새로 띄워 해당 작업만 구현하도록 지시
+4. 타입체크/테스트 등 품질 검사 실행 (`npm test`)
+5. 통과하면 자동으로 git 커밋
+6. `prd.json`에서 해당 항목을 `passes: true`로 변경
+7. `progress.txt`에 배운 점 기록
+8. 모든 항목이 끝났으면 `<promise>COMPLETE</promise>`를 출력하고 종료
+
+## 규칙
+작업이 1개뿐이므로 최대 반복 횟수를 작게 줘도 충분합니다.
 
 ## 체크리스트
-[ ] 
+[ ] `<promise>COMPLETE</promise>`이 나왔는지 확인한다.
 
+# 5 단계: 결과 확인하기
 
-# 5 단계: 
+루프가 끝나면 실제로 무엇이 바뀌었는지 확인해봅니다.
 
-## 규칙
+```bash
+# 작업이 완료로 표시됐는지 확인
+cat prd.json | jq '.userStories[] | {id, title, passes}'
 
-## 산출물
+# 커밋 히스토리 확인
+git log --oneline -5
+
+# 실제 코드 변경 확인
+cat calc.js
+
+# 이전 반복에서 남긴 학습 기록 확인
+cat progress.txt
+
+# 테스트가 실제로 통과하는지 재확인
+npm test
+```
 
 ## 체크리스트
-[ ] 
+[ ] `calc.js`에 `subtract` 함수가 추가되어 있고, `test.js`에도 테스트가 추가되어 있으며, `npm test`가 정상적으로 통과하면 성공입니다.
 
 
-# 6 단계: 
+# 6 단계: 다음 단계로
 
-## 규칙
+작은 예제를 성공적으로 돌려봤다면, 다음을 시도해볼 수 있습니다.
 
-## 산출물
+- 저장소의 `skills/prd` 스킬을 설치해서 PRD 문서 작성 자체를 AI에게 맡기기
+  ```bash
+  cp -r /tmp/ralph/skills/prd ~/.claude/skills/
+  cp -r /tmp/ralph/skills/ralph ~/.claude/skills/
+  ```
+- `prd.json`에 여러 개의 작업(user story)을 추가해서, Ralph가 우선순위 순서대로 여러 작업을 자동으로 처리하게 해보기
+- **각 작업은 반드시 작게 쪼개기** — "대시보드 전체 만들기"처럼 크고 모호한 작업이 아니라, "리스트에 필터 드롭다운 추가" 같은 한 번에 끝낼 수 있는 작업 단위로 나누는 것이 Ralph를 성공적으로 쓰는 핵심입니다.
 
 ## 체크리스트
-[ ] 
+[ ] 여러개를 쪼개서 실행가능한지 확인한다.
+
+# 자주 겪는 문제 (트러블슈팅)
+
+| 증상 | 원인/해결 |
+|---|---|
+| `jq: command not found` | `brew install jq` (또는 리눅스는 `apt install jq`) |
+| Ralph가 계속 반복해도 `passes`가 `false`로 남음 | `acceptanceCriteria`가 모호할 수 있습니다. 더 구체적인 문장으로 다시 작성해보세요 |
+| 테스트/타입체크 명령이 프로젝트와 안 맞음 | `scripts/ralph/CLAUDE.md`를 열어 프로젝트에 맞는 품질 검사 명령(`npm test` 등)을 명시해주세요 |
+| 루프가 중간에 멈춤 | `progress.txt`를 확인하면 마지막 반복이 무엇을 했는지 알 수 있습니다 |
