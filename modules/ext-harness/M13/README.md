@@ -4,7 +4,7 @@
 
 ## 목적
 
-ORCA ADE로 좀 더 쉽게 Claude와 같은 코드 에이전트를 넘어 그래프 엔지니어링 방식으로 활용하는 것을 배워본다.
+ADE로 좀 더 쉽게 Claude와 같은 코드 에이전트를 사용하기 위한 편집기를 배워본다.
 
 ## 산출물 4종 (체크리스트)
 
@@ -15,6 +15,6 @@ ORCA ADE로 좀 더 쉽게 Claude와 같은 코드 에이전트를 넘어 그래
 
 ## 참고 링크
 - Orca 공식 사이트: https://www.onorca.dev
-- Orca 오케스트레이션 문서: https://www.onorca.dev/docs/cli/orchestration
-- 첫 3-에이전트 세션 가이드: https://www.onorca.dev/docs/first-session
+- 첫 3-에이전트 세션 공식 가이드: https://www.onorca.dev/docs/first-session
 - 설치 가이드: https://www.onorca.dev/docs/install
+- "세 에이전트 경쟁시키기" 레시피: https://www.onorca.dev/docs/recipes/parallel-agents
