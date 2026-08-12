@@ -1,229 +1,193 @@
 # 개념
 
-> "Graph Engineering"이란 하나의 작업을 여러 개의 하위 작업(Task)으로 쪼개고,
-> 그 작업들을 **의존관계 그래프(DAG)** 로 연결한 뒤, 여러 AI 코딩 에이전트에게
-> 병렬 또는 순차적으로 분배해서 실행시키는 작업 방식을 말합니다.
+Orca는 **ADE (Agent Development Environment)** — "에이전트 개발 환경"입니다.
+Cursor나 VS Code 같은 일반 IDE가 "사람이 코드를 짜는 도구"라면, Orca는
+**여러 개의 AI 코딩 에이전트(Claude Code, Codex, Cursor CLI, Gemini 등)를
+동시에, 서로 방해받지 않게 실행시키는 도구**라는 점이 다릅니다.
 
-## Orca로 구현하는 그래프 엔지니어링
-핵심 개념 3가지만 먼저 알고 가면 됩니다.
+무료 오픈소스(MIT 라이선스)이며 macOS·Windows·Linux를 모두 지원합니다.
+
+## 핵심 개념 5가지
+
+### 1. Repo (저장소)
+작업 대상이 되는 git 저장소입니다. Orca에 추가하면 자동으로 기본 브랜치를 **base ref**(모든 새 worktree가 갈라져 나오는 기준점)로 인식합니다.
+
+### 2. Worktree (작업 공간)
+하나의 저장소에서 브랜치를 분리해 만든 **독립된 실제 git 작업 폴더**입니다. 에이전트마다 별도의 worktree를 주면, 여러 에이전트가 동시에 작업해도 서로 파일을 덮어쓰거나 충돌하지 않습니다. 스태시(stash)나 브랜치 전환을 신경 쓸 필요가 없는 게 핵심 장점입니다.
+
+### 3. Agent (에이전트)
+그 worktree 안에서 실제로 코드를 읽고 수정하는 CLI 도구입니다. Claude Code, Codex, Cursor CLI 등 25개 이상을 기본 지원하며, 원하는 CLI 에이전트는 직접 추가할 수도 있습니다.
+하나의 worktree = 하나의 에이전트 세션으로 매칭됩니다.
+
+### 4. Session (세션)
+"한 worktree에서 실행 중인 하나의 에이전트"의 생명주기입니다. 작업 중(스피너), 대기 중(주황 물음표 - 권한 필요/입력 대기), 완료(초록) 등 상태로 표시되어, 여러 탭을 일일이 클릭하지 않아도 어떤 에이전트가 지금 뭘 하고 있는지 한눈에 알 수 있습니다.
+
+### 5. Diff & Review (검토)
+에이전트가 작업을 마치면 변경 내역을 diff로 보여줍니다. 특정 줄에 마크다운 코멘트를 남겨 에이전트에게 다시 보내는 **Annotate AI Diff** 기능으로 수정 요청을 반복할 수 있고, 마음에 들면 Orca 안에서 바로 커밋·푸시·PR 생성까지 가능합니다.
+
+## 추가로 알아두면 좋은 개념
 
 | 개념 | 설명 |
 |---|---|
-| **Worktree** | 하나의 저장소(repo)에서 브랜치를 분리해 만든 독립 작업 공간. 에이전트마다 별도의 worktree를 주면 서로 파일을 덮어쓰지 않습니다. |
-| **Agent** | 그 worktree 안에서 실제로 코드를 짜는 CLI 에이전트 (Claude Code, Codex 등) |
-| **Orchestration (오케스트레이션)** | 여러 Task와 Agent를 하나의 "그래프"로 묶어서 관리하는 Orca의 기능. 이 문서에서 다루는 **Graph Engineering**의 핵심입니다. |
+| **Design Mode** | worktree마다 내장된 크롬 브라우저 창. UI 요소를 클릭하면 HTML/CSS/스크린샷이 자동으로 에이전트 프롬프트에 첨부됩니다. |
+| **Orchestration (오케스트레이션)** | 여러 Task(작업)를 의존관계 그래프로 묶어 여러 에이전트에 자동 분배하는 고급 기능. "Graph Engineering"이 여기 해당합니다. |
+| **SSH Worktree** | 원격 서버에서 worktree를 돌리고 로컬 Orca에서 그대로 파일 편집·터미널·git을 쓸 수 있는 기능. |
+| **Mobile companion** | 모바일 앱으로 에이전트 상태를 확인하고 원격으로 작업을 이어갈 수 있는 기능. |
 
-즉 "Graph Engineering"은 Orca 안에서 **여러 개의 Task 노드(node)를 만들고,
-그 Task들 사이의 의존관계(edge)를 정의해서, 이 그래프를 여러 에이전트에게
-분배 실행**시키는 작업이라고 이해하면 됩니다.
 
-## Graph Engineering의 핵심 개념 이해하기
+## Orca의 기본 사이클
 
-Orca의 오케스트레이션은 다음 5가지 요소로 이루어진 그래프 모델입니다.
-
-- **Run** — 그래프 전체를 담는 "네임스페이스"이자 코디네이터의 받은편지함(inbox). 스스로 작업을 스케줄링하지는 않습니다.
-- **Task** — 그래프의 "노드(node)"입니다. 명세(spec), 의존관계, 상태(`pending` → `ready` → `dispatched` → `completed`/`failed`/`blocked`)를 가집니다.
-- **Dispatch** — 하나의 Task를 특정 터미널(에이전트)에 실행시킨 "한 번의 시도"입니다.
-- **Message** — Run의 inbox로 오가는 메일 (`status`, `dispatch`, `worker_done`, `escalation`, `question`, `heartbeat` 등)
-- **Decision gate** — 그래프 흐름 중 사람(코디네이터)의 판단이 필요할 때 Task를 막아두는 "게이트"입니다.
-
-즉:
-```
-Run (그래프 전체)
- └─ Task A (노드) ──depends on──> Task B (노드)
-      └─ Dispatch (Task A를 codex 에이전트에게 실행 지시)
-           └─ Message: worker_done (완료 보고)
-```
-
-## 요약 다이어그램 (개념도)
+> 이 기본 사용법 튜토리얼은 Orca를 처음 써보는 사람을 위한 **가장 기본적인 사용 흐름**만 다룹니다.
+> **저장소 추가 → worktree 만들기 → 에이전트 실행 → 결과 확인 → 반영**
+> 이 다섯 단계만 실제 샘플과 함께 체험합니다.
 
 ```
-[Run: "블로그 QA 나누고 블로커 요약"]
+Repo 추가
    │
-   ├── Task 1: 모바일 UI 감사 ──(worker-start: codex)──▶ Dispatch ──▶ worker_done
+   ▼
+Worktree 생성 (작업 공간 분리)
    │
-   ├── Task 2: 링크, 이미지 무결성 감사 ──(worker-start: claude)─▶ Dispatch ──▶ worker_done
-   │                                                              │
-   │                                                     [Decision Gate: 병합 여부?]
-   │                                                              │
-   └── Task 3: 회귀 테스트 (Task 1, 2 완료 후 시작) ──▶ Dispatch ──▶ worker_done
+   ▼
+에이전트 선택 & 프롬프트 입력
+   │
+   ▼
+Diff 확인 & 코멘트로 수정 요청
+   │
+   ▼
+커밋 & 푸시
 ```
 
-이렇게 노드(Task)와 엣지(의존관계)를 정의하고, 각 노드를 에이전트에게 분배해
-동시에 혹은 순서대로 처리시키는 전체 과정이 **Orca에서의 Graph Engineering**입니다.
+이 사이클만 익히면 Orca의 기본 사용법은 끝입니다.
 
 
-# 1 단계: Orca에서 Graph Engineering 활성화하기
-오케스트레이션(=그래프 엔지니어링) 기능은 실험적 기능이므로 먼저 켜야 합니다.
-1. **Settings → AI기능**로 이동해 Orchestration 스킬을 설치합니다.
-2. 터미널에서 CLI가 런타임과 통신되는지 확인합니다.
-   ```bash
-   orca status --json
-   ```
-   이 명령이 정상적으로 응답하면 준비가 끝난 것입니다.
+---
+
+# 0 단계: 준비하기
+
+- macOS / Windows / Linux 컴퓨터
+- 로컬에 있는 git 저장소 하나 (연습용이면 아무 프로젝트나 `git clone` 해둔 것으로 충분합니다)
+- Claude Code, Codex, Cursor CLI 중 최소 1개의 CLI 에이전트 구독 또는 로그인 정보
+
+# 1 단계: Orca 설치
+
+**macOS (Homebrew)**
+```bash
+brew install --cask stablyai/orca/orca
+```
+
+**macOS (직접 다운로드)**
+- Apple Silicon / Intel용 `.dmg` 파일을 [다운로드 페이지](https://www.onorca.dev/download)에서 받습니다.
+
+**Windows**
+- `.exe` 설치 파일을 다운로드 페이지에서 받아 실행합니다.
+
+**Linux**
+- AppImage 또는 `.deb` 파일을 받아 설치합니다.
 
 ## 규칙
-1. 만약 Orchestration 스킬에서 에러가 난다면 node의 버전이 22.20 버전보다 낮아서 생기는 일일 수 있다.
-   이 경우 다음을 실행힌다.
-   
-   ```bash
-   nvm install 22
-   nvm use 22
-   node --version   # confirm it's 22.20+
-   ```
-2. node의 버전을 설치한 후에 버전이 안 잡히는 경우 다음과 같이 디폴트 값을 바꾸어 해결할 수 있다.
-   ```bash
-   nvm alias default 22
-   cat ~/.nvm/alias/default
-   ```
-## 체크리스트
-[ ] CLI가 런타임으로 통신되는지를 확인한다.
-
-# 2 단계: 첫 그래프 만들기: Run 생성
-터미널에서 다음 명령을 싱행합니다. 
-`--objective`에는 이 그래프 전체가 달성하려는 목표를 자연어로 적습니다.
-이 명령이 반환하는 `runId`를 이후 명령들에서 사용하게 됩니다 (Orca가 대부분 자동 바인딩해줍니다).
-
-```bash
-orca orchestration run-create --objective "블로그 QA를 나누고 블로커 요약하기" --json
-```
+설치 후 처음 실행하면:
+1. 홈 디렉터리 접근 권한을 요청합니다 → 허용하세요.
+2. 기존 `~/.claude`, `~/.codex` 설정을 가져올지 물어봅니다 → 그대로 진행하면 됩니다.
+3. 빈 화면이 뜨면 설치가 끝난 것입니다.
 
 ## 체크리스트
-[ ] 해당 명령의 결과로 JSON 포맷의 응답이 있는지 확인한다.
+[ ] Orca 앱이 설치되었는지 확인한다.
 
-# 3 단계: Task(노드) 만들기
+# 2 단계: 저장소(Repo) 추가하기
 
-```bash
-orca orchestration task-create \
-  --spec "블로그 내 모든 내부/외부 링크와 이미지 경로가 깨지지 않았는지 감사하기" \
-  --task-title "링크·이미지 무결성 감사" \
-  --json
-```
-
-- `--spec`: 에이전트에게 전달될 상세 작업 지시문
-- `--task-title`: 그래프에서 보이는 짧은 이름
-
-이 명령을 여러 번 실행해 여러 개의 Task 노드를 만들 수 있습니다.
-Task 사이에 의존관계(예: "B는 A가 끝나야 시작 가능")를 설정하면
-그것이 곧 그래프의 **엣지(edge)** 가 됩니다.
-
-## 체크리스트
-[ ] 해당 명령의 결과로 JSON 포맷의 응답이 있는지 확인한다.
-
-# 4 단계: Worker(에이전트) 배치해서 노드 실행하기
-1. 현재의 실행에 어떤 task들이 있는지 확인하고, 실행시킬 테스크의 id를 확인한다. task_...으로 시작한다.
-```bash
-   orca orchestration task-list --json
-```
-2. 확인한 태스크의 id를 대입하여 다음 명령을 실행하여 지정한 Task(노드)가 실제 에이전트에게 "디스패치"되어 작업이 시작되도록 한다.
-
-```bash
-# 현재 worktree에서 실행
-orca orchestration worker-start --task <taskId> --worktree current --agent claude --json
-
-# 또는 새 worktree를 만들어 실행
-orca orchestration worker-start \
-  --task <taskId> --worktree new-child --name billing-audit \
-  --agent codex --setup run --json
-```
-## 규칙
-여러 Task에 대해 이 명령을 반복하면, 여러 에이전트가 **그래프의 여러 노드를 동시에 처리**하게 됩니다 — 이것이 병렬 Graph Engineering의 실체입니다.
-
-## 체크리스트
-[ ] JSON 응답이 false가 아닌 true가 되는지 확인한다.
-
-# 5 단계: 완료 메시지 기다리기 (그래프 진행 상황 확인)
-
-코디네이터(당신, 혹은 상위 에이전트) 입장에서는 아래 명령으로 완료/에스컬레이션/질문 메시지를 기다립니다.
-```bash
-orca orchestration check --wait --types worker_done,escalation,question --timeout-ms 900000 --json
-```
-또한 아래 명령어와 같이 반드시 ack(확인 처리) 해야 다음 메시지로 넘어갑니다. 이 때 deliveryId는 delivery_...로 시작합니다.
-```bash
-orca orchestration check --ack <deliveryId> --wait --types worker_done,escalation,question --timeout-ms 900000 --json
-```
+1. Orca 앱의 왼쪽 사이드바에서 **Add Project** 버튼을 클릭합니다.
+2. 로컬에 있는 git 저장소 폴더를 선택합니다.
+3. Orca가 자동으로 해당 저장소의 기본 브랜치(예: `main`)를 **base ref**로 인식합니다.
+   - 이 base ref는 나중에 언제든 저장소 설정에서 바꿀 수 있습니다.
 
 ## 규칙
-워커(에이전트) 쪽에서는 작업이 끝나면 아래처럼 완료 보고를 보냅니다 (자동으로 처리되는 경우가 많습니다).
-```bash
-orca orchestration send \
-  --type worker_done \
-  --subject "모바일 감사 완료" \
-  --body "푸터 겹침 문제 수정, 추가 조치 없음." \
-  --task-id <taskId> \
-  --dispatch-id <dispatchId> \
-  --outcome succeeded \
-  --files-modified "src/app/settings/Billing.tsx" \
-  --json
-```
+> 💡 **샘플**: 연습용으로 아무 개인 프로젝트나 사용해도 좋고,
+> `git clone` 받은 오픈소스 저장소도 괜찮습니다. 실제로 배포하지 않을 것이므로 편하게 골라보세요.
 
 ## 체크리스트
-[ ] 응답으로의 JSON 결과가 제대로 오는지 확인한다.
+[ ] Orca 왼쪽 사이드 바에 추가한 git 저장소 폴더와 브랜치 이름이 보이는지 확인한다.
 
-# 6 단계: 그래프에 "판단 지점" 추가하기: Decision Gate
+# 3 단계: 첫 Worktree(작업 공간) 만들기
 
-여러 노드가 얽힌 복잡한 그래프에서는 특정 지점에서 사람의 결정을 기다려야 할 때가 있습니다.
-이럴 때 **Decision Gate**를 사용합니다.
+1. 방금 추가한 저장소 이름 옆을 마우스로 올리면 보이는 **+** 버튼을 클릭합니다.
+2. 작업 이름을 입력합니다.
+   - 예: `add-readme-badge`
+   - 비워두면 Orca가 바다 생물 이름(예: `narwhal`)을 자동으로 붙여줍니다.
+3. **start-from** 기준 브랜치를 선택합니다. 특별한 이유가 없다면 base ref(`origin/main`)를 그대로 씁니다.
+4. Orca가 실제 git worktree를 만들고 해당 브랜치를 체크아웃한 뒤 새 탭을 엽니다.
 
-```bash
-orca orchestration gate-create \
-  --task <taskId> \
-  --question "공통 버튼 변경사항을 task 브랜치에 병합할까요?" \
-  --options '["yes","no"]' \
-  --json
-```
+## 규칙
+> Worktree는 원본 브랜치와 완전히 분리된 폴더이므로, 이 안에서 무슨 실험을 해도
+> `main` 브랜치나 다른 worktree에 영향을 주지 않습니다.
 
-결정이 내려지면 게이트를 해제해서 그래프 흐름을 이어갑니다.
-
-```bash
-orca orchestration gate-resolve --id <gateId> --resolution "yes" --json
-```
-
-에이전트가 직접 질문해야 하는 경우(작업 중 막혔을 때)는 `ask`를 사용합니다.
-
-```bash
-orca orchestration ask \
-  --to <coordinatorHandle> \
-  --question "공통 컴포넌트를 수정할까요, 이 페이지만 수정할까요?" \
-  --options "shared,page-only" \
-  --timeout-ms 600000 \
-  --json
-```
+> 새 worktree 탭이 열리면 터미널에 **에이전트 콤보박스**가 보일 수 있습니다.
+이 경우, 목록에서 `Claude Code`(또는 보유 중인 다른 에이전트)를 선택합니다.
 
 ## 체크리스트
-[ ] 응답으로의 JSON 결과가 제대로 오는지 확인한다.
+[ ] 클로드 코드가 열리고 워크트리 이름으로 ~/orca/workspaces/.../main-2와 같이 worktree가 생기는지 확인한다.
 
-# 7 단계: 그래프 전체 초기화 (필요할 때만)
+# 4 단계: 에이전트 선택하고 첫 프롬프트 실행하기 (샘플)
+1. Orca가 해당 CLI를 그 worktree 경로에서 자동으로 실행합니다(구독 정보도 자동 연결).
+2. 아래와 같은 간단한 샘플 프롬프트를 붙여넣어 봅니다.
 
-그래프 상태를 완전히 리셋하고 싶을 때만 사용하세요. 다른 코디네이터가 활성 상태일 때는 사용하지 마세요.
+   ```
+   이 저장소의 README.md 최상단에 프로젝트 상태를 나타내는
+   뱃지(badge) 한 개를 추가해줘. 빌드 상태는 "passing"으로 표시해줘.
+   ```
 
-```bash
-orca orchestration reset --tasks --json     # Task만 초기화
-orca orchestration reset --messages --json  # 메시지만 초기화
-orca orchestration reset --all --json       # 전체 초기화
-```
+3. 에이전트가 파일을 읽고, 수정하고, 결과를 보여주는 과정을 실시간으로 지켜봅니다.
 
-## 체크리스트
-[ ] 초기화 요청 후 JSON 응답이 오는지 확인한다.
-
-# 8 단계: 더 깊이 배우기
-Orca 설치 후 에이전트에게 아래 명령을 실행시키면, 최신 오케스트레이션 전체 가이드를 CLI가 직접 보여줍니다 (문서 UI보다 최신 상태를 반영합니다).
-
-```bash
-orca skills get orchestration --full
-```
+## 규칙
+> 오류가 발생하면 오류를 복사해서 다시 프롬프트에 넣어 에러를 수정한다.
 
 ## 체크리스트
-[ ] 최신 오케스트레이션 전체 가이드가 잘 나오는지 확인한다.
+[ ] README.md 파잎에 요청한 뱃지가 추가되었는지 확인한다.
 
-# 참조: Orca가 에이전트를 다룰 때의 3가지 방식
-Orca가 에이전트를 다룰 때의 3가지 방식이 있습니다.
+# 5 단계: 결과(diff) 확인하기
+1. 오른쪽 사이드탭 위에 두 개의 문서가 겹쳐진 아이콘을 누르면 프로젝트 파일들을 볼 수 있습니다.
+2. 이 중에서 변경된 README.md 파일은 노란색 M으로 표기되어 변경을 표현합니다.
+3. 해당 README.md 파일을 선택하면 파일 내용을 볼 수 있습니다.
+4. 파일 내용 위에 보면 두 개의 동그라미가 순환되는 아이콘을 볼 수 있으며, 이는 commit되지 않은 변경 사항을 나타냅니다.
+5. 에이전트가 수정한 파일들의 변경 내역(diff)이 색상으로 표시됩니다 (추가는 초록, 삭제는 빨강).
 
-| 상황 | 추천 방법 |
-|---|---|
-| 에이전트 하나에게 가벼운 지시 하나만 내리면 될 때 | `orca terminal send` |
-| 완료 추적/소유권 없이 그냥 통째로 맡길 때 | worktree + terminal 명령 (2단계 방식) |
-| **작업 완료 추적, 여러 Task 간 의존관계(DAG), 여러 에이전트 협업**이 필요할 때 | **`orca orchestration run-create` + task + worker (Graph Engineering)** |
+## 체크리스트
+[ ] 변경 사항을 Orca에서 확인한다.
 
-앞에서 보인 Graph Engineering은 해당 방식 중 마지막 방식입니다. 여러 에이전트 협업, 작업 간의 의존 관계, 완료 추적이 필요할 때 고려할 수 있습니다.
+# 6 단계: 커밋 & 푸시로 마무리하기
+결과가 마음에 들면 Orca 안에서 바로 커밋/푸시할 수 있습니다.
+1. 오른쪽 사이드 바에 보면 소스 화면이 있습니다. 해당 화면에서 **Commit** 버튼을 클릭하고 커밋 메시지를 입력합니다.
+   - 예: `docs: add build status badge to README`
+2. **Push** 버튼을 눌러 원격 저장소로 브랜치를 올립니다.
 
+작업이 끝난 worktree는 사이드바에서 클릭 한 번으로 삭제할 수 있으며,
+관련 브랜치도 함께 정리됩니다.
+
+## 규칙
+> 필요하면 GitHub 탭에서 바로 PR(Pull Request)을 생성할 수 있습니다.
+> push 후 PR 및 Merge를 실행할 수 있고, 이후 workspace 삭제가 표시됩니다.
+
+## 체크리스트
+[ ] 변경 사항이 깃허브에 잘 올려졌는지 확인한다.
+
+# 보너스 단계: 에이전트 3개를 같은 작업에 붙여서 "경쟁"시키기
+
+기본 흐름에 익숙해졌다면, Orca의 대표 기능인 "여러 에이전트 동시 실행"도 가볍게 체험해볼 수 있습니다.
+
+1. 2~3단계를 반복해서 같은 저장소에 worktree 3개를 만듭니다.
+   - `fix-bug`, `fix-bug-2`, `fix-bug-3`
+2. 각각 다른 에이전트를 선택합니다.
+   - `fix-bug` → Claude Code
+   - `fix-bug-2` → Codex
+   - `fix-bug-3` → Cursor CLI
+3. **완전히 동일한 프롬프트**를 세 곳에 똑같이 붙여넣습니다.
+   ```
+   src/utils/date.ts 에 있는 timezone 변환 버그를 고쳐줘.
+   테스트 코드도 함께 추가해줘.
+   ```
+4. 탭을 화면 가장자리로 드래그해서 화면을 분할하면, 세 에이전트가 동시에 작업하는
+   모습을 한 화면에서 지켜볼 수 있습니다.
+5. 셋 다 끝나면 각각의 diff를 열어 비교하고, 가장 잘한 결과를 골라 5~6단계처럼
+   커밋/푸시합니다. 나머지 두 worktree는 삭제하면 됩니다.
+
+> 이 "한 프롬프트 → 여러 에이전트 → 결과 비교" 방식은 Orca 팀이 직접
+> "Orca의 킬러 기능"이라고 소개하는 흐름입니다.
