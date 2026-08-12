@@ -4,7 +4,7 @@
 
 ## 목적
 
-Claude Code를 가용한 ralph loop를 사용하는 방법을 배워본다.
+[Ralph](https://github.com/snarktank/ralph)라는 도구를 사용해, AI 코딩 에이전트(Claude Code)를 "반복 실행되는 루프"로 돌려서 작은 기능 하나를 자동으로 완성시켜보는 과정을 처음부터 끝까지 따라 해볼 수 있도록 한다.
 
 ## 산출물 4종 (체크리스트)
 
