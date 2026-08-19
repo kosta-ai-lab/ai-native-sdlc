@@ -1,0 +1,118 @@
+@startuml erd
+skinparam backgroundColor #FEFEFE
+skinparam shadowing false
+skinparam linetype ortho
+skinparam class {
+  BackgroundColor #EEF3FF
+  BorderColor #2b59ff
+  ArrowColor #444444
+  FontSize 11
+}
+hide circle
+title 멀티셀러 마켓플레이스 — ERD (3일차 확장)\n<size:11><color:#888>주문(orders)과 하위주문(sub_orders) 분리가 멀티셀러 정산의 데이터 토대</color></size>
+
+entity sellers {
+  * id : uuid <<PK>>
+  --
+  * name : text
+  * status : text
+  * commission_rate : numeric
+}
+entity products {
+  * id : uuid <<PK>>
+  --
+  * seller_id : uuid <<FK>>
+  * name : text
+  * price : numeric
+}
+entity inventory {
+  * product_id : uuid <<PK,FK>>
+  --
+  * quantity : int
+  reserved : int
+}
+entity buyers {
+  * id : uuid <<PK>>
+  --
+  * name : text
+}
+entity orders {
+  * id : uuid <<PK>>
+  --
+  * buyer_id : uuid <<FK>>
+  * total_amount : numeric
+  * status : text
+  * created_at : timestamptz
+}
+entity sub_orders {
+  * id : uuid <<PK>>
+  --
+  * order_id : uuid <<FK>>
+  * seller_id : uuid <<FK>>
+  * subtotal : numeric
+  * status : text
+}
+entity order_items {
+  * id : uuid <<PK>>
+  --
+  * sub_order_id : uuid <<FK>>
+  * product_id : uuid <<FK>>
+  * unit_price : numeric
+  * quantity : int
+}
+entity payments {
+  * id : uuid <<PK>>
+  --
+  * order_id : uuid <<FK>>
+  * idempotency_key : text <<UQ>>
+  * amount : numeric
+  * status : text
+}
+entity shipments {
+  * id : uuid <<PK>>
+  --
+  * sub_order_id : uuid <<FK>>
+  * carrier_id : uuid
+  * status : text
+  delivered_at : timestamptz
+}
+entity settlements {
+  * id : uuid <<PK>>
+  --
+  * seller_id : uuid <<FK>>
+  * period : daterange
+  * gross_amount : numeric
+  * commission : numeric
+  * net_payout : numeric
+}
+entity settlement_items {
+  * id : uuid <<PK>>
+  --
+  * settlement_id : uuid <<FK>>
+  * sub_order_id : uuid <<FK>>
+}
+entity refunds {
+  * id : uuid <<PK>>
+  --
+  * sub_order_id : uuid <<FK>>
+  * payment_id : uuid <<FK>>
+  * amount : numeric
+  * reason : text
+}
+
+sellers ||--o{ products
+products ||--|| inventory
+buyers ||--o{ orders
+orders ||--|{ sub_orders
+sub_orders ||--|{ order_items
+products ||--o{ order_items
+orders ||--|| payments
+sub_orders ||--o| shipments
+sellers ||--o{ sub_orders
+sellers ||--o{ settlements
+settlements ||--|{ settlement_items
+sub_orders ||--o{ settlement_items
+sub_orders ||--o{ refunds
+payments ||--o{ refunds
+
+@enduml

@@ -1,0 +1,49 @@
+@startuml state-suborder
+skinparam backgroundColor #FEFEFE
+skinparam shadowing false
+skinparam state {
+  BackgroundColor #EEF3FF
+  BorderColor #2b59ff
+  ArrowColor #444444
+  FontSize 12
+}
+title SubOrder 라이프사이클 — 상태머신 (3일차 확장)\n<size:11><color:#888>SubOrder가 배송·정산·환불의 상태 단위. 결제는 Order 단위, 상태는 SubOrder 단위</color></size>
+
+[*] --> 생성됨
+
+생성됨 --> 결제대기 : 재고 선점 성공
+생성됨 --> 실패 : 재고 부족 (409)
+
+결제대기 --> 결제완료 : 결제 승인
+결제대기 --> 취소됨 : 타임아웃 / 구매자 취소\n[재고 release]
+
+결제완료 --> 수락됨 : 판매자 수락
+결제완료 --> 환불중 : 배송 전 취소\n[결제 void + 재고 release]
+
+수락됨 --> 배송중 : 배송사 접수
+배송중 --> 배송완료 : markDelivered
+
+배송완료 --> 정산대상 : 정산 배치 집계
+배송완료 --> 환불중 : 반품 승인\n[정산 역산]
+
+정산대상 --> 정산완료 : 수수료 공제 후 지급
+
+환불중 --> 환불완료 : 환불 처리 완료
+
+정산완료 --> [*]
+환불완료 --> [*]
+취소됨 --> [*]
+실패 --> [*]
+
+note right of 배송완료
+  <b>정산의 트리거</b>
+  배송완료 이전에는
+  정산 큐에 진입 불가
+end note
+
+note right of 환불중
+  이미 정산완료된 건은
+  차기 정산에서 <b>역산(차감)</b>
+end note
+
+@enduml
