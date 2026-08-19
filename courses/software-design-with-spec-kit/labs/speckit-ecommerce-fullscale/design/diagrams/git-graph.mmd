@@ -1,0 +1,53 @@
+---
+title: 멀티셀러 확장 — 이슈·브랜치·PR·머지 히스토리
+config:
+  theme: base
+  themeVariables:
+    git0: "#2b59ff"
+    git1: "#E8871E"
+    git2: "#10B981"
+    git3: "#7C3AED"
+    gitBranchLabel0: "#ffffff"
+    commitLabelColor: "#1E293B"
+    commitLabelBackground: "#EEF3FF"
+    commitLabelFontSize: "13px"
+    tagLabelFontSize: "13px"
+  gitGraph:
+    showCommitLabel: true
+    mainBranchName: main
+---
+gitGraph
+  commit id: "seed (Day2)"
+  commit id: "constitution 2.0"
+  commit id: "design 풀세트"
+  commit id: "spec 004~008"
+  branch feature/004-order
+  checkout feature/004-order
+  commit id: "plan(004)"
+  commit id: "feat(004) 14 tests"
+  checkout main
+  merge feature/004-order tag: "PR merge"
+  branch feature/005-payment
+  checkout feature/005-payment
+  commit id: "plan(005)"
+  commit id: "feat(005) 10 tests"
+  checkout main
+  merge feature/005-payment tag: "PR #2"
+  branch feature/006-shipping
+  checkout feature/006-shipping
+  commit id: "plan(006)"
+  commit id: "feat(006) 11 tests"
+  checkout main
+  merge feature/006-shipping tag: "PR #4"
+  branch feature/007-settlement
+  checkout feature/007-settlement
+  commit id: "plan(007)"
+  commit id: "feat(007) 13 tests"
+  checkout main
+  merge feature/007-settlement tag: "PR #6"
+  branch feature/008-refund
+  checkout feature/008-refund
+  commit id: "plan(008)"
+  commit id: "feat(008) 10 tests"
+  checkout main
+  merge feature/008-refund tag: "PR #8"

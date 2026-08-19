@@ -3,6 +3,16 @@
 > KOSTA AI Lab 멤버가 만든 **강의 과정(training course)** 자료를 모으는 폴더입니다.
 > `modules/`가 AI Native SDLC 방법론을 단계별로 쌓는 자산이라면, `courses/`는 그 방법론을 가르치는 **교육 과정**을 담습니다.
 
+## 게재된 강의
+
+| 강의 | 분량 | 강사 |
+|------|------|------|
+| [Agentic Coding using Claude Code](agentic-coding-using-claude-code/) | 4시간 × 10편 시리즈 | 박준성 |
+| **AI Native 개발 실무 3부작** | | 윤성열 |
+| ├ [1편 · 바이브 코딩 첫걸음](vibe-coding-with-claude-code/) | 1일 7블록 | |
+| ├ [2편 · 스펙 주도 개발 실전](spec-driven-development-practice/) | 1일 8블록 | |
+| └ [3편 · Spec Kit으로 실전 소프트웨어 설계](software-design-with-spec-kit/) | 1일 8블록 | |
+
 ## 폴더 규칙
 
 강의 하나당 폴더 하나를 만듭니다. 폴더 이름은 강의 주제를 영어 kebab-case로 짓습니다(예: `agentic-coding-with-claude-code`).
