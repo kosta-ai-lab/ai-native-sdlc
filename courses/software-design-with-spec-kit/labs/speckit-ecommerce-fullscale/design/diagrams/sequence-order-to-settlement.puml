@@ -9,7 +9,7 @@ skinparam sequence {
   ParticipantBorderColor #2b59ff
   ActorBackgroundColor #FFF3E0
 }
-title 주문에서 정산까지 — 멀티셀러 핵심 흐름 (3일차 확장)\n<size:11><color:#888>결제 전 재고 선점 → 판매자별 분할 → 배송 완료가 정산을 연다</color></size>
+title 주문에서 정산까지 — 멀티셀러 핵심 흐름\n<size:11><color:#888>결제 전 재고 선점 → 판매자별 분할 → 배송 완료가 정산을 연다</color></size>
 
 actor 구매자 as Buyer
 participant "주문 API" as API

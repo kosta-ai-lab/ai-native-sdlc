@@ -9,7 +9,7 @@ skinparam class {
   FontSize 11
 }
 hide circle
-title 멀티셀러 마켓플레이스 — ERD (3일차 확장)\n<size:11><color:#888>주문(orders)과 하위주문(sub_orders) 분리가 멀티셀러 정산의 데이터 토대</color></size>
+title 멀티셀러 마켓플레이스 — ERD\n<size:11><color:#888>주문(orders)과 하위주문(sub_orders) 분리가 멀티셀러 정산의 데이터 토대</color></size>
 
 entity sellers {
   * id : uuid <<PK>>

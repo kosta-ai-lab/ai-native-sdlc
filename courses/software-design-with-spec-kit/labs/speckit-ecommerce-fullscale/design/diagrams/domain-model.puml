@@ -13,7 +13,7 @@ skinparam note {
   BackgroundColor #FFFDF0
   BorderColor #E8C000
 }
-title 멀티셀러 마켓플레이스 — 도메인 모델 (3일차 확장)\n<size:11><color:#888>주문은 판매자별 SubOrder로 분할되고, SubOrder가 배송·정산의 단위가 된다</color></size>
+title 멀티셀러 마켓플레이스 — 도메인 모델\n<size:11><color:#888>주문은 판매자별 SubOrder로 분할되고, SubOrder가 배송·정산의 단위가 된다</color></size>
 
 package "판매자 컨텍스트" #FFF8F0 {
   class Seller {

@@ -14,7 +14,7 @@ skinparam actor {
   BackgroundColor #FFF3E0
   BorderColor #E8871E
 }
-title 멀티셀러 마켓플레이스 — 유스케이스 (3일차 확장)\n<size:11><color:#888>2일차 상품·주문·재고 위에 판매자·결제·배송·정산·환불을 얹음</color></size>
+title 멀티셀러 마켓플레이스 — 유스케이스\n<size:11><color:#888>기본 상품·주문·재고 위에 판매자·결제·배송·정산·환불을 얹음</color></size>
 
 actor "구매자" as Buyer
 actor "판매자" as Seller

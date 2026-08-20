@@ -35,3 +35,15 @@ git checkout <tag>     # 그 시점 상태를 그대로 재현
 
 ## 스펙 현황
 `openspec list --specs` → `product-catalog`(5 requirements), `order-management`(4 requirements: Create/List/Get/Cancel).
+
+## 시작하기
+
+OpenSpec이 생성하는 파일(`.claude/commands/opsx/`, `.claude/skills/openspec-*`)은 이 사본에 포함하지 않았습니다. 먼저 init을 실행하십시오.
+
+```bash
+npx @fission-ai/openspec@latest init
+pnpm install
+pnpm test
+```
+
+`openspec/config.yaml`은 이 프로젝트에 맞게 작성한 내용이니 덮어쓰지 마십시오.

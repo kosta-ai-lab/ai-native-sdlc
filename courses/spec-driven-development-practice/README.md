@@ -54,6 +54,8 @@
 
 두 트랙의 차이를 정리한 비교 문서가 `labs/speckit-ecommerce-api/docs/openspec-vs-speckit.md`에 있습니다.
 
+두 도구가 생성하는 파일(슬래시 커맨드·스킬·템플릿·스크립트)은 사본을 두지 않았습니다. 실습 첫 단계에서 `openspec init`과 `specify init`을 직접 실행하시면 됩니다. 절차는 `labs/README.md`에 있습니다.
+
 ## 도구 버전
 
 OpenSpec 1.5.0 · Spec Kit(specify) 0.12.8 · Node 20.19 이상 (2026년 7월 실측 기준)

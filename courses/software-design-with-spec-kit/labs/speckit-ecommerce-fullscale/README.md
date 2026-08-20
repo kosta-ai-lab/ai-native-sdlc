@@ -35,6 +35,16 @@ TypeScript · Hono · Vitest · Spec Kit(specify) 0.12.8
 
 각 단계에서 어떤 프롬프트로 어떤 산출물을 얻었는지는 강의 슬라이드의 「실습」 장표에 그대로 실려 있습니다.
 
+## 시작하기
+
+Spec Kit이 생성하는 파일(`.specify/templates·scripts·workflows`, `.claude/skills/speckit-*`)은 이 사본에 포함하지 않았습니다. 먼저 init을 실행하십시오.
+
+```bash
+uvx --from git+https://github.com/github/spec-kit.git specify init . --ai claude
+```
+
+`.specify/memory/constitution.md`는 이 프로젝트의 아홉 원칙이니 덮어쓰지 마십시오.
+
 ## 실행
 
 ```bash
