@@ -18,7 +18,7 @@ skinparam note {
   BackgroundColor #FFFDF0
   BorderColor #E8C000
 }
-title 컴포넌트 아키텍처 — C4 Container 수준 (3일차 확장)\n<size:11><color:#888>모듈형 모놀리스: 라우트 → 도메인 서비스 → 얇고 교체 가능한 Store</color></size>
+title 컴포넌트 아키텍처 — C4 Container 수준\n<size:11><color:#888>모듈형 모놀리스: 라우트 → 도메인 서비스 → 얇고 교체 가능한 Store</color></size>
 
 actor "구매자" as Buyer
 actor "판매자" as Seller

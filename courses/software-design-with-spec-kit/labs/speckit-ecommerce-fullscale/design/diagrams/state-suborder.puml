@@ -7,7 +7,7 @@ skinparam state {
   ArrowColor #444444
   FontSize 12
 }
-title SubOrder 라이프사이클 — 상태머신 (3일차 확장)\n<size:11><color:#888>SubOrder가 배송·정산·환불의 상태 단위. 결제는 Order 단위, 상태는 SubOrder 단위</color></size>
+title SubOrder 라이프사이클 — 상태머신\n<size:11><color:#888>SubOrder가 배송·정산·환불의 상태 단위. 결제는 Order 단위, 상태는 SubOrder 단위</color></size>
 
 [*] --> 생성됨
 

@@ -52,7 +52,7 @@ AI가 코드를 대신 쓰는 시대에, 사람이 쥐고 있어야 할 것은 �
 
 ## 실습 자산
 
-`labs/speckit-ecommerce-fullscale/`에 완성 저장소가 들어 있습니다.
+`labs/speckit-ecommerce-fullscale/`에 완성 저장소가 들어 있습니다. Spec Kit이 생성하는 템플릿·스크립트·스킬은 사본을 두지 않았으니, 실습 전에 `specify init`을 먼저 실행하십시오(자세한 절차는 `labs/README.md`).
 
 - `design/diagrams/` — PlantUML 소스와 렌더 이미지 (유스케이스·도메인·ERD·시퀀스·상태·컴포넌트)
 - `design/adr/` — 아키텍처 결정 기록 ADR-001~005

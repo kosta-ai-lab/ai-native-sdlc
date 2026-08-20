@@ -1,6 +1,6 @@
 # E-Commerce API Constitution
 
-> 3일차 확장: 단일 판매자 API를 멀티셀러 마켓플레이스로 확장한다. 원칙 I~V는 2일차 계승, VI~IX는 3일차 추가.
+> 멀티셀러 확장: 단일 판매자 API를 멀티셀러 마켓플레이스로 확장한다. 원칙 I~V는 기본 API에서 계승, VI~IX는 이번 확장에서 추가.
 
 ## Core Principles
 

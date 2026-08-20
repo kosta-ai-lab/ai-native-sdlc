@@ -17,3 +17,15 @@ Spec Kit(`specify`) 0.12.8 · TypeScript/Hono(예정)
 
 ## 짝 트랙
 - OpenSpec: `../openspec-ecommerce-api` (완성: change 3개·47테스트·나레이션 5편)
+
+## 시작하기
+
+Spec Kit이 생성하는 파일(`.specify/templates·scripts·workflows`, `.claude/skills/speckit-*`)은 이 사본에 포함하지 않았습니다. 먼저 init을 실행하십시오.
+
+```bash
+uvx --from git+https://github.com/github/spec-kit.git specify init . --ai claude
+pnpm install
+pnpm test
+```
+
+`.specify/memory/constitution.md`는 이 프로젝트에 맞게 작성한 내용이니 덮어쓰지 마십시오.
