@@ -1,0 +1,27 @@
+schema: spec-driven
+
+# Project context — shown to AI when creating artifacts (constraints, NOT copied into files).
+context: |
+  Tech stack: TypeScript, Hono (web framework), pnpm, vitest, tsx.
+  Runtime: Node.js (ESM). API style: REST/JSON, resource-oriented routes.
+  Storage: in-memory repository for Act 1, behind an interface so it can be swapped later.
+  Conventions: Conventional Commits; small focused modules (one responsibility per file);
+  explicit error handling with proper HTTP status codes (400/404/409).
+  Domain: e-commerce. Products have id, name, price (cents), stock. Orders reference
+  products with quantities, compute a total, and move through a status lifecycle.
+  Testing: vitest with app.request() request-level tests; cover failure paths, not just happy path.
+
+# Per-artifact rules — applied as constraints when generating each artifact.
+rules:
+  proposal:
+    - Keep the proposal concise and include a "Non-goals" section.
+    - List impacted files under an "Impact" section.
+  specs:
+    - Every Requirement has at least one Scenario written with WHEN / THEN (AND as needed).
+    - Include failure scenarios (invalid input, not found, conflict) — not only the happy path.
+    - Requirements describe observable API behavior, not implementation details.
+  design:
+    - Record concrete decisions (data shapes, route table, error model) and rejected alternatives.
+  tasks:
+    - Each task maps to a small, independently testable unit (roughly one commit).
+    - Order tasks so tests can be written first (TDD-friendly).

@@ -1,0 +1,143 @@
+@startuml domain-model
+skinparam backgroundColor #FEFEFE
+skinparam shadowing false
+skinparam linetype ortho
+skinparam class {
+  BackgroundColor #EEF3FF
+  BorderColor #2b59ff
+  ArrowColor #444444
+  FontSize 12
+  AttributeFontColor #333
+}
+skinparam note {
+  BackgroundColor #FFFDF0
+  BorderColor #E8C000
+}
+title 멀티셀러 마켓플레이스 — 도메인 모델\n<size:11><color:#888>주문은 판매자별 SubOrder로 분할되고, SubOrder가 배송·정산의 단위가 된다</color></size>
+
+package "판매자 컨텍스트" #FFF8F0 {
+  class Seller {
+    +id: SellerId
+    +name: string
+    +status: 승인대기|승인|정지
+    +commissionRate: Rate
+    --
+    +canSell(): boolean
+  }
+  class Product {
+    +id: ProductId
+    +sellerId: SellerId
+    +name: string
+    +price: Money
+    --
+    +isPurchasable(): boolean
+  }
+  class Inventory {
+    +productId: ProductId
+    +quantity: int
+    --
+    +reserve(qty): void
+    +release(qty): void
+  }
+}
+
+package "주문 컨텍스트" #F0F4FF {
+  class Buyer {
+    +id: BuyerId
+    +name: string
+  }
+  class Order {
+    +id: OrderId
+    +buyerId: BuyerId
+    +totalAmount: Money
+    +status: OrderStatus
+    --
+    +split(): SubOrder[]
+  }
+  class SubOrder {
+    +id: SubOrderId
+    +orderId: OrderId
+    +sellerId: SellerId
+    +subtotal: Money
+    +status: SubOrderStatus
+  }
+  class OrderItem {
+    +productId: ProductId
+    +unitPrice: Money
+    +quantity: int
+    +lineTotal: Money
+  }
+}
+
+package "결제·정산 컨텍스트" #F0FFF4 {
+  class Payment {
+    +id: PaymentId
+    +orderId: OrderId
+    +idempotencyKey: string
+    +amount: Money
+    +status: PaymentStatus
+    --
+    +authorize(): void
+    +void(): void
+  }
+  class Settlement {
+    +id: SettlementId
+    +sellerId: SellerId
+    +period: Period
+    +grossAmount: Money
+    +commission: Money
+    +netPayout: Money
+    --
+    +aggregate(subOrders): void
+  }
+  class Refund {
+    +id: RefundId
+    +subOrderId: SubOrderId
+    +amount: Money
+    +reason: string
+  }
+}
+
+package "배송 컨텍스트" #FFF0F5 {
+  class Shipment {
+    +id: ShipmentId
+    +subOrderId: SubOrderId
+    +carrierId: CarrierId
+    +status: 접수|배송중|완료
+    --
+    +markDelivered(): void
+  }
+}
+
+' --- 관계 ---
+Seller "1" --> "*" Product : 소유
+Product "1" -- "1" Inventory
+Buyer "1" --> "*" Order
+Order "1" *-- "1..*" SubOrder : 분할
+SubOrder "1" *-- "1..*" OrderItem
+OrderItem "*" --> "1" Product
+Order "1" -- "1" Payment
+SubOrder "1" --> "0..1" Shipment
+Seller "1" --> "*" SubOrder
+Settlement "1" o-- "1..*" SubOrder : 집계
+SubOrder "1" --> "0..*" Refund
+Payment "1" ..> "0..*" Refund : 취소 근거
+
+note bottom of Inventory
+  <b>reserve</b> = 결제 전 재고 선점 (오버셀 방지)
+  <b>release</b> = 취소 시 복원
+end note
+
+note right of Payment
+  <b>void()는 멱등</b> — 같은 idempotencyKey
+  재시도는 중복 취소 없이 안전
+end note
+
+note bottom of Settlement
+  netPayout = grossAmount − commission
+  집계 대상: <b>배송 완료</b>된 SubOrder만
+  (markDelivered 가 트리거)
+  환불 발생 시 해당 SubOrder 역산
+end note
+
+@enduml

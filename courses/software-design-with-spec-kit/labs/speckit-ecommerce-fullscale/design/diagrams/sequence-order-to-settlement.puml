@@ -1,0 +1,58 @@
+@startuml sequence-order-to-settlement
+autonumber
+skinparam backgroundColor #FEFEFE
+skinparam shadowing false
+skinparam sequence {
+  ArrowColor #2b59ff
+  LifeLineBorderColor #2b59ff
+  ParticipantBackgroundColor #EEF3FF
+  ParticipantBorderColor #2b59ff
+  ActorBackgroundColor #FFF3E0
+}
+title 주문에서 정산까지 — 멀티셀러 핵심 흐름\n<size:11><color:#888>결제 전 재고 선점 → 판매자별 분할 → 배송 완료가 정산을 연다</color></size>
+
+actor 구매자 as Buyer
+participant "주문 API" as API
+participant "재고" as Inv
+participant "결제 GW" as PG
+participant "판매자 A" as SA
+participant "판매자 B" as SB
+participant "배송사" as Carrier
+participant "정산" as Settle
+
+Buyer -> API : 주문 생성 (A상품 + B상품)
+activate API
+API -> API : split() — 판매자별 SubOrder 분할\n(SubOrderA, SubOrderB)
+
+group 결제 전 재고 선점 (오버셀 방지)
+  API -> Inv : reserve(A상품), reserve(B상품)
+  alt 재고 충분
+    Inv --> API : 선점 OK
+  else 재고 부족
+    Inv --> API : 409 Conflict
+    API --> Buyer : 주문 실패 (재고 부족)
+  end
+end
+
+API -> PG : authorize(총액, idempotencyKey)
+PG --> API : 결제 승인
+note right of PG : 같은 key 재시도는\n중복 승인 없이 안전
+
+group 판매자별 병렬 처리 (동시 진행)
+  API -> SA : SubOrderA 접수 알림
+  SA -> Carrier : 배송 접수 (SubOrderA)
+  API -> SB : SubOrderB 접수 알림
+  SB -> Carrier : 배송 접수 (SubOrderB)
+end
+
+Carrier -> API : markDelivered(SubOrderA)
+API -> Settle : SubOrderA 정산 대상 등록
+note right of Settle : 배송 완료된 SubOrder만\n정산 큐에 진입
+
+== 정산 주기 (배치) ==
+Settle -> Settle : aggregate(판매자A의 완료 SubOrder)
+Settle -> Settle : commission 공제\nnetPayout = gross − commission
+Settle -> SA : 판매자 A 지급
+deactivate API
+
+@enduml

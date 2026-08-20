@@ -1,0 +1,51 @@
+@startuml component-architecture
+skinparam backgroundColor #FEFEFE
+skinparam shadowing false
+skinparam componentStyle rectangle
+skinparam rectangle {
+  BackgroundColor #FAFCFF
+  BorderColor #2b59ff
+}
+skinparam component {
+  BackgroundColor #EEF3FF
+  BorderColor #2b59ff
+}
+skinparam actor {
+  BackgroundColor #FFF3E0
+  BorderColor #E8871E
+}
+skinparam note {
+  BackgroundColor #FFFDF0
+  BorderColor #E8C000
+}
+title 컴포넌트 아키텍처 — C4 Container 수준\n<size:11><color:#888>모듈형 모놀리스: 라우트 → 도메인 서비스 → 얇고 교체 가능한 Store</color></size>
+
+actor "구매자" as Buyer
+actor "판매자" as Seller
+actor "관리자" as Admin
+
+rectangle "마켓플레이스 플랫폼  <<system>>" {
+  component "HTTP 라우트  [Hono]\nproducts · orders · payments\nsettlements · shipments" as Routes
+  component "도메인 서비스\n주문 분할 · 재고 선점\n정산 집계 · 환불 역산" as Domain
+  component "Store 인터페이스\n(in-memory, 교체 가능)" as Store
+}
+database "메모리 저장소\n(교체 지점)" as DB
+cloud "결제 게이트웨이" as PG
+cloud "배송사 API" as Carrier
+
+Buyer --> Routes : HTTP / JSON
+Seller --> Routes
+Admin --> Routes
+Routes --> Domain
+Domain --> Store
+Store --> DB
+Domain --> PG : authorize / void
+Domain --> Carrier : 배송 접수 / 상태
+
+note bottom of Store
+  <b>Constitution III — Thin, Swappable Storage</b>
+  라우트·도메인은 Store 인터페이스에만 의존
+  → DB 교체가 핸들러에 무영향, 테스트 용이
+end note
+
+@enduml

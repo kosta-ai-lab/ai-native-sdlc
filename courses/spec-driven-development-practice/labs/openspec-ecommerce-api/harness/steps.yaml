@@ -1,0 +1,15 @@
+# 살아있는 교재 — OpenSpec 트랙 1막 단계 정의
+# 각 단계는 무브(작은 커밋)로 구성되고, 게이트 통과 시 태그를 찍는다.
+# claude -p 여정 단계(01~04)는 openspec instructions 방식 확정 후 추가한다.
+
+- id: step-00-init
+  name: openspec init (--tools claude)
+  tag: step-00-init
+  gate:
+    - file:openspec
+  moves:
+    - id: openspec-init
+      run: "openspec init --tools claude --force"
+      commit: "chore: openspec init (--tools claude)"
+      verify:
+        - file:openspec
