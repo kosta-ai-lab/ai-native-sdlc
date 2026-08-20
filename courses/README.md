@@ -13,6 +13,8 @@
 | ├ [2편 · 스펙 주도 개발 실전](spec-driven-development-practice/) | 1일 8블록 | |
 | └ [3편 · Spec Kit으로 실전 소프트웨어 설계](software-design-with-spec-kit/) | 1일 8블록 | |
 
+> 강의를 새로 올리시려면 [작성 규격](CONVENTIONS.md)을 먼저 봐 주십시오. 폴더 이름·README 항목·라이선스 주의사항을 한곳에 모았습니다.
+
 ## 폴더 규칙
 
 강의 하나당 폴더 하나를 만듭니다. 폴더 이름은 강의 주제를 영어 kebab-case로 짓습니다(예: `agentic-coding-with-claude-code`).

@@ -1,5 +1,7 @@
 # Spec Kit으로 실전 소프트웨어 설계
 
+> 상태: 완성 · 담당: 윤성열
+>
 > **AI Native 개발 실무 3부작 · 3편.** 설계 산출물을 직접 그려 내는 날입니다.
 > 1편 [바이브 코딩 첫걸음](../vibe-coding-with-claude-code/) · 2편 [스펙 주도 개발 실전](../spec-driven-development-practice/)
 

@@ -1,5 +1,7 @@
 # 스펙 주도 개발 실전 — OpenSpec과 Spec Kit
 
+> 상태: 완성 · 담당: 윤성열
+>
 > **AI Native 개발 실무 3부작 · 2편.** 방법론을 세우고 두 구현체를 손에 익히는 날입니다.
 > 1편 [바이브 코딩 첫걸음](../vibe-coding-with-claude-code/) · 3편 [Spec Kit으로 실전 소프트웨어 설계](../software-design-with-spec-kit/)
 

@@ -1,5 +1,7 @@
 # 바이브 코딩 첫걸음 — Claude Code로 기획에서 배포까지
 
+> 상태: 완성 · 담당: 윤성열
+>
 > **AI Native 개발 실무 3부작 · 1편.** 도구를 손에 익히는 날입니다.
 > 2편 [스펙 주도 개발 실전](../spec-driven-development-practice/) · 3편 [Spec Kit으로 실전 소프트웨어 설계](../software-design-with-spec-kit/)
 
