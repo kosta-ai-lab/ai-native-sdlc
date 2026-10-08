@@ -55,7 +55,7 @@ OpenWiki를 Claude Code 같은 코딩 에이전트 안에서 쓰게 해 주는 �
 OpenWiki 설치
    │
    ▼
-Claude Code에 통합 설치 (스킬 + MCP)
+Claude Code에 통합 설치
    │
    ▼
 저장소에서 위키 생성 (openwiki/ 폴더)
@@ -66,6 +66,18 @@ Claude Code에 통합 설치 (스킬 + MCP)
    ▼
 코드 변경 → 위키 업데이트 → 커밋
 ```
+
+각 단계는 [공식 README](https://github.com/langchain-ai/openwiki)의 안내 순서를 그대로 따릅니다. 3단계(연습용 저장소)만 이 가이드에서 추가한 것입니다.
+
+| 이 가이드 | 공식 README |
+|---|---|
+| 1 단계: OpenWiki 설치 | Quick start › 1. Install OpenWiki |
+| 2 단계: Claude Code에 연결하기 | Quick start › 2. Connect your coding agent |
+| 3 단계: 연습용 저장소 만들기 | (가이드에서 추가한 실습 준비) |
+| 4 단계: 위키 생성하기 | Quick start › 3. Create your wiki |
+| 5 단계: 위키 읽고 검색하기 | Search your wiki |
+| 6 단계: 그래프로 시각화하기 | Explore your wiki |
+| 7 단계: 코드 변경 후 위키 업데이트하기 | Keep your wiki current |
 
 ---
 
@@ -122,13 +134,11 @@ openwiki --help
 
 # 2 단계: Claude Code에 연결하기
 
-1. 통합을 설치합니다.
+1. Claude Code용 통합을 설치합니다.
 
    ```bash
    openwiki integrations install claude
    ```
-
-   성공하면 스킬이 설치된 폴더와 MCP 설정 파일의 경로, 그리고 "Claude Code를 재시작하라"는 안내가 출력됩니다.
 
 2. 설치 상태를 확인합니다.
 
@@ -136,17 +146,16 @@ openwiki --help
    openwiki integrations list
    ```
 
-3. Claude Code가 켜져 있었다면 **완전히 종료한 뒤 다시 실행**합니다. 재시작해야 새 스킬과 MCP 서버를 읽습니다.
-
 ## 규칙
 > 기본값은 **사용자 범위** 설치입니다. 한 번 설치하면 내 컴퓨터의 모든 git 저장소에서 쓸 수 있습니다.
 > 특정 저장소에만 설치하려면 그 저장소 안에서 `openwiki integrations install claude --project`를 실행합니다.
 
 > 제거는 `openwiki integrations uninstall claude` 입니다.
 
+> Claude Code 말고 다른 에이전트를 쓴다면 `claude` 자리에 `codex`, `cursor`, `opencode`, `copilot` 등을 넣습니다. 전체 목록은 공식 README의 표를 참고하세요.
+
 ## 산출물
-- Claude Code용 `openwiki` 스킬
-- Claude Code MCP 설정에 추가된 `openwiki` 서버
+- Claude Code에 설치된 OpenWiki 통합 (사용자 범위)
 
 ## 체크리스트
 - [ ] `openwiki integrations list`에서 claude가 설치됨으로 표시되는지 확인한다.
@@ -340,30 +349,30 @@ openwiki --help
 
 # 4 단계: 위키 생성하기 (샘플)
 
-1. `todo-cli` 폴더 안에서 Claude Code를 실행합니다.
+1. **Claude Code를 재시작합니다.** 2단계에서 통합을 설치할 때 Claude Code가 켜져 있었다면 완전히 종료합니다.
+
+2. `todo-cli` 폴더 안에서 Claude Code를 실행합니다.
 
    ```bash
    claude
    ```
 
-2. `/mcp`를 입력해 `openwiki` 서버가 연결(connected)되어 있는지 확인합니다.
+3. 아래 프롬프트를 입력합니다. 공식 README가 안내하는 문장입니다.
 
-3. 아래 프롬프트를 붙여 넣습니다.
+   ```text
+   Initialize this repository's OpenWiki from the current source and tests.
+   ```
+
+   같은 뜻의 한국어로 요청해도 됩니다. 위키를 한국어로 받고 싶으면 둘째 줄을 덧붙입니다.
 
    ```text
    이 저장소의 현재 소스와 테스트를 바탕으로 OpenWiki를 초기화해줘.
-   위키는 한국어(ko)로 작성해줘.
+   위키는 한국어로 작성해줘.
    ```
 
-4. Claude Code가 `openwiki_begin` 같은 OpenWiki 도구를 쓰겠다고 허용 여부를 물으면 허용합니다.
+4. 진행 과정을 지켜봅니다. Claude Code가 저장소를 조사하고, 페이지를 계획한 뒤, 한 페이지씩 작성해 `openwiki/` 폴더에 서로 링크된 위키를 만듭니다. 페이지가 하나 끝날 때마다 진행 상황이 저장됩니다.
 
-5. 진행 과정을 지켜봅니다. 대략 이런 순서로 움직입니다.
-   - 저장소 조사 (파일 구조, 진입점, 테스트 읽기)
-   - 페이지 계획 제출 (`openwiki_submit_plan`)
-   - 페이지를 하나씩 작성하고 제출 (`openwiki_next_page` → `openwiki_submit_page` 반복)
-   - 마무리 (`openwiki_finish`)
-
-6. Claude Code가 완료를 보고하면 결과를 커밋합니다. 터미널을 하나 더 열거나 Claude Code를 `/exit`로 나온 뒤 실행합니다.
+5. Claude Code가 완료를 보고하면 결과를 커밋합니다. 터미널을 하나 더 열거나 Claude Code를 `/exit`로 나온 뒤 실행합니다.
 
    ```bash
    git status
@@ -375,7 +384,7 @@ openwiki --help
    ```
 
 ## 규칙
-> 프롬프트에 언어를 적지 않으면 영어로 작성될 수 있습니다. 언어는 `ko`, `en`, `ja` 같은 BCP-47 코드로 지정합니다.
+> 위키 언어 지정은 공식 README에 없는, 이 가이드에서 덧붙인 요청입니다. 적지 않으면 영어로 작성될 수 있습니다.
 
 > 중간에 끊기거나 오류가 나면 같은 프롬프트를 다시 입력하세요. 끝난 페이지는 저장되어 있으므로 남은 페이지부터 이어서 진행합니다.
 
@@ -400,7 +409,7 @@ todo-cli/
 - [ ] `openwiki/quickstart.md` 파일이 생겼는지 확인한다.
 - [ ] 저장소 루트에 `AGENTS.md`가 생겼고 `<!-- OPENWIKI:START -->` 블록이 들어 있는지 확인한다.
 - [ ] `openwiki/.claims/` 폴더에 JSON 파일이 있는지 확인한다.
-- [ ] 위키 본문이 한국어로 작성되었는지 확인한다.
+- [ ] (한국어로 요청했다면) 위키 본문이 한국어로 작성되었는지 확인한다.
 
 # 5 단계: 위키 읽고 검색하기
 
@@ -416,6 +425,7 @@ todo-cli/
    관련 섹션을 읽은 뒤 설명해줘.
    ```
 
+   공식 README의 예시 문장(`Search this repository's OpenWiki for how retry handling works, then read the relevant sections.`)을 이 저장소에 맞게 바꾼 것입니다.
    Claude Code가 `openwiki_search`로 관련 섹션을 찾고 `openwiki_read`로 그 섹션만 읽어 답합니다.
 
 ## 규칙
@@ -448,7 +458,9 @@ todo-cli/
 ## 규칙
 > 서버는 내 컴퓨터에서만 접속할 수 있는 주소(`127.0.0.1`)로 뜹니다. 다만 화면에 쓰는 라이브러리를 CDN에서 받아오므로 **인터넷 연결이 필요**합니다.
 
-> 포트가 겹치면 `openwiki visualize --port 4400`처럼 바꿀 수 있습니다.
+> 기본 포트 `4321`이 사용 중이면 다음 번호로 자동으로 올라갑니다. 직접 정하려면 `openwiki visualize --port 4400`처럼 지정하고, 브라우저를 자동으로 열지 않으려면 `--no-open`을 붙입니다.
+
+> 서버가 떠 있는 동안 위키 파일을 고치면 그래프에 자동으로 반영됩니다.
 
 ## 산출물
 - 없음 (로컬 미리보기). 정적 사이트로 내보내려면 `openwiki visualize openwiki --export docs/openwiki-visualizer`를 사용합니다.
@@ -480,7 +492,13 @@ todo-cli/
    git commit -m "feat: 할 일 삭제 기능 추가"
    ```
 
-3. Claude Code에서 위키 업데이트를 요청합니다.
+3. Claude Code에서 위키 업데이트를 요청합니다. 공식 README가 안내하는 문장입니다.
+
+   ```text
+   Update this repository's OpenWiki for changes since its last successful run.
+   ```
+
+   같은 뜻의 한국어로 요청해도 됩니다.
 
    ```text
    마지막으로 성공한 실행 이후의 변경 사항을 반영해서 이 저장소의 OpenWiki를 업데이트해줘.
@@ -506,7 +524,7 @@ todo-cli/
    ```
 
 6. (선택) 아무것도 고치지 않고 3번 프롬프트를 한 번 더 입력해 봅니다.
-   OpenWiki가 "업데이트할 것이 없다(noop)"고 답하고 위키 내용은 그대로 둡니다.
+   바뀐 것이 없으므로 모델 작업을 건너뛰고 위키 본문은 그대로 둡니다. 점검했다는 기록만 `openwiki/.last-update.json`에 남습니다.
 
 ## 규칙
 > **코드를 먼저 커밋하고, 그다음 위키를 업데이트**하세요. 순서를 지키면 "어떤 코드 변경이 어떤 문서 변경을 만들었는지"를 git 기록에서 따로 볼 수 있습니다.
@@ -532,9 +550,9 @@ todo-cli/
 |---|---|
 | `openwiki` 명령을 찾을 수 없다 | 터미널을 다시 열고 `npm install -g openwiki`가 오류 없이 끝났는지 확인합니다. |
 | 설치 중 Node 버전 오류가 난다 | `node -v`가 v22.22.0 이상인지 확인합니다. |
-| Claude Code의 `/mcp`에 openwiki가 없다 | `openwiki integrations list`로 설치 여부를 보고, Claude Code를 완전히 종료 후 다시 실행합니다. |
+| Claude Code가 초기화 요청에 OpenWiki를 쓰지 않는다 | `openwiki integrations list`로 설치 여부를 보고, Claude Code를 완전히 종료 후 다시 실행합니다. |
 | 초기화 프롬프트에서 git 관련 오류가 난다 | 현재 폴더가 git 저장소인지(`git status`) 확인합니다. |
-| 위키가 영어로 만들어졌다 | 초기화 프롬프트에 "한국어(ko)로 작성"을 넣어 다시 실행합니다. |
+| 위키가 영어로 만들어졌다 | 초기화 프롬프트에 "위키는 한국어로 작성해줘"를 넣어 다시 실행합니다. |
 | 생성 도중 멈췄다 | 같은 프롬프트를 다시 입력하면 남은 페이지부터 이어서 진행합니다. |
 | `openwiki visualize` 화면이 비어 있다 | 인터넷 연결을 확인하고, `openwiki/` 폴더가 있는 저장소 루트에서 실행했는지 확인합니다. |
 
