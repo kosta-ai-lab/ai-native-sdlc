@@ -3,18 +3,27 @@
 > AI 에이전트로 실제 제품 수준의 소프트웨어를 만드는 전주기 방법론과 실행 자산.
 > **코딩 전에 청사진, 코딩 후에 검증.**
 
-KOSTA AI 에이전트 코딩 전문가 워크숍에서 출발한 오픈소스 프로젝트입니다.
-현재 비공개(private) 준비 단계입니다.
+KOSTA AI 에이전트 코딩 전문가 워크숍에서 출발한 공개 준비 프로젝트입니다.
+**현재 저장소는 비공개(private)입니다.** 전체 공개와 초안 포함, 초기 운영 책임·리뷰·기여 확인 방식은 [준비 기준](docs/PUBLIC_RELEASE_DECISIONS.md)으로 정했습니다. 이 브랜치의 문서 반영과 실제 공개는 별개이며, 기존 자료의 권리·내용 확인과 최종 공개 승인만 필수 확인으로 남깁니다.
+
+## 처음 오셨다면
+
+1. [시작 가이드](docs/GETTING_STARTED.md)에서 읽기 전용 탐색, 작은 TDD 예제, SDD 실습 중 목적에 맞는 경로를 고릅니다.
+2. 방법론은 [METHODOLOGY.md](METHODOLOGY.md), 교육 과정은 [courses/README.md](courses/README.md)에서 살펴봅니다.
+3. 가장 작은 코드 예제는 [web-task-system](samples/web-task-system/README.md)입니다. 실행 명령과 검증 한계는 시작 가이드에 명시했습니다.
+4. 질문·문서 수정·버그 제안은 [기여 가이드](CONTRIBUTING.md)를 읽어 주세요. 현재 비공개이므로 저장소 접근 권한이 필요합니다. 공개 후에는 같은 GitHub Issues·PR 경로로 참여하며, 외부 접근을 실제 확인합니다.
+
+API 키·고객 자료·개인정보·비공개 로그는 이슈나 PR에 올리지 않습니다. [보안 안내](SECURITY.md)을 먼저 확인하세요.
 
 ## 무엇인가
 
 - 에이전트 코딩의 전주기(분석, 설계, 개발, 검증, 배포, 운영)를 **방법론(프로세스 표준)**으로 정의합니다.
-- 각 단계에 **바로 복사해 쓰는 실행 자산**을 제공합니다. Claude Code 설정(CLAUDE.md·스킬·훅·서브에이전트)과 동작하는 샘플 코드입니다.
+- 각 단계에 실행 자산을 쌓습니다. Claude Code 설정(CLAUDE.md·스킬·훅·서브에이전트)과 샘플 코드가 포함되며, 완성도와 검증 상태는 경로별로 다릅니다.
 - 구현체는 각 사가 자율적으로 만듭니다. 이 프로젝트는 표준·패턴·레퍼런스를 제공합니다.
 
 ## 왜인가
 
-스펙 주도 개발 도구(GitHub Spec-Kit, BMAD-METHOD 등)는 "스펙에서 코드까지"를 다루지만, 그 뒤의 **검증·CI/CD·보안·운영을 공학 규율로 묶는 부분**은 비어 있습니다. AI-Native SDLC는 그 전주기를 채웁니다.
+명세와 구현을 **검증·CI/CD·보안·운영의 공학 규율**로 연결하는 것이 이 프로젝트의 목표입니다. 각 단계의 방법론과 실행 자산을 함께 발전시킵니다.
 
 ## 구조
 
@@ -36,11 +45,14 @@ rfcs/           큰 변경 제안·합의 (상태머신 + 템플릿)
 decisions/      결정 기록 ADR
 references/methods/  참조 방법론 카탈로그
 samples/        참조 앱 (레퍼런스 구현)
+courses/        강의 개요·슬라이드·실습·참고자료
 docs/           심화 가이드·교육 매핑
 BACKLOG.md      앞으로 채울 항목
 ```
 
-## 각 모듈의 산출물 4종
+## 각 모듈의 산출물 4종 (목표 형식)
+
+아래는 목표 형식이며, 모든 모듈이 네 종류를 완성했다는 뜻은 아닙니다. 실제 파일과 상태는 각 모듈의 README를 확인하세요.
 
 | 산출물 | 내용 |
 |--------|------|
@@ -55,11 +67,18 @@ BACKLOG.md      앞으로 채울 항목
 
 ## 라이선스
 
-- 코어: Apache License 2.0 (예정)
-- 문서: CC BY 4.0 (예정)
+현재 [LICENSE](LICENSE)는 예정안을 적은 파일이며, 확정 라이선스 전문이 아닙니다.
+**라이선스 준비 기준은 코드·실행용 자료 Apache 2.0 / 설명·교재 CC BY 4.0으로 정했습니다.** 실제 자료의 적용 경계·권리자 허락·외부 조건과 고지는 [라이선스 준비 정책](docs/LICENSING_POLICY.md)에 따라 확인합니다. 기존 자료의 사용 허락은 아직 일괄 부여하지 않습니다.
+[권리 검토표](docs/RIGHTS_REVIEW.md)와 [정한 기준과 필수 확인](docs/PUBLIC_RELEASE_DECISIONS.md)을 확인하세요.
 
 ## 상태
 
-**비공개(private) 준비 단계입니다.** 코어 모듈 5~6개, 동작 레퍼런스 앱 1개, "따라 하면 되는" 문서가 갖춰지면 코어를 공개(public)로 전환합니다.
+**비공개(private) 공개 준비 단계입니다.** 내부 목표는 2026-10-14 자료 확인, 2026-10-16 조건부 공개입니다. 검수·권리 문제나 필수 준비가 남으면 조정하며, 날짜가 됐다고 자동 공개하지 않습니다. 최종 공개 승인자는 윤성열(Andy)입니다.
+
+[GOVERNANCE.md](GOVERNANCE.md)와 [기여 안내](CONTRIBUTING.md)는 같은 준비 기준으로 맞췄습니다. 기존 오픈코어 [ADR 0002](decisions/0002-open-core-private-start.md)는 역사로 보존하고, 전체 공개 준비 방향은 [ADR 0004](decisions/0004-public-release-preparation.md)에 기록합니다.
+
+- [공개 준비 체크리스트](docs/PUBLIC_RELEASE_CHECKLIST.md): 완료·미검증·승인 대기 구분
+- [릴리스 노트 초안](docs/RELEASE_NOTES_DRAFT.md): 아직 릴리스가 아님
+- [행동 기준](CODE_OF_CONDUCT.md) · [보안 안내](SECURITY.md): 초기 총괄 Andy, 비공개 요약 연락 경로 지정
 
 자세한 내용은 [METHODOLOGY.md](METHODOLOGY.md), [CONTRIBUTING.md](CONTRIBUTING.md), [GOVERNANCE.md](GOVERNANCE.md)를 참고하세요.
