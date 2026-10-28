@@ -12,5 +12,13 @@
     "bytes": 18657,
     "sha256": "9ba9550ad48438d0836ddab3da480b3b69ffa0aac7b7878b5a0039e7ab429411",
     "status": "reference text only; not a grant for repository assets"
+  },
+  {
+    "file": "CC-BY-NC-4.0.txt",
+    "source": "https://creativecommons.org/licenses/by-nc/4.0/legalcode.txt",
+    "bytes": 19347,
+    "sha256": "41003d4a74749c0220e33dd415042164b5a1093ed401f36277234f772d22d3d0",
+    "retrieved_on": "2026-10-29",
+    "status": "selected education-material license; per-file rights review still required"
   }
 ]
