@@ -26,7 +26,9 @@
 > 검증 환경: GitNexus 1.6.12, Node.js 22, Python 3.12, Ubuntu 24.04 (2026-09-23 기준).
 > 이 문서의 모든 CLI 명령과 MCP `rename` 호출은 이 환경에서 실제로 실행해 결과를 확인했다. 숫자는 버전에 따라 조금 달라질 수 있다.
 
-> **라이선스 안내:** GitNexus는 PolyForm Noncommercial 라이선스다. 학습·개인·비상업 용도는 자유롭게 쓸 수 있지만, 회사 업무 같은 상업적 사용에는 별도 라이선스가 필요하다.
+> **라이선스 안내:** 원출처 [abhigyanpatwari/GitNexus](https://github.com/abhigyanpatwari/GitNexus)의 확인 원 조건은 PolyForm Noncommercial 1.0.0입니다. 실제 버전의 허용 목적·교육기관 등 조직 조항과 사용 목적을 대조하세요. ‘회사/유료 교육이면 무조건 금지’로 단순화하지 않습니다. 설치/생성된 `CLAUDE.md`·스킬 등을 복사·팀 공유하기 전 원본·생성/변경 범위와 적용 조건을 확인하고, 소프트웨어 일부를 재배포하는 경우 원 조건 전문 또는 URL 및 제공된 `Required Notice:`를 함께 보존합니다. KOSTA의 CC BY-NC와 같은 라이선스가 아닙니다.
+>
+> 실습 대상 [psf/requests v2.32.3](https://github.com/psf/requests/tree/v2.32.3)은 별도 clone이며 확인한 원 LICENSE는 Apache 2.0입니다. clone의 LICENSE와 관련 NOTICE/귀속 고지를 유지하고 수정본·diff·교재 발췌를 배포할 때 원출처·태그·변경 범위를 연결하세요. 이 clone 안내를 KOSTA가 requests 전체를 포함하는 것으로 해석하지 않습니다.
 
 ---
 

@@ -67,6 +67,8 @@ Claude Code에 통합 설치
 코드 변경 → 위키 업데이트 → 커밋
 ```
 
+**출처·재사용 범위:** 원출처는 [langchain-ai/openwiki](https://github.com/langchain-ai/openwiki)이며 감사에서 확인한 LICENSE는 MIT입니다. 아래 순서 참조와 실제 문구/코드 복사·번역을 구분하세요. 원문을 복사·변형해 배포하는 범위는 해당 버전·원 경로를 기록하고 실제 LICENSE의 저작권/허락 고지를 보존합니다. 독자 설명 부분과 변경/번역한 부분은 구별해 표시합니다. 안내 순서가 같다는 사실만으로 전문 번역·복제나 권리침해라고 단정하지 않으며 KOSTA 교재 NC로 upstream 권리를 덮지 않습니다.
+
 각 단계는 [공식 README](https://github.com/langchain-ai/openwiki)의 안내 순서를 그대로 따릅니다. 3단계(연습용 저장소)만 이 가이드에서 추가한 것입니다.
 
 | 이 가이드 | 공식 README |

@@ -74,6 +74,10 @@ cp -r /tmp/harness-100/ko/63-research-assistant/.claude ./
 rm -rf /tmp/harness-100
 ```
 
+### 복사 원출처와 고지 보존
+
+원출처는 [revfactory/harness-100](https://github.com/revfactory/harness-100)입니다. `.claude`만 복사하고 임시 clone을 지우기 **전에**, 실제 clone 커밋과 원본 경로를 기록하고 루트 및 `ko/63-research-assistant/`의 LICENSE·저작권 고지·관련 NOTICE 유무를 확인하세요. 위 삭제 명령은 고지 보존을 끝낸 뒤에만 수행합니다. 실제 버전의 LICENSE를 `third-party/harness-100/LICENSE` 등 충돌 없는 위치에 함께 보관·배포하고, 관련 NOTICE가 있으면 해당 내용도 보존합니다. 원 파일의 귀속/고지를 삭제하지 말고 수정 파일에는 변경 여부를 표시하세요. ZIP 방식에도 같은 절차를 적용합니다. 확인한 upstream은 Apache 2.0이지만 다른 버전·하위 자산 예외는 실제 원본에서 확인합니다. NOTICE를 조회하지 못했다고 ‘없음’으로 일반화하지 않습니다. 프로젝트 자체 교재 NC/코드 Apache 정책으로 upstream을 재허락하지 않습니다.
+
 ### 방법 B — Git 없이 받기
 
 1. 브라우저에서 https://github.com/revfactory/harness-100 접속
