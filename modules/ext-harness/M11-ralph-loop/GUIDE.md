@@ -70,6 +70,8 @@ git commit -m "Initial commit: simple calculator with add()"
 
 # 2 단계: Ralph 파일을 프로젝트에 복사하기
 
+**복사 고지:** 원출처 [snarktank/ralph](https://github.com/snarktank/ralph)의 실제 복사 커밋·경로를 기록합니다. `ralph.sh`·`CLAUDE.md`·뒤의 skills를 복사할 때 해당 버전의 LICENSE와 저작권/허락 고지도 `scripts/ralph/LICENSE` 또는 `third-party/ralph/`에 함께 보존·배포하세요. 감사에서 확인한 원 조건은 MIT입니다. 원본에 별도 고지가 있으면 함께 보존하고 수정한 범위를 기록합니다. 프로젝트 자체 Apache 선택이 원본 MIT 조건을 대체하지 않습니다. 이 문서의 복사 안내는 KOSTA 트리에 ralph.sh 전체가 이미 포함되어 있다는 뜻이 아닙니다.
+
 Ralph 저장소를 클론한 뒤, 필요한 파일만 내 프로젝트로 복사합니다.
 
 ```bash

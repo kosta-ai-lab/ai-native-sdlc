@@ -70,7 +70,7 @@ BACKLOG.md      앞으로 채울 항목
 
 ## 라이선스
 
-**교육자료는 CC BY-NC 4.0(저작자표시-비영리)을 적용하는 것으로 합의되었습니다.** 2026-10-29 윤성열(Andy)이 전달한 회의 합의를 반영합니다. 코드·실행용 자료는 기존 Apache 2.0 준비 기준을 유지하며, 외부 자료는 원래의 조건을 따로 확인합니다.
+**교육자료는 CC BY-NC 4.0(저작자표시-비영리)을 적용하는 것으로 합의되었습니다.** 2026-10-29 윤성열(Andy)이 전달한 회의 합의를 반영합니다. **코드·실행용 자료는 Apache 2.0으로 분리 적용하는 것으로 선택·확정했습니다.** 이는 정책 결정이며 파일별 실제 권리자의 적용 허락·귀속·고지 완료를 뜻하지 않습니다. 제3자 자료는 원 조건을 유지합니다. 과거 React 공식 영어 문서는 [CC BY 4.0 예외](THIRD_PARTY_NOTICES.md)이며 교재 NC로 덮지 않습니다.
 
 [LICENSE](LICENSE) · [적용 정책과 예외](docs/LICENSING_POLICY.md) · [공식 전문](docs/license-texts/CC-BY-NC-4.0.txt) · [표시 양식](docs/ATTRIBUTION_TEMPLATE.md)
 
@@ -78,7 +78,9 @@ BACKLOG.md      앞으로 채울 항목
 
 ## 상태
 
-**비공개(private) 공개 준비 단계입니다.** 라이선스 합의 반영과 자료별 공개 준비를 진행합니다. 과거 2026-10-14/16 목표일은 경과했으며 새로운 공개일은 확정하지 않았습니다. [최신 준비 현황](docs/RELEASE_READINESS_20261029.md)의 남은 항목과 최종 배포 SHA를 확인한 뒤 윤성열(Andy)의 공개 승인으로 전환합니다.
+**2026-11-04 공개 전 점검:** 기준 커밋은 317개 파일입니다. [검증 결과와 남은 판단](docs/RELEASE_VERIFICATION_20261104.md) · [기준 명세](docs/distribution-manifest-d698f205.csv). 대표 앱 시험 163건 통과, harness 12건 미실행. 현재·과거 미디어 검사 후 과거 강의의 연락처·계정 식별 표시와 일부 이미지의 공개 근거 확인이 남아 있어 비공개를 유지합니다.
+
+**비공개(private) 공개 준비 단계입니다.** 라이선스 합의 반영과 자료별 공개 준비를 진행합니다. 과거 2026-10-14/16 목표일은 경과했으며 새로운 공개일은 확정하지 않았습니다. [현재 검증 현황](docs/RELEASE_VERIFICATION_20261104.md)의 남은 항목과 최종 배포 SHA와 남은 공개 조건을 확인한 뒤 이미 승인된 공개 전환을 진행합니다.
 
 [GOVERNANCE.md](GOVERNANCE.md)와 [기여 안내](CONTRIBUTING.md)는 같은 준비 기준으로 맞췄습니다. 기존 오픈코어 [ADR 0002](decisions/0002-open-core-private-start.md)는 역사로 보존하고, 전체 공개 준비 방향은 [ADR 0004](decisions/0004-public-release-preparation.md)에 기록합니다.
 
