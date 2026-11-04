@@ -1,5 +1,7 @@
 # 권리·자료 확인표 — 타인의 허락과 내용 검수는 대신 완료하지 않음
 
+> **2026-11-04 현행 진입점:** [317개 배포 기준 명세](distribution-manifest-d698f205.csv)는 `d698f2055d40c0dfb76f26716d422a6e9c5b4e3f`의 현재 파일을 별도로 기록합니다. 아래 326행/286행 CSV와 날짜별 설명은 역사입니다. 기존 권리·허락·검수·clearance를 승격하지 않았고 새 항목도 pending/not_cleared입니다. 명세의 선택 정책은 교재 CC BY-NC 4.0 / 코드 Apache 2.0이며 제3자 예외가 우선합니다. [검증 현황](RELEASE_VERIFICATION_20261104.md) · [React 등 제3자 고지](../THIRD_PARTY_NOTICES.md).
+
 2026-10-08 · 원격 main `2e96afb40522244f881e75a47e0abe69c6c03b92`의 **286개 파일**을 [CSV 확인대장](rights-review-main.csv)에 기록했습니다. CSV는 경로·blob SHA·크기와 자동 제안 분류를 담으며, 확인 상태를 전부 대기로 시작합니다. 준비 브랜치에서 새로 만든 문서는 이 main 목록의 집계와 별개입니다.
 
 ## 2026-10-29 현재 기준
