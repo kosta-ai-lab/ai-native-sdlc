@@ -1,7 +1,7 @@
 # Claude Code Cloud App Development-Golf Scorecard
 
 ## 강의 개요
-Claude Code Cloud를 이용해 Golf Scorecard 앱을 개발하는 Vibe Coding 실습 데모
+Claude Code Cloud를 이용해 Golf Scorecard 앱을 개발하는 Agentic Coding 실습 데모
 
 ## 항목	내용
 - 제목: Claude Code Cloud App Development-Golf Scorecard
