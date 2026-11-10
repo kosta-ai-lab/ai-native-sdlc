@@ -450,28 +450,34 @@ export function formatTodos(todos) { ... }                  // "[x] 1. 분리수
 
 # 5 단계: 구현 확인과 커밋
 
-4단계 4번에서 구현을 요청하면 Claude가 코드를 작성합니다. 이 단계는 gstack 스킬이 아니라 Claude Code의 기본 기능입니다.
+4단계 4번에서 구현을 요청하면 Claude가 코드를 작성합니다. 이 단계는 gstack 스킬이 아니라 Claude Code의 기본 기능입니다. 구현이 끝나면 **Claude Code에서 나와 터미널에서 직접** 확인하고 커밋합니다.
 
 1. Claude가 파일 수정·명령 실행 권한을 물으면 내용을 확인하고 허용합니다. 보통 `test/todo.test.js`, `src/todo.js`, `src/cli.js`가 바뀝니다.
 
-2. 구현이 끝나면 테스트를 직접 돌려 봅니다.
+2. 구현이 끝났다는 메시지가 나오면 Claude Code를 종료하고 터미널로 돌아갑니다.
 
    ```text
-   !npm test
+   /exit
    ```
 
-3. 기능을 손으로 확인합니다.
+3. 터미널(`todo-app` 폴더)에서 테스트를 직접 돌려 봅니다.
 
-   ```text
-   !node -e "require('fs').rmSync('todos.json', { force: true })"
+   ```bash
+   npm test
    ```
 
-   ```text
-   !node src/cli.js add 분리수거 2026-11-16 --every week
+4. 기능을 손으로 확인합니다.
+
+   ```bash
+   node -e "require('fs').rmSync('todos.json', { force: true })"
    ```
 
-   ```text
-   !node src/cli.js done 1
+   ```bash
+   node src/cli.js add 분리수거 2026-11-16 --every week
+   ```
+
+   ```bash
+   node src/cli.js done 1
    ```
 
    기대 출력 (형식은 3단계에서 정한 대로이며 글자는 조금 다를 수 있습니다):
@@ -481,14 +487,23 @@ export function formatTodos(todos) { ... }                  // "[x] 1. 분리수
    [ ] 2. 분리수거 (마감 2026-11-23, 매주)
    ```
 
-4. 커밋합니다.
+5. 브랜치를 확인하고 커밋합니다.
 
-   ```text
-   !git add . && git commit -m "반복 할 일 기능 구현"
+   ```bash
+   git branch --show-current
+   ```
+
+   `feature/recurring-todos`가 나오면 커밋합니다.
+
+   ```bash
+   git add .
+   git commit -m "반복 할 일 기능 구현"
    ```
 
 ## 규칙
-> 테스트가 실패하거나 결과가 다르면 다음 단계로 넘어가지 말고 Claude에게 고쳐 달라고 합니다. 예) "npm test 에서 실패한 테스트를 고쳐줘."
+> 테스트가 실패하거나 결과가 다르면 커밋하지 말고 Claude에게 고쳐 달라고 합니다. 터미널에서 `claude --continue`로 실행하면 방금 구현하던 대화를 이어서 열 수 있습니다. 예) "npm test 에서 실패한 테스트를 고쳐줘." 고친 뒤 다시 `/exit`하고 3번부터 확인합니다.
+
+> 앞에 `!`가 없는 명령은 **터미널**에서 실행합니다. Claude Code 입력창에 그대로 치면 Claude에게 보내는 메시지가 됩니다.
 
 > 커밋은 반드시 `feature/recurring-todos` 브랜치에서 합니다. `/ship`은 기본 브랜치(`main`)에서는 실행을 거부합니다.
 
@@ -505,10 +520,10 @@ export function formatTodos(todos) { ... }                  // "[x] 1. 분리수
 
 테스트가 통과해도 안심하지 않습니다. "**운영에서 뭐가 터질 수 있지?**"를 묻는 스태프 엔지니어에게 리뷰를 받습니다.
 
-1. 리뷰는 **새 대화**에서 받는 것이 좋습니다. 구현한 대화의 가정에 끌려가지 않기 위해서입니다.
+1. 터미널(`todo-app` 폴더)에서 Claude Code를 다시 실행합니다. 새로 실행하면 **새 대화**로 시작합니다. 리뷰는 구현한 대화의 가정에 끌려가지 않도록 새 대화에서 받는 것이 좋습니다.
 
-   ```text
-   /clear
+   ```bash
+   claude
    ```
 
 2. 리뷰를 실행합니다. 현재 브랜치와 `main`의 차이를 자동으로 찾아서 봅니다.
