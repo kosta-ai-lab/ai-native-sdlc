@@ -46,7 +46,7 @@ CEO는 "이게 정말 만들 가치가 있나?", 스태프 엔지니어는 "뭐�
 모드는 두 가지입니다. 창업·사내 프로젝트는 날카로운 질문을 던지는 **Startup mode**, 학습·취미·해커톤은 아이디어를 키워 주는 **Builder mode**입니다. 이 실습은 **Builder mode**로 진행합니다.
 
 #### 4. Plan Mode와 `/autoplan`
-Claude Code의 **plan mode**(계획 모드)에서는 Claude가 코드를 고치지 않고 계획만 세웁니다. 이 계획에 `/autoplan`을 실행하면 CEO → 디자인(화면이 있을 때만) → DX(개발자용 도구일 때만) → 엔지니어링 순서로 리뷰하며 **대부분의 질문은 추천 답으로 자동 결정**하고, 취향의 문제(taste decision)만 사람에게 묻습니다. 승인하면 plan mode를 빠져나와 구현이 시작됩니다.
+`/autoplan`에 설계 문서를 바탕으로 구현 계획을 요청하면 계획을 세우고 이어서 리뷰합니다. 리뷰 기록 파일을 여러 개 써야 하므로 Claude Code의 **plan mode**(계획 모드)는 **끈 상태**에서 실행합니다(plan mode에서는 막힙니다). `/autoplan`은 CEO → 디자인(화면이 있을 때만) → DX(개발자용 도구일 때만) → 엔지니어링 순서로 리뷰하며 **대부분의 질문은 추천 답으로 자동 결정**하고, 취향의 문제(taste decision)만 사람에게 묻습니다. 리뷰가 끝나면 반영된 계획대로 구현을 요청합니다.
 
 #### 5. Fix-First Review (먼저 고치는 리뷰)
 `/review`는 문제를 나열만 하지 않습니다. 뻔한 기계적 문제는 바로 고치고 `[AUTO-FIXED] 파일:줄 문제 → 조치`로 알려 줍니다. 보안·경쟁 상태·설계 결정처럼 **판단이 필요한 것만** 사람에게 묻습니다.
@@ -73,7 +73,7 @@ Claude Code의 **plan mode**(계획 모드)에서는 Claude가 코드를 고치�
 |---|---|
 | 설치 | `~/.claude/skills/gstack`에 내려받고 `./setup` (Bun 1.4.2+ 필요) |
 | Think | `/office-hours` — 기능 요청을 재정의하고 전제를 점검해 **설계 문서** 작성 (Builder mode) |
-| Plan | plan mode + `/autoplan` — 구현 계획을 CEO → (DX) → 엔지니어링 관점으로 자동 리뷰 |
+| Plan | `/autoplan` — 구현 계획을 세우고 CEO → (DX) → 엔지니어링 관점으로 자동 리뷰 |
 | Build | 승인된 계획대로 Claude Code가 구현 |
 | Review | `/review` — 테스트는 통과해도 운영에서 터질 버그를 찾고, 뻔한 것은 바로 고침 |
 | Test | `/qa` — CLI를 직접 실행하며 탐색, 버그는 실패하는 회귀 테스트를 먼저 쓰고 수정 |
@@ -89,7 +89,7 @@ Claude Code의 **plan mode**(계획 모드)에서는 Claude가 코드를 고치�
 |---|---|---|
 | 철학 | 작고 고치기 쉬운 스킬을 **조합**. 과정을 사람이 쥠 | 스프린트 전체를 **과정**으로 제공. 단계가 서로 결과물을 넘김 |
 | 시작 | `/grill-with-docs` — 질문으로 합의, `GLOSSARY.md` 작성 | `/office-hours` — 기능 요청을 재정의, 설계 문서 작성 |
-| 계획 | `/to-spec`, `/to-tickets` — 스펙과 티켓 파일 | plan mode + `/autoplan` — 여러 역할의 자동 리뷰 |
+| 계획 | `/to-spec`, `/to-tickets` — 스펙과 티켓 파일 | `/autoplan` — 구현 계획 작성과 여러 역할의 자동 리뷰 |
 | 검증 | `tdd` + `code-review`(Standards / Spec 두 축) | `/review`(운영 위험) + `/qa`(실행 탐색) |
 | 마무리 | 커밋 | `/ship`으로 PR 생성까지 |
 | 기록 위치 | 저장소 안 (`GLOSSARY.md`, `.scratch/`) | 주로 저장소 밖 (`~/.gstack/projects/`), QA 보고서는 `.gstack/` |
