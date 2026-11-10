@@ -1,241 +1,193 @@
-# 예제 실행 및 프롬프트
+# 예제 앱: `todo-app`
 
-GUIDE.md의 흐름을 명령어와 프롬프트만 모아 놓은 실행용 요약입니다.
-설명과 체크리스트는 [GUIDE.md](GUIDE.md)를 참고하세요.
-Windows에서는 모든 터미널 명령을 **Git Bash**(또는 WSL)에서 실행합니다.
+[GUIDE.md](GUIDE.md) 실습에서 기능을 추가하는 대상인 **할 일 관리 CLI**입니다.
+이 문서는 실습을 시작할 때의 **초기 상태**(코드 구성과 실행 방법)와, 실습을 마친 뒤 **무엇이 바뀌는지**를 설명합니다.
 
-## 1단계: gstack 설치
+---
 
-Claude Code를 실행하고 공식 설치 문장을 붙여 넣습니다.
+# 1. 초기 상태
 
-```bash
-claude
+## 어떤 앱인가
+
+터미널에서 할 일을 **추가·완료·조회**하는 작은 프로그램입니다. 할 일에는 **마감일**을 붙일 수 있습니다.
+Node.js만 있으면 실행되며, 따로 설치할 패키지(의존성)는 없습니다.
+
+## 폴더 구성
+
+```
+todo-app/
+├── package.json        npm test 로 테스트를 실행하는 설정 (의존성 없음)
+├── .gitignore          실행 중 생기는 todos.json 을 git 에서 제외
+├── src/
+│   ├── todo.js         할 일 목록을 다루는 함수 (추가·완료·목록 문자열 만들기)
+│   ├── store.js        todos.json 파일 읽기·쓰기
+│   └── cli.js          터미널 명령 처리 (add / done / list)
+└── test/
+    └── todo.test.js    todo.js 의 동작을 확인하는 테스트 5개
 ```
 
-```text
-Install gstack: run git clone --single-branch --depth 1 https://github.com/garrytan/gstack.git ~/.claude/skills/gstack && cd ~/.claude/skills/gstack && ./setup then add a "gstack" section to CLAUDE.md that says to use the /browse skill from gstack for all web browsing and never use mcp__claude-in-chrome__* tools. Claude Code lists the installed skills itself, so the section needs no skill list. Then ask the user if they also want to add gstack to the current project so teammates get it.
+| 파일 | 하는 일 |
+|---|---|
+| `src/todo.js` | `addTodo`(새 할 일 추가, 번호는 1부터), `completeTodo`(해당 번호만 완료로), `formatTodos`(목록을 화면용 문자열로). 원본 목록을 바꾸지 않고 새 목록을 돌려줍니다. |
+| `src/store.js` | 할 일 목록을 `todos.json` 파일 하나에 저장하고 읽습니다. 파일이 없으면 빈 목록으로 시작합니다. |
+| `src/cli.js` | 터미널에서 받은 명령(`add`, `done`, `list`)을 `todo.js` 함수로 처리하고, 결과 목록을 출력합니다. |
+
+## 할 일 하나의 모양
+
+`todos.json`에는 할 일이 아래 모양으로 저장됩니다.
+
+```json
+[
+  { "id": 1, "title": "분리수거", "due": "2026-11-16", "done": false }
+]
 ```
 
-또는 터미널에서 직접 설치합니다.
+| 항목 | 뜻 |
+|---|---|
+| `id` | 번호. 1부터 차례로 붙습니다. |
+| `title` | 제목. 비어 있으면 안 됩니다. |
+| `due` | 마감일. `YYYY-MM-DD` 형식이거나, 없으면 `null`. |
+| `done` | 완료했으면 `true`. |
 
-```bash
-git clone --single-branch --depth 1 https://github.com/garrytan/gstack.git ~/.claude/skills/gstack
-```
+## 실행 방법
 
-```bash
-cd ~/.claude/skills/gstack && ./setup
-```
+`todo-app` 폴더 안에서 실행합니다.
 
-```bash
-cat ~/.claude/skills/gstack/VERSION
-```
+| 하고 싶은 것 | 명령 |
+|---|---|
+| 할 일 추가 | `node src/cli.js add <제목> [마감일]` |
+| 완료 표시 | `node src/cli.js done <번호>` |
+| 목록 보기 | `node src/cli.js list` |
+| 테스트 실행 | `npm test` |
 
-설치 후 Claude Code를 완전히 종료했다가 다시 실행합니다.
-
-## 2단계: 연습용 저장소 `todo-app` 준비
-
-이 모듈 폴더의 `todo-app`을 강의 자료 저장소 밖으로 복사합니다. 터미널을 `M35-gstack` 폴더에서 열고 실행합니다.
-
-```bash
-cp -r todo-app ~/todo-app
-```
-
-```bash
-cd ~/todo-app
-```
-
-```bash
-git init -b main
-```
-
-```bash
-npm test
-```
-
-반복되는 일을 매번 다시 추가해야 하는 불편함을 확인합니다.
+예시:
 
 ```bash
 node src/cli.js add 분리수거 2026-11-16
-```
-
-```bash
+node src/cli.js add "우유 사기"
 node src/cli.js done 1
 ```
 
-```bash
-node -e "require('fs').rmSync('todos.json', { force: true })"
-```
-
-```bash
-git add .
-git commit -m "todo-app 초기 버전"
-```
-
-## 3단계: 기능 브랜치를 만들고 Claude Code 실행
-
-```bash
-git switch -c feature/recurring-todos
-```
-
-```bash
-claude
-```
-
-## 4단계: 프롬프트가 뜨면 자연어로 지시
-
-**오피스아워** — 목표를 물으면 `학습(Learning)`을 골라 Builder mode로 진행
+출력:
 
 ```text
-/office-hours 할 일 앱에 반복 할 일 기능을 넣고 싶어.
-지금은 "매주 월요일 분리수거"를 끝내면 다음 주 것을 매번 손으로 다시 add 해야 해.
+[x] 1. 분리수거 (마감 2026-11-16)
+[ ] 2. 우유 사기
 ```
 
-질문과 접근 방식 선택에는 아래 결정대로 답합니다.
+- 제목에 띄어쓰기가 있으면 따옴표로 감쌉니다.
+- 명령을 실행할 때마다 현재 목록 전체가 출력됩니다.
+- 데이터를 처음부터 다시 시작하려면 `todos.json`을 지웁니다.
 
-| 결정할 것 | 답 |
+  ```bash
+  node -e "require('fs').rmSync('todos.json', { force: true })"
+  ```
+
+잘못 입력하면 오류 메시지가 나옵니다.
+
+| 입력 | 오류 메시지 |
 |---|---|
-| 범위 | 가장 작은 버전 (반복 중단·알림·연속 기록은 하지 않음) |
-| 반복 주기 | 매일(day)·매주(week)만 |
-| 다음 회차가 생기는 때 | 완료하는 순간 |
-| 다음 마감일 기준 | 원래 마감일 + 주기 |
-| 마감일 없는 반복 할 일 | 허용하지 않음 |
-| 지난 회차를 안 하고 넘어가면 | 쌓이지 않음 |
-| 명령 형식 | `add <제목> <마감일> --every day\|week` |
-| 목록 표시 | `(마감 2026-11-23, 매주)` |
+| 빈 제목 | `제목은 비어 있을 수 없습니다.` |
+| 형식이 틀린 마감일 (예: `11월 16일`) | `마감일은 YYYY-MM-DD 형식이어야 합니다.` |
+| 없는 번호를 `done` | `<번호>번 할 일을 찾을 수 없습니다.` |
+| `add`·`done`·`list` 외의 명령 | `명령은 add, done, list 중 하나여야 합니다.` |
 
-```text
-가장 작은 버전으로 하자. 주기는 매일과 매주만, 완료하는 순간 다음 회차를 만들고,
-다음 마감일은 원래 마감일에 주기를 더해. 반복 할 일은 마감일이 꼭 있어야 해.
-명령은 add <제목> <마감일> --every day 또는 week, 목록에는 "(마감 2026-11-23, 매주)"처럼 보여줘.
-반복 중단, 알림, 연속 기록은 이번엔 안 해.
-```
+## 불편한 점 (실습에서 해결할 문제)
 
-**계획 + 자동 리뷰** — `Shift+Tab`으로 plan mode를 켠 뒤
-
-```text
-방금 만든 설계 문서대로 반복 할 일 기능의 구현 계획을 세워줘.
-테스트는 test/todo.test.js 에 node:test 로 추가하는 걸로.
-```
-
-계획이 나오면 승인하기 전에 실행합니다. TASTE DECISIONS에 답한 뒤 계획을 승인하면 구현이 시작됩니다.
-
-```text
-/autoplan
-```
-
-**구현 확인과 커밋**
-
-```text
-!npm test
-```
-
-```text
-!git add . && git commit -m "반복 할 일 기능 구현"
-```
-
-**코드 리뷰** — 새 대화에서
-
-```text
-/clear
-```
-
-```text
-/review
-```
-
-```text
-!npm test
-```
-
-```text
-!git add . && git commit -m "review 반영"
-```
-
-**QA** — 새 대화에서
-
-```text
-/clear
-```
-
-```text
-/qa 이 저장소의 CLI(node src/cli.js)를 테스트해줘.
-반복 할 일의 add / done / list, 잘못된 입력(마감일 없음, --every month, 없는 번호),
-종료 코드와 오류 메시지, 월말·연말을 넘는 다음 마감일을 확인해줘.
-todos.json 은 임시 폴더에서 만들어서 쓰고, 외부 서비스에는 접속하지 마.
-```
-
-**PR 출시** (선택, GitHub 저장소와 `gh` 로그인 필요)
+"매주 월요일 분리수거"처럼 **반복되는 일**을 다루지 못합니다.
 
 ```bash
-gh auth status
-```
-
-```bash
-gh repo create todo-app --private --source=. --remote=origin
-```
-
-```bash
-git push -u origin main
+node src/cli.js add 분리수거 2026-11-16
+node src/cli.js done 1
 ```
 
 ```text
-/ship
+[x] 1. 분리수거 (마감 2026-11-16)
 ```
 
-**회고** (선택)
+이번 주 분리수거를 끝내도 다음 주(2026-11-23) 분리수거는 생기지 않습니다. 매주 손으로 다시 `add` 해야 합니다.
 
-```text
-/retro
-```
+---
 
-## 5단계: 결과 확인
+# 2. 실습을 마친 뒤 바뀌는 점
 
-```bash
-npm test
-```
+GUIDE.md의 4~7단계를 마치면 **반복 할 일** 기능이 추가됩니다.
+아래는 4단계 인터뷰에서 GUIDE.md의 표대로 결정했을 때의 모습입니다. 실제 코드와 메시지 문구는 에이전트가 만들기 때문에 조금씩 다를 수 있습니다.
 
-```bash
-node -e "require('fs').rmSync('todos.json', { force: true })"
-```
+## 새 용어
+
+| 용어 | 뜻 |
+|---|---|
+| **반복 할 일** | 완료하면 같은 제목의 다음 회차가 자동으로 생기는 할 일. 마감일이 반드시 있다. |
+| **반복 주기** | 다음 회차의 마감일을 정하는 간격. 매일(`day`) 또는 매주(`week`). |
+| **회차** | 반복 할 일이 만들어 낸 할 일 하나하나. |
+
+이 용어들은 실습 중 생기는 `GLOSSARY.md`에 기록되고, 코드의 함수·테스트 이름에도 쓰입니다.
+
+## 바뀐 명령
+
+| 하고 싶은 것 | 명령 |
+|---|---|
+| 반복 할 일 추가 | `node src/cli.js add <제목> <마감일> --every day\|week` |
+| 일반 할 일 추가 | `node src/cli.js add <제목> [마감일]` (이전과 같음) |
+| 완료 표시 | `node src/cli.js done <번호>` (반복 할 일이면 다음 회차가 생김) |
+| 목록 보기 | `node src/cli.js list` (반복 할 일은 주기도 표시) |
+
+## 동작 예시
 
 ```bash
 node src/cli.js add 분리수거 2026-11-16 --every week
 ```
 
+```text
+[ ] 1. 분리수거 (마감 2026-11-16, 매주)
+```
+
 ```bash
 node src/cli.js done 1
 ```
 
-```bash
-node src/cli.js add "물 마시기" --every day
+```text
+[x] 1. 분리수거 (마감 2026-11-16, 매주)
+[ ] 2. 분리수거 (마감 2026-11-23, 매주)
 ```
 
-```bash
-node src/cli.js add 운동 2026-11-16 --every month
-```
+- 반복 할 일을 **완료하는 순간** 다음 회차가 새 할 일로 추가됩니다.
+- 다음 마감일은 **원래 마감일 + 주기**입니다. 늦게 완료해도 "매주 월요일"이 화요일로 밀리지 않습니다.
+- 회차를 완료하지 않고 넘어가도 회차가 쌓이지 않습니다. **완료할 때만** 다음 회차가 생깁니다.
+- 반복이 아닌 일반 할 일은 이전과 똑같이 동작합니다. 완료해도 새 할 일이 생기지 않습니다.
+
+## 새로 거부되는 입력
 
 ```bash
-ls ~/.gstack/projects/*/
+node src/cli.js add "물 마시기" --every day      # 마감일 없는 반복 할 일
+node src/cli.js add 운동 2026-11-16 --every month  # 지원하지 않는 주기
 ```
 
-```bash
-ls .gstack/qa-reports/
+둘 다 오류 메시지가 나옵니다. 반복 할 일에는 마감일이 꼭 있어야 하고, 주기는 `day`와 `week`만 됩니다.
+
+## 할 일 하나의 모양 (변경 후 예시)
+
+반복 주기를 기억하는 항목이 하나 늘어납니다. 이름은 에이전트가 용어집에 맞춰 정하며, 아래는 예시입니다.
+
+```json
+{ "id": 2, "title": "분리수거", "due": "2026-11-23", "done": false, "every": "week" }
 ```
 
-```bash
-git log --oneline main..HEAD
-```
+## 바뀌는 파일
 
-기대 결과:
-- `~/.gstack/projects/<프로젝트>/` 아래에 `-design-`이 들어간 설계 문서와 리뷰 기록이 생긴다.
-- `done 1` 뒤 목록이 아래처럼 나온다. 새 회차의 마감일은 원래 마감일 + 7일이다.
+| 파일 | 바뀌는 내용 |
+|---|---|
+| `src/todo.js` | 반복 주기를 가진 할 일 추가, 완료 시 다음 회차 생성, 목록에 주기 표시, 잘못된 반복 입력 거부 |
+| `src/cli.js` | `add`에서 `--every day\|week` 옵션 처리 |
+| `test/todo.test.js` | 반복 할 일 동작을 확인하는 테스트 추가 (기존 테스트 5개는 그대로 통과) |
+| `GLOSSARY.md` (새 파일) | 반복 할 일, 반복 주기, 회차 등 용어 정의 |
+| `.scratch/<기능 이름>/` (새 폴더) | 스펙(`spec.md`)과 티켓(`issues/01-….md` 등) |
+| `CLAUDE.md`, `docs/agents/` (새 파일) | 3단계 저장소 설정에서 생기는 에이전트용 설정 |
 
-  ```text
-  [x] 1. 분리수거 (마감 2026-11-16, 매주)
-  [ ] 2. 분리수거 (마감 2026-11-23, 매주)
-  ```
+## 이번에 하지 않은 것 (Out of Scope)
 
-- 마감일 없는 반복 할 일과 `--every month`는 오류 메시지로 거부된다.
-- `.gstack/qa-reports/`에 QA 보고서가 있고, "테스트하지 못한 것"이 따로 적혀 있다.
-- `feature/recurring-todos` 브랜치에 구현·리뷰 반영(·QA 수정) 커밋이 있다.
-- (`/ship`을 했다면) GitHub에 `feature/recurring-todos` → `main` PR이 생성되어 있다.
+- 매월 반복 (말일 처리가 복잡해서 제외)
+- 반복 중단·삭제
+
+다음 실습 과제로 GUIDE.md의 '더 해보기'에서 이어서 해 볼 수 있습니다.
