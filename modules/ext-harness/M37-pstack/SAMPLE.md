@@ -1,208 +1,213 @@
-# 예제 실행 및 프롬프트
+# 예제 앱: `todo-app`
 
-GUIDE.md의 흐름을 명령어와 프롬프트만 모아 놓은 실행용 요약입니다.
-설명과 체크리스트는 [GUIDE.md](GUIDE.md)를 참고하세요.
-명령은 **Claude Code** 기준입니다. Cursor에서는 `/add-plugin pstack`으로 설치하고, 명령에서 `pstack:` 접두어를 빼고 입력합니다.
+[GUIDE.md](GUIDE.md) 실습에서 기능을 추가하는 대상인 **할 일 관리 CLI**입니다.
+이 문서는 실습을 시작할 때의 **초기 상태**(코드 구성과 실행 방법)와, 실습을 마친 뒤 **무엇이 바뀌는지**를 설명합니다.
 
-## 1단계: pstack 설치
+---
 
-```bash
-claude plugin marketplace add cursor/plugins
+# 1. 초기 상태
+
+## 어떤 앱인가
+
+터미널에서 할 일을 **추가·완료·조회**하는 작은 프로그램입니다. 할 일에는 **마감일**을 붙일 수 있습니다.
+Node.js만 있으면 실행되며, 따로 설치할 패키지(의존성)는 없습니다.
+
+## 폴더 구성
+
+```
+todo-app/
+├── package.json        npm test 로 테스트를 실행하는 설정 (의존성 없음)
+├── .gitignore          실행 중 생기는 todos.json 을 git 에서 제외
+├── src/
+│   ├── todo.js         할 일 목록을 다루는 함수 (추가·완료·목록 문자열 만들기)
+│   ├── store.js        todos.json 파일 읽기·쓰기
+│   └── cli.js          터미널 명령 처리 (add / done / list)
+└── test/
+    └── todo.test.js    todo.js 의 동작을 확인하는 테스트 5개
 ```
 
-```bash
-claude plugin install pstack@cursor-plugins
+| 파일 | 하는 일 |
+|---|---|
+| `src/todo.js` | `addTodo`(새 할 일 추가, 번호는 1부터), `completeTodo`(해당 번호만 완료로), `formatTodos`(목록을 화면용 문자열로). 원본 목록을 바꾸지 않고 새 목록을 돌려줍니다. |
+| `src/store.js` | 할 일 목록을 `todos.json` 파일 하나에 저장하고 읽습니다. 파일이 없으면 빈 목록으로 시작합니다. |
+| `src/cli.js` | 터미널에서 받은 명령(`add`, `done`, `list`)을 `todo.js` 함수로 처리하고, 결과 목록을 출력합니다. |
+
+## 할 일 하나의 모양
+
+`todos.json`에는 할 일이 아래 모양으로 저장됩니다.
+
+```json
+[
+  { "id": 1, "title": "분리수거", "due": "2026-11-16", "done": false }
+]
 ```
 
-```bash
-claude plugin list
-```
+| 항목 | 뜻 |
+|---|---|
+| `id` | 번호. 1부터 차례로 붙습니다. |
+| `title` | 제목. 비어 있으면 안 됩니다. |
+| `due` | 마감일. `YYYY-MM-DD` 형식이거나, 없으면 `null`. |
+| `done` | 완료했으면 `true`. |
 
-설치 후 Claude Code를 완전히 종료했다가 다시 실행합니다.
+## 실행 방법
 
-## 2단계: 연습용 저장소 `todo-app` 준비
+`todo-app` 폴더 안에서 실행합니다.
 
-이 모듈 폴더의 `todo-app`을 강의 자료 저장소 밖으로 복사합니다. 터미널을 `M37-pstack` 폴더에서 열고 실행합니다.
+| 하고 싶은 것 | 명령 |
+|---|---|
+| 할 일 추가 | `node src/cli.js add <제목> [마감일]` |
+| 완료 표시 | `node src/cli.js done <번호>` |
+| 목록 보기 | `node src/cli.js list` |
+| 테스트 실행 | `npm test` |
 
-macOS / Linux / Git Bash:
-```bash
-cp -r todo-app ~/todo-app
-```
-
-Windows PowerShell:
-```powershell
-Copy-Item -Recurse todo-app $HOME\todo-app
-```
-
-```bash
-cd ~/todo-app
-```
-
-```bash
-git init -b main
-```
-
-```bash
-npm test
-```
+예시:
 
 ```bash
 node src/cli.js add 분리수거 2026-11-16
-```
-
-```bash
+node src/cli.js add "우유 사기"
 node src/cli.js done 1
 ```
 
-```bash
-node -e "require('fs').rmSync('todos.json', { force: true })"
-```
-
-```bash
-git add .
-git commit -m "todo-app 초기 버전"
-```
-
-```bash
-git switch -c feature/recurring-todos
-```
-
-## 3단계: Claude Code CLI를 실행
-
-```bash
-claude
-```
-
-## 4단계: 프롬프트가 뜨면 자연어로 지시
-
-**모델 설정과 검증 스킬** — 예산 `small`, 역할 표는 그대로, 검증 스킬 `yes`, 형식 검증 `no`
+출력:
 
 ```text
-/pstack:setup-pstack
+[x] 1. 분리수거 (마감 2026-11-16)
+[ ] 2. 우유 사기
 ```
 
-```text
-!git add .claude && git commit -m "verify-todo-app 검증 스킬 추가"
-```
+- 제목에 띄어쓰기가 있으면 따옴표로 감쌉니다.
+- 명령을 실행할 때마다 현재 목록 전체가 출력됩니다.
+- 데이터를 처음부터 다시 시작하려면 `todos.json`을 지웁니다.
 
-설정은 새 세션부터 적용되므로 `/exit` 후 `claude`를 다시 실행합니다.
+  ```bash
+  node -e "require('fs').rmSync('todos.json', { force: true })"
+  ```
 
-**코드 이해하기** (읽기 전용)
+잘못 입력하면 오류 메시지가 나옵니다.
 
-```text
-/pstack:how 할 일을 완료하면 어떤 순서로 처리되고 todos.json 에 어떻게 저장돼?
-마감일은 어떤 형태로 다뤄지고 있어?
-```
+| 입력 | 오류 메시지 |
+|---|---|
+| 빈 제목 | `제목은 비어 있을 수 없습니다.` |
+| 형식이 틀린 마감일 (예: `11월 16일`) | `마감일은 YYYY-MM-DD 형식이어야 합니다.` |
+| 없는 번호를 `done` | `<번호>번 할 일을 찾을 수 없습니다.` |
+| `add`·`done`·`list` 외의 명령 | `명령은 add, done, list 중 하나여야 합니다.` |
 
-**기능 구현** — 새 대화에서, 결정할 것은 모두 프롬프트에 (`verify-todo-app`은 실제 생긴 이름으로)
+## 불편한 점 (실습에서 해결할 문제)
 
-```text
-/clear
-```
-
-```text
-/pstack:poteto-mode 반복 할 일 기능을 추가해줘.
-지금은 "매주 월요일 분리수거"를 done 하면 다음 주 것을 손으로 다시 add 해야 해.
-
-정해진 동작:
-- node src/cli.js add <제목> <마감일> --every day|week 로 반복 할 일을 만든다. 반복 할 일은 마감일이 꼭 있어야 한다.
-- 반복 할 일을 done 하면 그 순간 같은 제목의 다음 회차가 새 할 일로 추가된다.
-  다음 마감일은 완료한 날이 아니라 원래 마감일 + 주기(1일 또는 7일)다.
-- 목록에는 "[ ] 2. 분리수거 (마감 2026-11-23, 매주)" 처럼 주기를 함께 보여준다.
-- 마감일 없는 반복, day/week 이외의 주기는 오류 메시지와 함께 종료 코드 1로 거부한다.
-
-완료 조건: npm test 통과(기존 5개 포함), 2026-12-28 매주 반복을 완료하면 2027-01-04 회차가 생김.
-증거: /verify-todo-app 으로 실제 CLI를 실행한 출력을 보여줘.
-제약: 기존 할 일의 목록 출력 형식은 바꾸지 마. 의존성 추가 금지.
-이 폴더의 현재 브랜치(feature/recurring-todos)에서 작업하고 커밋까지만 해. PR은 열지 마.
-```
-
-**깨뜨려 보기** — 새 대화에서
-
-```text
-/clear
-```
-
-```text
-/pstack:interrogate main 이후 이 브랜치의 변경 전체를 회의적으로 봐줘.
-실제 버그나 회귀가 아니면 지적하지 마.
-```
-
-찾은 문제가 있으면:
-
-```text
-/pstack:poteto-mode new task. interrogate 결과 1번을 고쳐줘. repro first, then fix and verify.
-```
-
-**주석 정리**
-
-```text
-/pstack:no-comments the diff
-```
-
-```text
-!git add . && git commit -m "주석 정리"
-```
-
-**PR 열기** (선택, GitHub 저장소와 `gh` 로그인 필요)
+"매주 월요일 분리수거"처럼 **반복되는 일**을 다루지 못합니다.
 
 ```bash
-gh repo create todo-app --private --source=. --remote=origin
-```
-
-```bash
-git push -u origin main
+node src/cli.js add 분리수거 2026-11-16
+node src/cli.js done 1
 ```
 
 ```text
-/pstack:poteto-mode feature/recurring-todos 브랜치로 main 에 PR을 열어줘.
+[x] 1. 분리수거 (마감 2026-11-16)
 ```
 
-## 5단계: 결과 확인
+이번 주 분리수거를 끝내도 다음 주(2026-11-23) 분리수거는 생기지 않습니다. 매주 손으로 다시 `add` 해야 합니다.
 
-```bash
-npm test
-```
+---
 
-```bash
-node -e "require('fs').rmSync('todos.json', { force: true })"
-```
+# 2. 실습을 마친 뒤 바뀌는 점
+
+GUIDE.md의 3~7단계(모델 설정과 검증 스킬 → 코드 이해 → `/pstack:poteto-mode` 구현 → 깨뜨려 보기 → 주석 정리)를 마치면 **반복 할 일** 기능이 추가됩니다.
+아래는 5단계에서 GUIDE.md의 프롬프트대로 동작을 정해 요청했을 때의 모습입니다. 실제 코드와 메시지 문구는 에이전트가 만들기 때문에 조금씩 다를 수 있습니다.
+
+## 새 용어
+
+| 용어 | 뜻 |
+|---|---|
+| **반복 할 일** | 완료하면 같은 제목의 다음 회차가 자동으로 생기는 할 일. 마감일이 반드시 있다. |
+| **반복 주기** | 다음 회차의 마감일을 정하는 간격. 매일(`day`) 또는 매주(`week`). |
+| **회차** | 반복 할 일이 만들어 낸 할 일 하나하나. |
+
+이 용어들은 코드의 함수·테스트 이름에 반영됩니다.
+
+## 바뀐 명령
+
+| 하고 싶은 것 | 명령 |
+|---|---|
+| 반복 할 일 추가 | `node src/cli.js add <제목> <마감일> --every day\|week` |
+| 일반 할 일 추가 | `node src/cli.js add <제목> [마감일]` (이전과 같음) |
+| 완료 표시 | `node src/cli.js done <번호>` (반복 할 일이면 다음 회차가 생김) |
+| 목록 보기 | `node src/cli.js list` (반복 할 일은 주기도 표시) |
+
+## 동작 예시
 
 ```bash
 node src/cli.js add 분리수거 2026-11-16 --every week
 ```
 
+```text
+[ ] 1. 분리수거 (마감 2026-11-16, 매주)
+```
+
 ```bash
 node src/cli.js done 1
 ```
 
-```bash
-node src/cli.js add "물 마시기" --every day
+```text
+[x] 1. 분리수거 (마감 2026-11-16, 매주)
+[ ] 2. 분리수거 (마감 2026-11-23, 매주)
 ```
 
-```bash
-node src/cli.js add 운동 2026-11-16 --every month
-```
+- 반복 할 일을 **완료하는 순간** 다음 회차가 새 할 일로 추가됩니다.
+- 다음 마감일은 **원래 마감일 + 주기**입니다. 늦게 완료해도 "매주 월요일"이 화요일로 밀리지 않습니다.
+- 회차를 완료하지 않고 넘어가도 회차가 쌓이지 않습니다. **완료할 때만** 다음 회차가 생깁니다.
+- 반복이 아닌 일반 할 일은 이전과 똑같이 동작합니다. 완료해도 새 할 일이 생기지 않고, 목록 출력 형식도 바뀌지 않습니다.
+- 달·해가 바뀌는 날짜도 올바르게 계산합니다. 예) 2026-12-28 마감인 매주 반복 할 일을 완료하면 다음 회차는 2027-01-04.
+
+## 새로 거부되는 입력
 
 ```bash
-ls .claude/skills/
+node src/cli.js add "물 마시기" --every day      # 마감일 없는 반복 할 일
+node src/cli.js add 운동 2026-11-16 --every month  # 지원하지 않는 주기
 ```
+
+둘 다 오류 메시지가 나오고 **종료 코드 1**로 끝납니다. 반복 할 일에는 마감일이 꼭 있어야 하고, 주기는 `day`와 `week`만 됩니다.
+
+종료 코드는 명령 직후 아래처럼 확인할 수 있습니다.
 
 ```bash
-git log --oneline main..HEAD
+echo $?
 ```
 
-기대 결과:
-- `~/.claude/rules/pstack-models.md`에 예산과 역할별 모델이 기록되어 있다.
-- `.claude/skills/verify-todo-app/`에 `SKILL.md`와 `features/` 기능 지도가 있다.
-- `done 1` 뒤 목록이 아래처럼 나온다. 새 회차의 마감일은 원래 마감일 + 7일이다.
+## 할 일 하나의 모양 (변경 후 예시)
 
-  ```text
-  [x] 1. 분리수거 (마감 2026-11-16, 매주)
-  [ ] 2. 분리수거 (마감 2026-11-23, 매주)
-  ```
+반복 주기를 기억하는 항목이 하나 늘어납니다. 이름은 에이전트가 정하며, 아래는 예시입니다.
 
-- 마감일 없는 반복 할 일과 `--every month`는 오류 메시지로 거부된다.
-- `/pstack:poteto-mode`의 최종 답변에 설계 시안 비교, 원칙 이름, 실제 CLI 출력이 들어 있다.
-- `/pstack:interrogate` 보고서에 Intent / Findings / Dropped가 있다.
-- `feature/recurring-todos` 브랜치에 작은 커밋 여러 개가 있다.
+```json
+{ "id": 2, "title": "분리수거", "due": "2026-11-23", "done": false, "every": "week" }
+```
+
+## 바뀌는 파일
+
+| 파일 | 바뀌는 내용 |
+|---|---|
+| `src/todo.js` | 반복 주기를 가진 할 일 추가, 완료 시 다음 회차 생성, 목록에 주기 표시, 잘못된 반복 입력 거부 |
+| `src/cli.js` | `add`에서 `--every day\|week` 옵션 처리, 잘못된 입력이면 종료 코드 1 |
+| `test/todo.test.js` | 반복 할 일 동작을 확인하는 테스트 추가 (기존 테스트 5개는 그대로 통과). `/pstack:interrogate`에서 버그를 찾아 고쳤다면 그 버그를 재현하는 테스트도 추가 |
+| `.claude/skills/verify-todo-app/` (새 폴더) | 3단계에서 만든 **검증 스킬**. `SKILL.md`(실행·조작·증거·정리 절차)와 `features/`(기능 지도). 커밋되어 팀원과 다른 에이전트도 씁니다. |
+
+pstack 설정은 저장소 밖에 생깁니다.
+
+| 위치 | 내용 |
+|---|---|
+| `~/.claude/rules/pstack-models.md` (홈 폴더) | 예산(`small` 등)과 역할별 모델 설정. 내 컴퓨터의 모든 프로젝트에 적용됩니다. |
+
+## 검증 스킬로 확인하기
+
+수정 후에는 손으로 명령을 치는 대신, 3단계에서 만든 검증 스킬에게 실제 CLI를 실행해 증거를 보여 달라고 할 수도 있습니다. Claude Code 입력창에서 실행합니다. (스킬 이름은 실제로 생긴 이름으로 바꿉니다)
+
+```text
+/verify-todo-app 반복 할 일을 만들고 완료해서 다음 회차가 생기는지 보여줘.
+```
+
+## 이번에 하지 않은 것 (Out of Scope)
+
+- 매월 반복 (말일 처리가 복잡해서 제외)
+- 반복 중단·삭제
+- 기존 할 일의 목록 출력 형식 변경, 의존성 추가 (5단계 프롬프트의 제약)
+
+다음 실습 과제로 GUIDE.md의 '더 해보기'에서 이어서 해 볼 수 있습니다.

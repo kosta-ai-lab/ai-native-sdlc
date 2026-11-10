@@ -36,7 +36,7 @@ M33(mattpocock/skills), M35(gstack), M37(pstack)은 모두 같은 `todo-app` + �
 ## 문서 구성
 
 - [GUIDE.md](GUIDE.md) — 개념 설명과 0~8단계 따라하기 (단계별 규칙·산출물·체크리스트)
-- [SAMPLE.md](SAMPLE.md) — 명령어와 프롬프트만 모은 실행용 요약
+- [SAMPLE.md](SAMPLE.md) — 예제 앱 `todo-app` 설명 (파일 구조·실행 방법, 실습 후 바뀌는 점)
 - [todo-app/](todo-app/) — 실습 출발점이 되는 할 일 관리 CLI (Node.js, 의존성 없음, 테스트 5개). 강의 자료 저장소 밖으로 복사해서 사용
 
 ## 산출물 4종 (체크리스트)
@@ -44,7 +44,7 @@ M33(mattpocock/skills), M35(gstack), M37(pstack)은 모두 같은 `todo-app` + �
 - [x] 가이드 — GUIDE.md 단계 목적·입력·산출물·체크리스트
 - [ ] 규칙 — CLAUDE.md 조각 (pstack은 모델 설정을 `~/.claude/rules/pstack-models.md`에 별도 규칙으로 저장)
 - [x] 자동화 — pstack 스킬·서브에이전트 (`/pstack:poteto-mode`, `/pstack:interrogate`, `poteto-agent`, Comment Sicko 등) + 생성된 프로젝트 검증 스킬 `verify-todo-app`
-- [x] 샘플 — SAMPLE.md 동작 스텝·프롬프트
+- [x] 샘플 — SAMPLE.md 예제 앱 `todo-app` 설명
 
 ## 품질 기준
 
