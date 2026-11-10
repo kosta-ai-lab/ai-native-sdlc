@@ -14,7 +14,7 @@ Matt Pocock의 에이전트 스킬 모음(mattpocock/skills)을 Claude Code 플�
 | 저장소 설정 | `/setup-matt-pocock-skills` — 이슈 트래커·트리아지 라벨·용어집 위치를 `CLAUDE.md`와 `docs/agents/`에 기록 |
 | 정렬(Alignment) | `/grill-with-docs` — 에이전트가 사람을 인터뷰하며 `GLOSSARY.md`와 ADR을 함께 작성 |
 | 계획 | `/to-spec`, `/to-tickets` — 대화를 스펙으로, 스펙을 예광탄(tracer-bullet) 티켓으로 |
-| 구현·검증 | `/tdd` — 첫 티켓을 빨강→초록 루프로 구현 / `/implement` — 나머지 티켓을 `tdd`와 `code-review`(Standards + Spec 두 축)로 구현·리뷰·커밋 |
+| 구현·검증 | `/tdd` — 티켓을 하나씩 빨강→초록 루프로 구현 (리뷰까지 묶은 `/implement`는 '더 해보기'에서 소개) |
 | 실습 예제 | `todo-app` 할 일 관리 CLI에 "완료하면 다음 회차가 생기는 반복 할 일" 추가 |
 
 ## 왜 할 일 앱 + 반복 할 일인가
@@ -26,16 +26,16 @@ Matt Pocock의 에이전트 스킬 모음(mattpocock/skills)을 Claude Code 플�
 
 ## 문서 구성
 
-- [GUIDE.md](GUIDE.md) — 개념 설명과 0~8단계 따라하기 (단계별 규칙·산출물·체크리스트)
-- [SAMPLE.md](SAMPLE.md) — 명령어와 프롬프트만 모은 실행용 요약
+- [GUIDE.md](GUIDE.md) — 개념 설명과 0~7단계 따라하기 (단계별 규칙·산출물·체크리스트)
+- [SAMPLE.md](SAMPLE.md) — 예제 앱 `todo-app` 설명 (초기 코드 구성·실행 방법, 실습 후 바뀌는 점)
 - [todo-app/](todo-app/) — 실습 출발점이 되는 할 일 관리 CLI (Node.js, 의존성 없음, 테스트 5개). 강의 자료 저장소 밖으로 복사해서 사용
 
 ## 산출물 4종 (체크리스트)
 
 - [x] 가이드 — GUIDE.md 단계 목적·입력·산출물·체크리스트
 - [ ] 규칙 — CLAUDE.md 조각 (`/setup-matt-pocock-skills`가 `## Agent skills` 블록을 자동 생성)
-- [x] 자동화 — mattpocock-skills 플러그인 스킬 (`/grill-with-docs`, `/to-spec`, `/to-tickets`, `/implement` 등)
-- [x] 샘플 — SAMPLE.md 동작 스텝·프롬프트
+- [x] 자동화 — mattpocock-skills 플러그인 스킬 (`/grill-with-docs`, `/to-spec`, `/to-tickets`, `/tdd` 등)
+- [x] 샘플 — SAMPLE.md 예제 앱 `todo-app` 설명
 
 ## 품질 기준
 

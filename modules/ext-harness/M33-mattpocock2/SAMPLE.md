@@ -1,231 +1,193 @@
-# 예제 실행 및 프롬프트
+# 예제 앱: `todo-app`
 
-GUIDE.md의 흐름을 명령어와 프롬프트만 모아 놓은 실행용 요약입니다.
-설명과 체크리스트는 [GUIDE.md](GUIDE.md)를 참고하세요.
+[GUIDE.md](GUIDE.md) 실습에서 기능을 추가하는 대상인 **할 일 관리 CLI**입니다.
+이 문서는 실습을 시작할 때의 **초기 상태**(코드 구성과 실행 방법)와, 실습을 마친 뒤 **무엇이 바뀌는지**를 설명합니다.
 
-## 1단계: 플러그인 설치
+---
 
-```bash
-claude plugin install mattpocock-skills@claude-plugins-official
+# 1. 초기 상태
+
+## 어떤 앱인가
+
+터미널에서 할 일을 **추가·완료·조회**하는 작은 프로그램입니다. 할 일에는 **마감일**을 붙일 수 있습니다.
+Node.js만 있으면 실행되며, 따로 설치할 패키지(의존성)는 없습니다.
+
+## 폴더 구성
+
+```
+todo-app/
+├── package.json        npm test 로 테스트를 실행하는 설정 (의존성 없음)
+├── .gitignore          실행 중 생기는 todos.json 을 git 에서 제외
+├── src/
+│   ├── todo.js         할 일 목록을 다루는 함수 (추가·완료·목록 문자열 만들기)
+│   ├── store.js        todos.json 파일 읽기·쓰기
+│   └── cli.js          터미널 명령 처리 (add / done / list)
+└── test/
+    └── todo.test.js    todo.js 의 동작을 확인하는 테스트 5개
 ```
 
-```bash
-claude plugin list
+| 파일 | 하는 일 |
+|---|---|
+| `src/todo.js` | `addTodo`(새 할 일 추가, 번호는 1부터), `completeTodo`(해당 번호만 완료로), `formatTodos`(목록을 화면용 문자열로). 원본 목록을 바꾸지 않고 새 목록을 돌려줍니다. |
+| `src/store.js` | 할 일 목록을 `todos.json` 파일 하나에 저장하고 읽습니다. 파일이 없으면 빈 목록으로 시작합니다. |
+| `src/cli.js` | 터미널에서 받은 명령(`add`, `done`, `list`)을 `todo.js` 함수로 처리하고, 결과 목록을 출력합니다. |
+
+## 할 일 하나의 모양
+
+`todos.json`에는 할 일이 아래 모양으로 저장됩니다.
+
+```json
+[
+  { "id": 1, "title": "분리수거", "due": "2026-11-16", "done": false }
+]
 ```
 
-설치가 안 되면 저장소를 마켓플레이스로 추가해서 설치합니다.
+| 항목 | 뜻 |
+|---|---|
+| `id` | 번호. 1부터 차례로 붙습니다. |
+| `title` | 제목. 비어 있으면 안 됩니다. |
+| `due` | 마감일. `YYYY-MM-DD` 형식이거나, 없으면 `null`. |
+| `done` | 완료했으면 `true`. |
 
-```bash
-claude plugin marketplace add mattpocock/skills
-```
+## 실행 방법
 
-```bash
-claude plugin install mattpocock-skills@mattpocock
-```
+`todo-app` 폴더 안에서 실행합니다.
 
-## 2단계: 연습용 저장소 `todo-app` 준비
+| 하고 싶은 것 | 명령 |
+|---|---|
+| 할 일 추가 | `node src/cli.js add <제목> [마감일]` |
+| 완료 표시 | `node src/cli.js done <번호>` |
+| 목록 보기 | `node src/cli.js list` |
+| 테스트 실행 | `npm test` |
 
-이 모듈 폴더의 `todo-app`을 강의 자료 저장소 밖으로 복사합니다. 터미널을 `M33-mattpocock2` 폴더에서 열고 실행합니다.
-
-macOS / Linux / Git Bash:
-```bash
-cp -r todo-app ~/todo-app
-```
-
-Windows PowerShell:
-```powershell
-Copy-Item -Recurse todo-app $HOME\todo-app
-```
-
-```bash
-cd ~/todo-app
-```
-
-```bash
-git init
-```
-
-```bash
-npm test
-```
-
-반복되는 일을 매번 다시 추가해야 하는 불편함을 확인합니다.
+예시:
 
 ```bash
 node src/cli.js add 분리수거 2026-11-16
-```
-
-```bash
+node src/cli.js add "우유 사기"
 node src/cli.js done 1
 ```
 
-```bash
-node -e "require('fs').rmSync('todos.json', { force: true })"
-```
-
-```bash
-git add .
-git commit -m "todo-app 초기 버전"
-```
-
-## 3단계: Claude Code CLI를 실행
-
-플러그인을 설치할 때 Claude Code가 켜져 있었다면 완전히 종료한 뒤, `todo-app` 폴더에서 다시 실행합니다.
-
-```bash
-claude
-```
-
-## 4단계: 프롬프트가 뜨면 자연어로 지시
-
-**저장소 설정** (저장소마다 한 번)
+출력:
 
 ```text
-/setup-matt-pocock-skills
+[x] 1. 분리수거 (마감 2026-11-16)
+[ ] 2. 우유 사기
 ```
 
-질문에는 `Local markdown` → `yes`(기본 라벨) → `CLAUDE.md` → `yes`(초안 승인) 순서로 답합니다.
+- 제목에 띄어쓰기가 있으면 따옴표로 감쌉니다.
+- 명령을 실행할 때마다 현재 목록 전체가 출력됩니다.
+- 데이터를 처음부터 다시 시작하려면 `todos.json`을 지웁니다.
 
-```text
-!git add . && git commit -m "mattpocock skills 설정"
-```
+  ```bash
+  node -e "require('fs').rmSync('todos.json', { force: true })"
+  ```
 
-**아이디어 인터뷰** — 여기서부터 티켓까지 `/clear` 없이 한 창에서 진행
+잘못 입력하면 오류 메시지가 나옵니다.
 
-```text
-/grill-with-docs 반복 할 일 기능을 추가하고 싶어.
-지금은 "매주 월요일 분리수거"를 끝내면 다음 주 것을 매번 손으로 다시 add 해야 해.
-반복으로 등록해 두면 완료할 때 다음 회차가 알아서 생겼으면 좋겠어.
-```
-
-질문 라운드에는 기본으로 `전부 추천대로 진행할게`라고 답하고, 추천 답이 아래 결정과 다른 질문만 직접 적어 덧붙입니다.
-
-| 결정할 것 | 답 |
+| 입력 | 오류 메시지 |
 |---|---|
-| 반복 주기 | 매일(day)·매주(week)만. 매월은 Out of Scope |
-| 다음 회차가 생기는 때 | 완료하는 순간 |
-| 다음 마감일 기준 | 원래 마감일 + 주기 |
-| 마감일 없는 반복 할 일 | 허용하지 않음 |
-| 지난 회차를 안 하고 넘어가면 | 쌓이지 않음. 완료할 때만 다음 회차 생성 |
-| 반복 중단·삭제 | Out of Scope |
-| 명령 형식 | `add <제목> <마감일> --every day\|week` |
-| 목록 표시 | `(마감 2026-11-23, 매주)` 처럼 주기 함께 표시 |
+| 빈 제목 | `제목은 비어 있을 수 없습니다.` |
+| 형식이 틀린 마감일 (예: `11월 16일`) | `마감일은 YYYY-MM-DD 형식이어야 합니다.` |
+| 없는 번호를 `done` | `<번호>번 할 일을 찾을 수 없습니다.` |
+| `add`·`done`·`list` 외의 명령 | `명령은 add, done, list 중 하나여야 합니다.` |
 
-```text
-반복 할 일은 마감일이 꼭 있어야 해. 명령은 add <제목> <마감일> --every day 또는 week 로 하자.
-반복 중단이나 삭제는 이번엔 안 할 거야.
-```
+## 불편한 점 (실습에서 해결할 문제)
 
-**스펙 만들기**
-
-```text
-/to-spec
-```
-
-**티켓으로 쪼개기**
-
-```text
-/to-tickets
-```
-
-```text
-다 좋아, 그대로 티켓 만들어줘.
-```
-
-```text
-!git add . && git commit -m "반복 할 일 스펙과 티켓"
-```
-
-**첫 티켓을 TDD로 구현** — 티켓마다 `/clear` 후 새로 시작 (파일 이름은 실제 생성된 이름으로 바꿉니다)
-
-```text
-!git switch -c feature/recurring-todos
-```
-
-```text
-/clear
-```
-
-```text
-/tdd @.scratch/recurring-todos/issues/01-create-recurring-todo.md
-```
-
-```text
-티켓 01의 완료 조건 체크박스를 갱신하고 커밋해줘.
-```
-
-**나머지 티켓 구현과 리뷰** — `/implement`가 tdd → code-review → 커밋까지 진행
-
-```text
-/clear
-```
-
-```text
-/implement @.scratch/recurring-todos/issues/02-create-next-occurrence-on-complete.md
-리뷰 기준점(fixed point)은 main 브랜치로 해줘.
-```
-
-```text
-/clear
-```
-
-```text
-/implement @.scratch/recurring-todos/issues/03-reject-invalid-recurrence.md
-리뷰 기준점(fixed point)은 main 브랜치로 해줘.
-```
-
-**별도 리뷰** (선택, 새 창에서 플러그인 정식 이름으로)
-
-```text
-/mattpocock-skills:code-review main
-```
-
-**회고** (선택, 구현을 마친 창에서 `/clear` 전에)
-
-```text
-/retro
-```
-
-## 5단계: 결과 확인
+"매주 월요일 분리수거"처럼 **반복되는 일**을 다루지 못합니다.
 
 ```bash
-npm test
+node src/cli.js add 분리수거 2026-11-16
+node src/cli.js done 1
 ```
 
-```bash
-node -e "require('fs').rmSync('todos.json', { force: true })"
+```text
+[x] 1. 분리수거 (마감 2026-11-16)
 ```
+
+이번 주 분리수거를 끝내도 다음 주(2026-11-23) 분리수거는 생기지 않습니다. 매주 손으로 다시 `add` 해야 합니다.
+
+---
+
+# 2. 실습을 마친 뒤 바뀌는 점
+
+GUIDE.md의 4~7단계를 마치면 **반복 할 일** 기능이 추가됩니다.
+아래는 4단계 인터뷰에서 GUIDE.md의 표대로 결정했을 때의 모습입니다. 실제 코드와 메시지 문구는 에이전트가 만들기 때문에 조금씩 다를 수 있습니다.
+
+## 새 용어
+
+| 용어 | 뜻 |
+|---|---|
+| **반복 할 일** | 완료하면 같은 제목의 다음 회차가 자동으로 생기는 할 일. 마감일이 반드시 있다. |
+| **반복 주기** | 다음 회차의 마감일을 정하는 간격. 매일(`day`) 또는 매주(`week`). |
+| **회차** | 반복 할 일이 만들어 낸 할 일 하나하나. |
+
+이 용어들은 실습 중 생기는 `GLOSSARY.md`에 기록되고, 코드의 함수·테스트 이름에도 쓰입니다.
+
+## 바뀐 명령
+
+| 하고 싶은 것 | 명령 |
+|---|---|
+| 반복 할 일 추가 | `node src/cli.js add <제목> <마감일> --every day\|week` |
+| 일반 할 일 추가 | `node src/cli.js add <제목> [마감일]` (이전과 같음) |
+| 완료 표시 | `node src/cli.js done <번호>` (반복 할 일이면 다음 회차가 생김) |
+| 목록 보기 | `node src/cli.js list` (반복 할 일은 주기도 표시) |
+
+## 동작 예시
 
 ```bash
 node src/cli.js add 분리수거 2026-11-16 --every week
 ```
 
+```text
+[ ] 1. 분리수거 (마감 2026-11-16, 매주)
+```
+
 ```bash
 node src/cli.js done 1
 ```
 
-```bash
-node src/cli.js add "물 마시기" --every day
+```text
+[x] 1. 분리수거 (마감 2026-11-16, 매주)
+[ ] 2. 분리수거 (마감 2026-11-23, 매주)
 ```
 
-```bash
-node src/cli.js add 운동 2026-11-16 --every month
-```
+- 반복 할 일을 **완료하는 순간** 다음 회차가 새 할 일로 추가됩니다.
+- 다음 마감일은 **원래 마감일 + 주기**입니다. 늦게 완료해도 "매주 월요일"이 화요일로 밀리지 않습니다.
+- 회차를 완료하지 않고 넘어가도 회차가 쌓이지 않습니다. **완료할 때만** 다음 회차가 생깁니다.
+- 반복이 아닌 일반 할 일은 이전과 똑같이 동작합니다. 완료해도 새 할 일이 생기지 않습니다.
+
+## 새로 거부되는 입력
 
 ```bash
-git log --oneline main..HEAD
+node src/cli.js add "물 마시기" --every day      # 마감일 없는 반복 할 일
+node src/cli.js add 운동 2026-11-16 --every month  # 지원하지 않는 주기
 ```
 
-기대 결과:
-- `CLAUDE.md`(`## Agent skills` 블록)와 `docs/agents/issue-tracker.md`, `triage-labels.md`, `domain.md`가 생성된다.
-- 루트에 `GLOSSARY.md`가 생기고 할 일·마감일·반복 할 일·반복 주기·회차 같은 용어가 정의된다.
-- `.scratch/<기능 이름>/spec.md`와 `.scratch/<기능 이름>/issues/01-….md`, `02-….md`, `03-….md`가 생성된다.
-- `done 1` 뒤 목록이 아래처럼 나온다. 새 회차의 마감일은 원래 마감일 + 7일이다.
+둘 다 오류 메시지가 나옵니다. 반복 할 일에는 마감일이 꼭 있어야 하고, 주기는 `day`와 `week`만 됩니다.
 
-  ```text
-  [x] 1. 분리수거 (마감 2026-11-16, 매주)
-  [ ] 2. 분리수거 (마감 2026-11-23, 매주)
-  ```
+## 할 일 하나의 모양 (변경 후 예시)
 
-- 마감일 없는 반복 할 일과 `--every month`는 오류 메시지로 거부된다.
-- `feature/recurring-todos` 브랜치에 티켓별 커밋이 있고, 각 티켓마다 Standards / Spec 두 축 리뷰 결과가 대화에 남는다.
+반복 주기를 기억하는 항목이 하나 늘어납니다. 이름은 에이전트가 용어집에 맞춰 정하며, 아래는 예시입니다.
+
+```json
+{ "id": 2, "title": "분리수거", "due": "2026-11-23", "done": false, "every": "week" }
+```
+
+## 바뀌는 파일
+
+| 파일 | 바뀌는 내용 |
+|---|---|
+| `src/todo.js` | 반복 주기를 가진 할 일 추가, 완료 시 다음 회차 생성, 목록에 주기 표시, 잘못된 반복 입력 거부 |
+| `src/cli.js` | `add`에서 `--every day\|week` 옵션 처리 |
+| `test/todo.test.js` | 반복 할 일 동작을 확인하는 테스트 추가 (기존 테스트 5개는 그대로 통과) |
+| `GLOSSARY.md` (새 파일) | 반복 할 일, 반복 주기, 회차 등 용어 정의 |
+| `.scratch/<기능 이름>/` (새 폴더) | 스펙(`spec.md`)과 티켓(`issues/01-….md` 등) |
+| `CLAUDE.md`, `docs/agents/` (새 파일) | 3단계 저장소 설정에서 생기는 에이전트용 설정 |
+
+## 이번에 하지 않은 것 (Out of Scope)
+
+- 매월 반복 (말일 처리가 복잡해서 제외)
+- 반복 중단·삭제
+
+다음 실습 과제로 GUIDE.md의 '더 해보기'에서 이어서 해 볼 수 있습니다.
