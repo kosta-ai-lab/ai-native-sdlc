@@ -1,0 +1,9 @@
+{
+  "name": "dutch-pay",
+  "version": "1.0.0",
+  "description": "mattpocock/skills 실습용 더치페이 계산기",
+  "type": "module",
+  "scripts": {
+    "test": "node --test"
+  }
+}
