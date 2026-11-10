@@ -1,0 +1,19 @@
+{
+  "name": "ai-native-sdlc-learning-site",
+  "version": "0.1.0",
+  "private": true,
+  "description": "AI-Native SDLC 학습 지도 정적 사이트 (GitHub Pages용 첫 시안)",
+  "license": "Apache-2.0",
+  "type": "module",
+  "engines": {
+    "node": ">=18.17"
+  },
+  "scripts": {
+    "build": "node scripts/build.mjs",
+    "check": "node scripts/check.mjs",
+    "check:dist": "node scripts/check.mjs --dist",
+    "test": "node scripts/test.mjs",
+    "serve": "node scripts/serve.mjs",
+    "verify": "node scripts/build.mjs && node scripts/check.mjs --dist && node scripts/test.mjs"
+  }
+}

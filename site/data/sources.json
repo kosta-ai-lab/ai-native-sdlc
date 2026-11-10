@@ -1,0 +1,971 @@
+{
+  "repository": "kosta-ai-lab/ai-native-sdlc",
+  "ref": "main",
+  "urlBase": "https://github.com/kosta-ai-lab/ai-native-sdlc",
+  "note": "사이트가 연결하는 원본 자료 목록. status는 원본 문서의 표기 또는 자료 구분이며, 사이트가 판단한 완성도가 아님. check.mjs가 git ls-files와 verify 문자열로 대조한다.",
+  "sources": [
+    {
+      "id": "readme",
+      "path": "README.md",
+      "kind": "file",
+      "url": "https://github.com/kosta-ai-lab/ai-native-sdlc/blob/main/README.md",
+      "type": "guide",
+      "title": "저장소 안내 README",
+      "status": "원문 상태 표기 없음",
+      "evidence": "README.md '자료의 상태' 절: 모든 모듈이 완성된 것은 아님",
+      "verify": [
+        "모든 모듈이 완성된 것은 아니며"
+      ]
+    },
+    {
+      "id": "methodology",
+      "path": "METHODOLOGY.md",
+      "kind": "file",
+      "url": "https://github.com/kosta-ai-lab/ai-native-sdlc/blob/main/METHODOLOGY.md",
+      "type": "guide",
+      "title": "방법론 — 전주기 한 장 요약",
+      "status": "원문 상태 표기 없음",
+      "evidence": "METHODOLOGY.md '전주기 단계' 표(01~10)",
+      "verify": [
+        "전주기 단계",
+        "코딩 전에 청사진"
+      ]
+    },
+    {
+      "id": "getting-started",
+      "path": "docs/GETTING_STARTED.md",
+      "kind": "file",
+      "url": "https://github.com/kosta-ai-lab/ai-native-sdlc/blob/main/docs/GETTING_STARTED.md",
+      "type": "guide",
+      "title": "처음 시작하기",
+      "status": "공개 준비 검토 초안",
+      "evidence": "docs/GETTING_STARTED.md 제목 표기",
+      "verify": [
+        "공개 준비 검토 초안"
+      ]
+    },
+    {
+      "id": "verification",
+      "path": "docs/RELEASE_VERIFICATION_20261104.md",
+      "kind": "file",
+      "url": "https://github.com/kosta-ai-lab/ai-native-sdlc/blob/main/docs/RELEASE_VERIFICATION_20261104.md",
+      "type": "record",
+      "title": "검증 기록 (2026-11-04)",
+      "status": "원문 상태 표기 없음",
+      "evidence": "README.md '자료의 상태' 절에서 연결"
+    },
+    {
+      "id": "contributing",
+      "path": "CONTRIBUTING.md",
+      "kind": "file",
+      "url": "https://github.com/kosta-ai-lab/ai-native-sdlc/blob/main/CONTRIBUTING.md",
+      "type": "policy",
+      "title": "기여 가이드",
+      "status": "원문 상태 표기 없음",
+      "evidence": "README.md '함께 기여하기' 절에서 연결"
+    },
+    {
+      "id": "conduct",
+      "path": "CODE_OF_CONDUCT.md",
+      "kind": "file",
+      "url": "https://github.com/kosta-ai-lab/ai-native-sdlc/blob/main/CODE_OF_CONDUCT.md",
+      "type": "policy",
+      "title": "행동 기준",
+      "status": "원문 상태 표기 없음",
+      "evidence": "README.md '함께 기여하기' 절에서 연결"
+    },
+    {
+      "id": "security",
+      "path": "SECURITY.md",
+      "kind": "file",
+      "url": "https://github.com/kosta-ai-lab/ai-native-sdlc/blob/main/SECURITY.md",
+      "type": "policy",
+      "title": "보안 안내",
+      "status": "원문 상태 표기 없음",
+      "evidence": "README.md '함께 기여하기' 절에서 연결"
+    },
+    {
+      "id": "rfcs",
+      "path": "rfcs/README.md",
+      "kind": "file",
+      "url": "https://github.com/kosta-ai-lab/ai-native-sdlc/blob/main/rfcs/README.md",
+      "type": "policy",
+      "title": "RFC 안내",
+      "status": "원문 상태 표기 없음",
+      "evidence": "README.md 기여 절차 3번에서 연결"
+    },
+    {
+      "id": "backlog",
+      "path": "BACKLOG.md",
+      "kind": "file",
+      "url": "https://github.com/kosta-ai-lab/ai-native-sdlc/blob/main/BACKLOG.md",
+      "type": "record",
+      "title": "백로그",
+      "status": "원문 상태 표기 없음",
+      "evidence": "README.md '저장소 둘러보기' 절에서 연결"
+    },
+    {
+      "id": "license",
+      "path": "LICENSE",
+      "kind": "file",
+      "url": "https://github.com/kosta-ai-lab/ai-native-sdlc/blob/main/LICENSE",
+      "type": "license",
+      "title": "LICENSE",
+      "status": "원문 상태 표기 없음",
+      "evidence": "README.md '라이선스' 절",
+      "verify": [
+        "CC BY-NC 4.0",
+        "Apache"
+      ]
+    },
+    {
+      "id": "licensing-policy",
+      "path": "docs/LICENSING_POLICY.md",
+      "kind": "file",
+      "url": "https://github.com/kosta-ai-lab/ai-native-sdlc/blob/main/docs/LICENSING_POLICY.md",
+      "type": "license",
+      "title": "라이선스 정책",
+      "status": "원문 상태 표기 없음",
+      "evidence": "README.md '라이선스' 절에서 연결"
+    },
+    {
+      "id": "third-party",
+      "path": "THIRD_PARTY_NOTICES.md",
+      "kind": "file",
+      "url": "https://github.com/kosta-ai-lab/ai-native-sdlc/blob/main/THIRD_PARTY_NOTICES.md",
+      "type": "license",
+      "title": "제3자 자료 고지",
+      "status": "원문 상태 표기 없음",
+      "evidence": "README.md '라이선스' 절에서 연결"
+    },
+    {
+      "id": "courses-index",
+      "path": "courses/README.md",
+      "kind": "file",
+      "url": "https://github.com/kosta-ai-lab/ai-native-sdlc/blob/main/courses/README.md",
+      "type": "course-index",
+      "title": "강의 목록",
+      "status": "원문 상태 표기 없음",
+      "evidence": "courses/README.md '게재된 강의' 표",
+      "verify": [
+        "게재된 강의",
+        "박준성",
+        "윤성열"
+      ]
+    },
+    {
+      "id": "sample-course",
+      "path": "courses/_sample-course/README.md",
+      "kind": "file",
+      "url": "https://github.com/kosta-ai-lab/ai-native-sdlc/blob/main/courses/_sample-course/README.md",
+      "type": "template",
+      "title": "강의 폴더 견본",
+      "status": "강의 견본",
+      "evidence": "courses/_sample-course/README.md: '이 폴더는 견본(sample)입니다'",
+      "verify": [
+        "견본(sample)"
+      ]
+    },
+    {
+      "id": "m01",
+      "path": "modules/01-business-reinvention/README.md",
+      "kind": "file",
+      "url": "https://github.com/kosta-ai-lab/ai-native-sdlc/blob/main/modules/01-business-reinvention/README.md",
+      "type": "module",
+      "title": "모듈 01 — 비즈니스 리인벤션",
+      "status": "초안",
+      "evidence": "modules/01-business-reinvention/README.md 상단: '상태: 초안 · 담당: 협의'",
+      "verify": [
+        "상태: 초안",
+        "담당: 협의"
+      ]
+    },
+    {
+      "id": "m02",
+      "path": "modules/02-semantic-model/README.md",
+      "kind": "file",
+      "url": "https://github.com/kosta-ai-lab/ai-native-sdlc/blob/main/modules/02-semantic-model/README.md",
+      "type": "module",
+      "title": "모듈 02 — 시맨틱 모델 (온톨로지)",
+      "status": "초안",
+      "evidence": "modules/02-semantic-model/README.md 상단: '상태: 초안 · 담당: 김정아 교수'",
+      "verify": [
+        "상태: 초안",
+        "담당: 김정아 교수"
+      ]
+    },
+    {
+      "id": "m03",
+      "path": "modules/03-requirements/README.md",
+      "kind": "file",
+      "url": "https://github.com/kosta-ai-lab/ai-native-sdlc/blob/main/modules/03-requirements/README.md",
+      "type": "module",
+      "title": "모듈 03 — 유즈케이스·요구사항",
+      "status": "초안",
+      "evidence": "modules/03-requirements/README.md 상단: '상태: 초안 · 담당: 윤성열'",
+      "verify": [
+        "상태: 초안",
+        "담당: 윤성열"
+      ]
+    },
+    {
+      "id": "m04",
+      "path": "modules/04-sdd",
+      "kind": "dir",
+      "url": "https://github.com/kosta-ai-lab/ai-native-sdlc/tree/main/modules/04-sdd",
+      "type": "module-group",
+      "title": "모듈 04 — SDD 하위 모듈 폴더",
+      "status": "상위 README 없음",
+      "evidence": "git ls-files: modules/04-sdd에 상위 README.md가 없고 하위 모듈 M01~M05가 있음"
+    },
+    {
+      "id": "m04-kiro",
+      "path": "modules/04-sdd/M01-kiro/README.md",
+      "kind": "file",
+      "url": "https://github.com/kosta-ai-lab/ai-native-sdlc/blob/main/modules/04-sdd/M01-kiro/README.md",
+      "type": "module",
+      "title": "M01 — Kiro로 하는 IDE 안의 스펙 주도 개발",
+      "status": "초안",
+      "evidence": "modules/04-sdd/M01-kiro/README.md 상단: '상태: 초안 · 담당: 이선아 교수'",
+      "verify": [
+        "상태: 초안",
+        "담당: 이선아 교수"
+      ]
+    },
+    {
+      "id": "m04-openspec",
+      "path": "modules/04-sdd/M02-open-spec-01/README.md",
+      "kind": "file",
+      "url": "https://github.com/kosta-ai-lab/ai-native-sdlc/blob/main/modules/04-sdd/M02-open-spec-01/README.md",
+      "type": "module",
+      "title": "M02 — OpenSpec으로 하는 변경 중심 스펙 주도 개발",
+      "status": "초안",
+      "evidence": "modules/04-sdd/M02-open-spec-01/README.md 상단: '상태: 초안 · 담당: 이선아 교수'",
+      "verify": [
+        "상태: 초안",
+        "담당: 이선아 교수"
+      ]
+    },
+    {
+      "id": "m04-speckit",
+      "path": "modules/04-sdd/M03-spec-kit/README.md",
+      "kind": "file",
+      "url": "https://github.com/kosta-ai-lab/ai-native-sdlc/blob/main/modules/04-sdd/M03-spec-kit/README.md",
+      "type": "module",
+      "title": "M03 — Spec Kit으로 하는 단계별 스펙 주도 개발",
+      "status": "초안",
+      "evidence": "modules/04-sdd/M03-spec-kit/README.md 상단: '상태: 초안 · 담당: 이선아 교수'",
+      "verify": [
+        "상태: 초안",
+        "담당: 이선아 교수"
+      ]
+    },
+    {
+      "id": "m04-gsd",
+      "path": "modules/04-sdd/M04-gsd/README.md",
+      "kind": "file",
+      "url": "https://github.com/kosta-ai-lab/ai-native-sdlc/blob/main/modules/04-sdd/M04-gsd/README.md",
+      "type": "module",
+      "title": "M04 — GSD로 하는 컨텍스트 엔지니어링 스펙 주도 개발",
+      "status": "초안",
+      "evidence": "modules/04-sdd/M04-gsd/README.md 상단: '상태: 초안 · 담당: 이선아 교수'",
+      "verify": [
+        "상태: 초안",
+        "담당: 이선아 교수"
+      ]
+    },
+    {
+      "id": "m04-bmad",
+      "path": "modules/04-sdd/M05-bmad/README.md",
+      "kind": "file",
+      "url": "https://github.com/kosta-ai-lab/ai-native-sdlc/blob/main/modules/04-sdd/M05-bmad/README.md",
+      "type": "module",
+      "title": "M05 — BMAD Method로 하는 에이전트 협업형 스펙 주도 개발",
+      "status": "초안",
+      "evidence": "modules/04-sdd/M05-bmad/README.md 상단: '상태: 초안 · 담당: 이선아 교수'",
+      "verify": [
+        "상태: 초안",
+        "담당: 이선아 교수"
+      ]
+    },
+    {
+      "id": "m04-slides",
+      "path": "modules/04-sdd/SDDs.pptx",
+      "kind": "file",
+      "url": "https://github.com/kosta-ai-lab/ai-native-sdlc/blob/main/modules/04-sdd/SDDs.pptx",
+      "type": "slides",
+      "title": "SDD 발표 자료 (PPTX)",
+      "status": "원문 상태 표기 없음",
+      "evidence": "git ls-files로 파일 존재 확인. 원본은 저장소에서 열람"
+    },
+    {
+      "id": "m05",
+      "path": "modules/05-bdd/README.md",
+      "kind": "file",
+      "url": "https://github.com/kosta-ai-lab/ai-native-sdlc/blob/main/modules/05-bdd/README.md",
+      "type": "module",
+      "title": "모듈 05 — BDD 인수조건",
+      "status": "초안",
+      "evidence": "modules/05-bdd/README.md 상단: '상태: 초안 · 담당: 박준성 회장'",
+      "verify": [
+        "상태: 초안",
+        "담당: 박준성 회장"
+      ]
+    },
+    {
+      "id": "m06",
+      "path": "modules/06-coding-tdd/README.md",
+      "kind": "file",
+      "url": "https://github.com/kosta-ai-lab/ai-native-sdlc/blob/main/modules/06-coding-tdd/README.md",
+      "type": "module",
+      "title": "모듈 06 — 코딩 + TDD",
+      "status": "시드 모듈",
+      "evidence": "modules/06-coding-tdd/README.md 상단: '상태: 시드 모듈 (담당: 윤성열)'",
+      "verify": [
+        "상태: 시드 모듈",
+        "담당: 윤성열"
+      ]
+    },
+    {
+      "id": "m06-rules",
+      "path": "modules/06-coding-tdd/CLAUDE.md",
+      "kind": "file",
+      "url": "https://github.com/kosta-ai-lab/ai-native-sdlc/blob/main/modules/06-coding-tdd/CLAUDE.md",
+      "type": "rules",
+      "title": "모듈 06 규칙 (CLAUDE.md)",
+      "status": "시드 모듈 구성물",
+      "evidence": "modules/06-coding-tdd/README.md '산출물 4종'에서 규칙으로 연결"
+    },
+    {
+      "id": "m06-skill",
+      "path": "modules/06-coding-tdd/skills/test-first.md",
+      "kind": "file",
+      "url": "https://github.com/kosta-ai-lab/ai-native-sdlc/blob/main/modules/06-coding-tdd/skills/test-first.md",
+      "type": "automation",
+      "title": "모듈 06 자동화 (test-first 스킬)",
+      "status": "시드 모듈 구성물",
+      "evidence": "modules/06-coding-tdd/README.md '산출물 4종'에서 자동화로 연결"
+    },
+    {
+      "id": "m06-sample",
+      "path": "modules/06-coding-tdd/sample/README.md",
+      "kind": "file",
+      "url": "https://github.com/kosta-ai-lab/ai-native-sdlc/blob/main/modules/06-coding-tdd/sample/README.md",
+      "type": "sample",
+      "title": "모듈 06 샘플 — TDD로 할 일 생성",
+      "status": "시드 모듈 구성물",
+      "evidence": "modules/06-coding-tdd/README.md '산출물 4종'에서 샘플로 연결"
+    },
+    {
+      "id": "m07",
+      "path": "modules/07-object-design/README.md",
+      "kind": "file",
+      "url": "https://github.com/kosta-ai-lab/ai-native-sdlc/blob/main/modules/07-object-design/README.md",
+      "type": "module",
+      "title": "모듈 07 — 객체설계 (SOLID·API)",
+      "status": "초안",
+      "evidence": "modules/07-object-design/README.md 상단: '상태: 초안 · 담당: 협의'",
+      "verify": [
+        "상태: 초안",
+        "담당: 협의"
+      ]
+    },
+    {
+      "id": "m08",
+      "path": "modules/08-ci/README.md",
+      "kind": "file",
+      "url": "https://github.com/kosta-ai-lab/ai-native-sdlc/blob/main/modules/08-ci/README.md",
+      "type": "module",
+      "title": "모듈 08 — CI 테스트 게이트",
+      "status": "초안",
+      "evidence": "modules/08-ci/README.md 상단: '상태: 초안 · 담당: 윤성열·최성웅'",
+      "verify": [
+        "상태: 초안",
+        "담당: 윤성열·최성웅"
+      ]
+    },
+    {
+      "id": "m09",
+      "path": "modules/09-cd-architecture/README.md",
+      "kind": "file",
+      "url": "https://github.com/kosta-ai-lab/ai-native-sdlc/blob/main/modules/09-cd-architecture/README.md",
+      "type": "module",
+      "title": "모듈 09 — CD·아키텍처 검증",
+      "status": "초안",
+      "evidence": "modules/09-cd-architecture/README.md 상단: '상태: 초안 · 담당: 최성웅'",
+      "verify": [
+        "상태: 초안",
+        "담당: 최성웅"
+      ]
+    },
+    {
+      "id": "m10",
+      "path": "modules/10-security/README.md",
+      "kind": "file",
+      "url": "https://github.com/kosta-ai-lab/ai-native-sdlc/blob/main/modules/10-security/README.md",
+      "type": "module",
+      "title": "모듈 10 — 보안·규제·윤리",
+      "status": "초안",
+      "evidence": "modules/10-security/README.md 상단: '상태: 초안 · 담당: 협의'",
+      "verify": [
+        "상태: 초안",
+        "담당: 협의"
+      ]
+    },
+    {
+      "id": "emb",
+      "path": "modules/ext-embedded/README.md",
+      "kind": "file",
+      "url": "https://github.com/kosta-ai-lab/ai-native-sdlc/blob/main/modules/ext-embedded/README.md",
+      "type": "module",
+      "title": "확장 — 환경 구축 (임베디드)",
+      "status": "초안",
+      "evidence": "modules/ext-embedded/README.md 상단: '상태: 초안 · 담당: 최성웅 교수'",
+      "verify": [
+        "상태: 초안",
+        "담당: 최성웅 교수"
+      ]
+    },
+    {
+      "id": "harness",
+      "path": "modules/ext-harness",
+      "kind": "dir",
+      "url": "https://github.com/kosta-ai-lab/ai-native-sdlc/tree/main/modules/ext-harness",
+      "type": "module-group",
+      "title": "확장 — 에이전트 하니스 하위 모듈 폴더",
+      "status": "상위 README 없음",
+      "evidence": "git ls-files: modules/ext-harness에 상위 README.md가 없고 하위 모듈 12개가 있음"
+    },
+    {
+      "id": "h-m01",
+      "path": "modules/ext-harness/M01-harness-basics/README.md",
+      "kind": "file",
+      "url": "https://github.com/kosta-ai-lab/ai-native-sdlc/blob/main/modules/ext-harness/M01-harness-basics/README.md",
+      "type": "module",
+      "title": "M01 — 하니스 기초",
+      "status": "초안",
+      "evidence": "modules/ext-harness/M01-harness-basics/README.md 상단: '상태: 초안 · 담당: 이선아 교수'",
+      "verify": [
+        "상태: 초안",
+        "담당: 이선아 교수"
+      ]
+    },
+    {
+      "id": "h-m03",
+      "path": "modules/ext-harness/M03-harness-100-reuse/README.md",
+      "kind": "file",
+      "url": "https://github.com/kosta-ai-lab/ai-native-sdlc/blob/main/modules/ext-harness/M03-harness-100-reuse/README.md",
+      "type": "module",
+      "title": "M03 — 기존 하니스 활용",
+      "status": "초안",
+      "evidence": "modules/ext-harness/M03-harness-100-reuse/README.md 상단: '상태: 초안 · 담당: 이선아 교수'",
+      "verify": [
+        "상태: 초안",
+        "담당: 이선아 교수"
+      ]
+    },
+    {
+      "id": "h-m05",
+      "path": "modules/ext-harness/M05-meta-harness/README.md",
+      "kind": "file",
+      "url": "https://github.com/kosta-ai-lab/ai-native-sdlc/blob/main/modules/ext-harness/M05-meta-harness/README.md",
+      "type": "module",
+      "title": "M05 — 메타 하니스",
+      "status": "초안",
+      "evidence": "modules/ext-harness/M05-meta-harness/README.md 상단: '상태: 초안 · 담당: 이선아 교수'",
+      "verify": [
+        "상태: 초안",
+        "담당: 이선아 교수"
+      ]
+    },
+    {
+      "id": "h-m07",
+      "path": "modules/ext-harness/M07-moai-adk/README.md",
+      "kind": "file",
+      "url": "https://github.com/kosta-ai-lab/ai-native-sdlc/blob/main/modules/ext-harness/M07-moai-adk/README.md",
+      "type": "module",
+      "title": "M07 — MoAI-ADK",
+      "status": "초안",
+      "evidence": "modules/ext-harness/M07-moai-adk/README.md 상단: '상태: 초안 · 담당: 이선아 교수'",
+      "verify": [
+        "상태: 초안",
+        "담당: 이선아 교수"
+      ]
+    },
+    {
+      "id": "h-m09",
+      "path": "modules/ext-harness/M09-loop-engineering/README.md",
+      "kind": "file",
+      "url": "https://github.com/kosta-ai-lab/ai-native-sdlc/blob/main/modules/ext-harness/M09-loop-engineering/README.md",
+      "type": "module",
+      "title": "M09 — 루프 엔지니어링",
+      "status": "초안",
+      "evidence": "modules/ext-harness/M09-loop-engineering/README.md 상단: '상태: 초안 · 담당: 이선아 교수'",
+      "verify": [
+        "상태: 초안",
+        "담당: 이선아 교수"
+      ]
+    },
+    {
+      "id": "h-m11",
+      "path": "modules/ext-harness/M11-ralph-loop/README.md",
+      "kind": "file",
+      "url": "https://github.com/kosta-ai-lab/ai-native-sdlc/blob/main/modules/ext-harness/M11-ralph-loop/README.md",
+      "type": "module",
+      "title": "M11 — Ralph 루프",
+      "status": "초안",
+      "evidence": "modules/ext-harness/M11-ralph-loop/README.md 상단: '상태: 초안 · 담당: 이선아 교수'",
+      "verify": [
+        "상태: 초안",
+        "담당: 이선아 교수"
+      ]
+    },
+    {
+      "id": "h-m13",
+      "path": "modules/ext-harness/M13-orca-ade/README.md",
+      "kind": "file",
+      "url": "https://github.com/kosta-ai-lab/ai-native-sdlc/blob/main/modules/ext-harness/M13-orca-ade/README.md",
+      "type": "module",
+      "title": "M13 — Orca ADE",
+      "status": "초안",
+      "evidence": "modules/ext-harness/M13-orca-ade/README.md 상단: '상태: 초안 · 담당: 이선아 교수'",
+      "verify": [
+        "상태: 초안",
+        "담당: 이선아 교수"
+      ]
+    },
+    {
+      "id": "h-m15",
+      "path": "modules/ext-harness/M15-orca-graph-engineering/README.md",
+      "kind": "file",
+      "url": "https://github.com/kosta-ai-lab/ai-native-sdlc/blob/main/modules/ext-harness/M15-orca-graph-engineering/README.md",
+      "type": "module",
+      "title": "M15 — Orca 그래프 엔지니어링",
+      "status": "초안",
+      "evidence": "modules/ext-harness/M15-orca-graph-engineering/README.md 상단: '상태: 초안 · 담당: 이선아 교수'",
+      "verify": [
+        "상태: 초안",
+        "담당: 이선아 교수"
+      ]
+    },
+    {
+      "id": "h-m21",
+      "path": "modules/ext-harness/M21-Graphify/README.md",
+      "kind": "file",
+      "url": "https://github.com/kosta-ai-lab/ai-native-sdlc/blob/main/modules/ext-harness/M21-Graphify/README.md",
+      "type": "module",
+      "title": "M21 — Graphify",
+      "status": "초안",
+      "evidence": "modules/ext-harness/M21-Graphify/README.md 상단: '상태: 초안 · 담당: 이선아 교수'",
+      "verify": [
+        "상태: 초안",
+        "담당: 이선아 교수"
+      ]
+    },
+    {
+      "id": "h-m23",
+      "path": "modules/ext-harness/M23-GitNexus/README.md",
+      "kind": "file",
+      "url": "https://github.com/kosta-ai-lab/ai-native-sdlc/blob/main/modules/ext-harness/M23-GitNexus/README.md",
+      "type": "module",
+      "title": "M23 — GitNexus로 안전하게 리팩터링",
+      "status": "초안",
+      "evidence": "modules/ext-harness/M23-GitNexus/README.md 상단: '상태: 초안 · 담당: 이선아 교수'",
+      "verify": [
+        "상태: 초안",
+        "담당: 이선아 교수"
+      ]
+    },
+    {
+      "id": "h-m25",
+      "path": "modules/ext-harness/M25-CodeGraph/README.md",
+      "kind": "file",
+      "url": "https://github.com/kosta-ai-lab/ai-native-sdlc/blob/main/modules/ext-harness/M25-CodeGraph/README.md",
+      "type": "module",
+      "title": "M25 — CodeGraph로 안전하게 리팩터링",
+      "status": "초안",
+      "evidence": "modules/ext-harness/M25-CodeGraph/README.md 상단: '상태: 초안 · 담당: 이선아 교수'",
+      "verify": [
+        "상태: 초안",
+        "담당: 이선아 교수"
+      ]
+    },
+    {
+      "id": "h-m27",
+      "path": "modules/ext-harness/M27-openwiki/README.md",
+      "kind": "file",
+      "url": "https://github.com/kosta-ai-lab/ai-native-sdlc/blob/main/modules/ext-harness/M27-openwiki/README.md",
+      "type": "module",
+      "title": "M27 — OpenWiki",
+      "status": "초안",
+      "evidence": "modules/ext-harness/M27-openwiki/README.md 상단: '상태: 초안 · 담당: 이선아 교수'",
+      "verify": [
+        "상태: 초안",
+        "담당: 이선아 교수"
+      ]
+    },
+    {
+      "id": "harness-slides",
+      "path": "modules/ext-harness/GraphEngApps.pptx",
+      "kind": "file",
+      "url": "https://github.com/kosta-ai-lab/ai-native-sdlc/blob/main/modules/ext-harness/GraphEngApps.pptx",
+      "type": "slides",
+      "title": "그래프 엔지니어링 발표 자료 (PPTX)",
+      "status": "원문 상태 표기 없음",
+      "evidence": "git ls-files로 파일 존재 확인. 원본은 저장소에서 열람"
+    },
+    {
+      "id": "meth-index",
+      "path": "references/methods/README.md",
+      "kind": "file",
+      "url": "https://github.com/kosta-ai-lab/ai-native-sdlc/blob/main/references/methods/README.md",
+      "type": "method",
+      "title": "참조 방법론 카탈로그",
+      "status": "원문 상태 표기 없음",
+      "evidence": "references/methods/README.md: 상태 줄 없음"
+    },
+    {
+      "id": "meth-aidlc",
+      "path": "references/methods/ai-dlc.md",
+      "kind": "file",
+      "url": "https://github.com/kosta-ai-lab/ai-native-sdlc/blob/main/references/methods/ai-dlc.md",
+      "type": "method",
+      "title": "AI-DLC",
+      "status": "원문 상태 표기 없음",
+      "evidence": "references/methods/ai-dlc.md: 상태 줄 없음"
+    },
+    {
+      "id": "meth-sdd",
+      "path": "references/methods/sdd.md",
+      "kind": "file",
+      "url": "https://github.com/kosta-ai-lab/ai-native-sdlc/blob/main/references/methods/sdd.md",
+      "type": "method",
+      "title": "SDD (명세 기반 개발)",
+      "status": "원문 상태 표기 없음",
+      "evidence": "references/methods/sdd.md: 상태 줄 없음"
+    },
+    {
+      "id": "meth-bdd",
+      "path": "references/methods/bdd.md",
+      "kind": "file",
+      "url": "https://github.com/kosta-ai-lab/ai-native-sdlc/blob/main/references/methods/bdd.md",
+      "type": "method",
+      "title": "BDD (행위 기반 개발)",
+      "status": "시드 예정(멤버 작성)",
+      "evidence": "references/methods/bdd.md 상단: '상태: 시드 예정(멤버 작성)'",
+      "verify": [
+        "상태: 시드 예정(멤버 작성)"
+      ]
+    },
+    {
+      "id": "meth-tdd",
+      "path": "references/methods/tdd.md",
+      "kind": "file",
+      "url": "https://github.com/kosta-ai-lab/ai-native-sdlc/blob/main/references/methods/tdd.md",
+      "type": "method",
+      "title": "TDD (테스트 주도 개발)",
+      "status": "원문 상태 표기 없음",
+      "evidence": "references/methods/tdd.md: 상태 줄 없음"
+    },
+    {
+      "id": "meth-safe",
+      "path": "references/methods/safe.md",
+      "kind": "file",
+      "url": "https://github.com/kosta-ai-lab/ai-native-sdlc/blob/main/references/methods/safe.md",
+      "type": "method",
+      "title": "SAFe",
+      "status": "시드 예정(멤버 작성)",
+      "evidence": "references/methods/safe.md 상단: '상태: 시드 예정(멤버 작성)'",
+      "verify": [
+        "상태: 시드 예정(멤버 작성)"
+      ]
+    },
+    {
+      "id": "meth-mcp",
+      "path": "references/methods/mcp.md",
+      "kind": "file",
+      "url": "https://github.com/kosta-ai-lab/ai-native-sdlc/blob/main/references/methods/mcp.md",
+      "type": "method",
+      "title": "MCP (Model Context Protocol)",
+      "status": "시드 예정(멤버 작성)",
+      "evidence": "references/methods/mcp.md 상단: '상태: 시드 예정(멤버 작성)'",
+      "verify": [
+        "상태: 시드 예정(멤버 작성)"
+      ]
+    },
+    {
+      "id": "meth-react",
+      "path": "references/methods/react.md",
+      "kind": "file",
+      "url": "https://github.com/kosta-ai-lab/ai-native-sdlc/blob/main/references/methods/react.md",
+      "type": "method",
+      "title": "ReAct",
+      "status": "시드 예정(멤버 작성)",
+      "evidence": "references/methods/react.md 상단: '상태: 시드 예정(멤버 작성)'",
+      "verify": [
+        "상태: 시드 예정(멤버 작성)"
+      ]
+    },
+    {
+      "id": "todo-readme",
+      "path": "samples/web-task-system/README.md",
+      "kind": "file",
+      "url": "https://github.com/kosta-ai-lab/ai-native-sdlc/blob/main/samples/web-task-system/README.md",
+      "type": "sample",
+      "title": "web-task-system 예제 안내",
+      "status": "예제",
+      "evidence": "README.md '빠른 시작' 절과 samples/web-task-system/README.md 단계 표",
+      "verify": [
+        "docs/03-requirements.md",
+        "docs/04-spec.md",
+        "docs/05-acceptance.feature"
+      ]
+    },
+    {
+      "id": "todo-req",
+      "path": "samples/web-task-system/docs/03-requirements.md",
+      "kind": "file",
+      "url": "https://github.com/kosta-ai-lab/ai-native-sdlc/blob/main/samples/web-task-system/docs/03-requirements.md",
+      "type": "sample",
+      "title": "03 요구사항 — 할 일 생성",
+      "status": "예제",
+      "evidence": "유즈케이스 UC-01과 R-01~R-03",
+      "verify": [
+        "UC-01",
+        "R-03"
+      ]
+    },
+    {
+      "id": "todo-spec",
+      "path": "samples/web-task-system/docs/04-spec.md",
+      "kind": "file",
+      "url": "https://github.com/kosta-ai-lab/ai-native-sdlc/blob/main/samples/web-task-system/docs/04-spec.md",
+      "type": "sample",
+      "title": "04 SDD 명세 — 할 일 생성",
+      "status": "예제",
+      "evidence": "Todo 모델과 createTodo 명세",
+      "verify": [
+        "createTodo"
+      ]
+    },
+    {
+      "id": "todo-acc",
+      "path": "samples/web-task-system/docs/05-acceptance.feature",
+      "kind": "file",
+      "url": "https://github.com/kosta-ai-lab/ai-native-sdlc/blob/main/samples/web-task-system/docs/05-acceptance.feature",
+      "type": "sample",
+      "title": "05 BDD 인수 조건 — 할 일 생성",
+      "status": "예제",
+      "evidence": "Gherkin 시나리오 2개",
+      "verify": [
+        "시나리오: 빈 제목은 거부한다"
+      ]
+    },
+    {
+      "id": "todo-test",
+      "path": "samples/web-task-system/test/todo.test.ts",
+      "kind": "file",
+      "url": "https://github.com/kosta-ai-lab/ai-native-sdlc/blob/main/samples/web-task-system/test/todo.test.ts",
+      "type": "sample",
+      "title": "테스트 — todo.test.ts",
+      "status": "예제",
+      "evidence": "05 인수 조건을 테스트로 1:1 변환",
+      "verify": [
+        "빈 제목은 거부한다"
+      ]
+    },
+    {
+      "id": "todo-impl",
+      "path": "samples/web-task-system/src/todo.ts",
+      "kind": "file",
+      "url": "https://github.com/kosta-ai-lab/ai-native-sdlc/blob/main/samples/web-task-system/src/todo.ts",
+      "type": "sample",
+      "title": "구현 — todo.ts",
+      "status": "예제",
+      "evidence": "테스트를 통과하는 최소 구현",
+      "verify": [
+        "export function createTodo"
+      ]
+    },
+    {
+      "id": "c-vibe",
+      "path": "courses/vibe-coding-with-claude-code/README.md",
+      "kind": "file",
+      "url": "https://github.com/kosta-ai-lab/ai-native-sdlc/blob/main/courses/vibe-coding-with-claude-code/README.md",
+      "type": "course",
+      "title": "바이브 코딩 첫걸음 — Claude Code로 기획에서 배포까지",
+      "status": "게재 강의",
+      "evidence": "courses/README.md '게재된 강의' 표에 연결된 강의 폴더"
+    },
+    {
+      "id": "c-vibe-pdf",
+      "path": "courses/vibe-coding-with-claude-code/slides/vibe-coding-with-claude-code.pdf",
+      "kind": "file",
+      "url": "https://github.com/kosta-ai-lab/ai-native-sdlc/blob/main/courses/vibe-coding-with-claude-code/slides/vibe-coding-with-claude-code.pdf",
+      "type": "slides-pdf",
+      "title": "바이브 코딩 첫걸음 — Claude Code로 기획에서 배포까지 — 교재 PDF",
+      "status": "게재 강의 교재",
+      "evidence": "git ls-files로 파일명 확인. 사이트에 복사하지 않고 원본으로 연결"
+    },
+    {
+      "id": "c-vibe-labs",
+      "path": "courses/vibe-coding-with-claude-code/labs/README.md",
+      "kind": "file",
+      "url": "https://github.com/kosta-ai-lab/ai-native-sdlc/blob/main/courses/vibe-coding-with-claude-code/labs/README.md",
+      "type": "lab",
+      "title": "실습 대본 — 하루 안에 앱 하나 완주하기",
+      "status": "게재 강의 실습",
+      "evidence": "courses/vibe-coding-with-claude-code/README.md '폴더 구성'"
+    },
+    {
+      "id": "c-vibe-res",
+      "path": "courses/vibe-coding-with-claude-code/resources/README.md",
+      "kind": "file",
+      "url": "https://github.com/kosta-ai-lab/ai-native-sdlc/blob/main/courses/vibe-coding-with-claude-code/resources/README.md",
+      "type": "resource",
+      "title": "참고 자료",
+      "status": "게재 강의 참고자료",
+      "evidence": "courses/vibe-coding-with-claude-code/README.md '폴더 구성'"
+    },
+    {
+      "id": "c-sdd",
+      "path": "courses/spec-driven-development-practice/README.md",
+      "kind": "file",
+      "url": "https://github.com/kosta-ai-lab/ai-native-sdlc/blob/main/courses/spec-driven-development-practice/README.md",
+      "type": "course",
+      "title": "스펙 주도 개발 실전 — OpenSpec과 Spec Kit",
+      "status": "게재 강의",
+      "evidence": "courses/README.md '게재된 강의' 표에 연결된 강의 폴더"
+    },
+    {
+      "id": "c-sdd-pdf",
+      "path": "courses/spec-driven-development-practice/slides/spec-driven-development-practice.pdf",
+      "kind": "file",
+      "url": "https://github.com/kosta-ai-lab/ai-native-sdlc/blob/main/courses/spec-driven-development-practice/slides/spec-driven-development-practice.pdf",
+      "type": "slides-pdf",
+      "title": "스펙 주도 개발 실전 — OpenSpec과 Spec Kit — 교재 PDF",
+      "status": "게재 강의 교재",
+      "evidence": "git ls-files로 파일명 확인. 사이트에 복사하지 않고 원본으로 연결"
+    },
+    {
+      "id": "c-sdd-labs",
+      "path": "courses/spec-driven-development-practice/labs/README.md",
+      "kind": "file",
+      "url": "https://github.com/kosta-ai-lab/ai-native-sdlc/blob/main/courses/spec-driven-development-practice/labs/README.md",
+      "type": "lab",
+      "title": "실습 자산 — 같은 API를 두 도구로",
+      "status": "게재 강의 실습",
+      "evidence": "courses/spec-driven-development-practice/README.md '관통 실습'"
+    },
+    {
+      "id": "c-sdd-steps",
+      "path": "courses/spec-driven-development-practice/labs/openspec-ecommerce-api/docs/steps/README.md",
+      "kind": "file",
+      "url": "https://github.com/kosta-ai-lab/ai-native-sdlc/blob/main/courses/spec-driven-development-practice/labs/openspec-ecommerce-api/docs/steps/README.md",
+      "type": "lab",
+      "title": "OpenSpec 트랙 단계별 나레이션",
+      "status": "게재 강의 실습",
+      "evidence": "courses/spec-driven-development-practice/README.md '관통 실습' 표"
+    },
+    {
+      "id": "c-sdd-compare",
+      "path": "courses/spec-driven-development-practice/labs/speckit-ecommerce-api/docs/openspec-vs-speckit.md",
+      "kind": "file",
+      "url": "https://github.com/kosta-ai-lab/ai-native-sdlc/blob/main/courses/spec-driven-development-practice/labs/speckit-ecommerce-api/docs/openspec-vs-speckit.md",
+      "type": "lab",
+      "title": "OpenSpec과 Spec Kit 비교",
+      "status": "게재 강의 실습",
+      "evidence": "courses/spec-driven-development-practice/README.md '관통 실습'"
+    },
+    {
+      "id": "c-sdd-res",
+      "path": "courses/spec-driven-development-practice/resources/README.md",
+      "kind": "file",
+      "url": "https://github.com/kosta-ai-lab/ai-native-sdlc/blob/main/courses/spec-driven-development-practice/resources/README.md",
+      "type": "resource",
+      "title": "참고 자료",
+      "status": "게재 강의 참고자료",
+      "evidence": "courses/spec-driven-development-practice/README.md '폴더 구성'"
+    },
+    {
+      "id": "c-design",
+      "path": "courses/software-design-with-spec-kit/README.md",
+      "kind": "file",
+      "url": "https://github.com/kosta-ai-lab/ai-native-sdlc/blob/main/courses/software-design-with-spec-kit/README.md",
+      "type": "course",
+      "title": "Spec Kit으로 실전 소프트웨어 설계",
+      "status": "게재 강의",
+      "evidence": "courses/README.md '게재된 강의' 표에 연결된 강의 폴더"
+    },
+    {
+      "id": "c-design-pdf",
+      "path": "courses/software-design-with-spec-kit/slides/software-design-with-spec-kit.pdf",
+      "kind": "file",
+      "url": "https://github.com/kosta-ai-lab/ai-native-sdlc/blob/main/courses/software-design-with-spec-kit/slides/software-design-with-spec-kit.pdf",
+      "type": "slides-pdf",
+      "title": "Spec Kit으로 실전 소프트웨어 설계 — 교재 PDF",
+      "status": "게재 강의 교재",
+      "evidence": "git ls-files로 파일명 확인. 사이트에 복사하지 않고 원본으로 연결"
+    },
+    {
+      "id": "c-design-labs",
+      "path": "courses/software-design-with-spec-kit/labs/README.md",
+      "kind": "file",
+      "url": "https://github.com/kosta-ai-lab/ai-native-sdlc/blob/main/courses/software-design-with-spec-kit/labs/README.md",
+      "type": "lab",
+      "title": "실습 안내 — 완성 저장소",
+      "status": "게재 강의 실습",
+      "evidence": "courses/software-design-with-spec-kit/README.md '실습 자산'"
+    },
+    {
+      "id": "c-design-trace",
+      "path": "courses/software-design-with-spec-kit/labs/speckit-ecommerce-fullscale/design/traceability.md",
+      "kind": "file",
+      "url": "https://github.com/kosta-ai-lab/ai-native-sdlc/blob/main/courses/software-design-with-spec-kit/labs/speckit-ecommerce-fullscale/design/traceability.md",
+      "type": "lab",
+      "title": "추적성 매트릭스",
+      "status": "게재 강의 실습",
+      "evidence": "courses/software-design-with-spec-kit/README.md '실습 자산'"
+    },
+    {
+      "id": "c-design-adr",
+      "path": "courses/software-design-with-spec-kit/labs/speckit-ecommerce-fullscale/design/adr/ADR.md",
+      "kind": "file",
+      "url": "https://github.com/kosta-ai-lab/ai-native-sdlc/blob/main/courses/software-design-with-spec-kit/labs/speckit-ecommerce-fullscale/design/adr/ADR.md",
+      "type": "lab",
+      "title": "아키텍처 결정 기록 (ADR)",
+      "status": "게재 강의 실습",
+      "evidence": "courses/software-design-with-spec-kit/README.md '실습 자산'"
+    },
+    {
+      "id": "c-design-res",
+      "path": "courses/software-design-with-spec-kit/resources/README.md",
+      "kind": "file",
+      "url": "https://github.com/kosta-ai-lab/ai-native-sdlc/blob/main/courses/software-design-with-spec-kit/resources/README.md",
+      "type": "resource",
+      "title": "참고 자료",
+      "status": "게재 강의 참고자료",
+      "evidence": "courses/software-design-with-spec-kit/README.md '폴더 구성'"
+    },
+    {
+      "id": "c-agentic",
+      "path": "courses/Agentic Coding using Claude Code/README.md",
+      "kind": "file",
+      "url": "https://github.com/kosta-ai-lab/ai-native-sdlc/blob/main/courses/Agentic%20Coding%20using%20Claude%20Code/README.md",
+      "type": "course",
+      "title": "Claude Code Cloud App Development-Golf Scorecard",
+      "status": "게재 강의",
+      "evidence": "courses/README.md '게재된 강의' 표에 연결된 강의 폴더"
+    },
+    {
+      "id": "c-agentic-pdf",
+      "path": "courses/Agentic Coding using Claude Code/Claude Code Cloud App Development-Golf Scorecard.pdf",
+      "kind": "file",
+      "url": "https://github.com/kosta-ai-lab/ai-native-sdlc/blob/main/courses/Agentic%20Coding%20using%20Claude%20Code/Claude%20Code%20Cloud%20App%20Development-Golf%20Scorecard.pdf",
+      "type": "slides-pdf",
+      "title": "Claude Code Cloud App Development-Golf Scorecard — 교재 PDF",
+      "status": "게재 강의 교재",
+      "evidence": "git ls-files로 파일명 확인. 사이트에 복사하지 않고 원본으로 연결"
+    }
+  ]
+}

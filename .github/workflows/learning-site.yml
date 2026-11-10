@@ -1,0 +1,92 @@
+# kosta-ai-lab 공개 포털(site/) — 정적 사이트 검사와 GitHub Pages 배포
+#
+# - PR: site/ 빌드·정적 검사·데이터 테스트만 수행한다. Pages artifact를 만들지 않고 배포하지 않는다.
+# - main push 또는 main에서의 수동 실행: 같은 검사를 통과한 site/dist만 Pages로 배포한다.
+# - 배포 전에 저장소 Settings → Pages → Source를 "GitHub Actions"로 바꿔야 한다(docs/LEARNING_SITE_OPERATIONS.md).
+#
+# Action 버전 출처: GitHub Docs "Using custom workflows with GitHub Pages" 예시(2026-11-10 확인)
+#   actions/checkout@v6 · actions/configure-pages@v5 · actions/upload-pages-artifact@v4 · actions/deploy-pages@v4
+# TODO(maintainer): 출처마다 권장 메이저가 다르다(2026-11-10 관측).
+#   action README: checkout v7 · upload-pages-artifact v3 · deploy-pages v4
+#   starter-workflows pages/static.yml: checkout v4 · configure-pages v5 · upload-pages-artifact v3 · deploy-pages v5
+#   releases Latest: checkout v7.0.1 · configure-pages v6.0.0 · upload-pages-artifact v5.0.0 · deploy-pages v5.0.1
+#   변경점과 플로팅 메이저 태그를 확인한 뒤 올릴지 결정한다(docs/LEARNING_SITE_OPERATIONS.md 5절).
+
+name: Learning site
+
+on:
+  pull_request:
+    paths:
+      - "site/**"
+      - ".github/workflows/learning-site.yml"
+  push:
+    branches: [main]
+    paths:
+      - "site/**"
+      - ".github/workflows/learning-site.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: learning-site-${{ github.ref }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
+
+jobs:
+  build:
+    name: Build and check (site only)
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    defaults:
+      run:
+        working-directory: site
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6
+        with:
+          persist-credentials: false
+
+      - name: Show Node.js version
+        run: node --version
+
+      - name: Build site
+        run: node scripts/build.mjs
+
+      - name: Static check (sources vs git ls-files, claims, assets, workflow, dist allowlist)
+        run: node scripts/check.mjs --dist
+
+      - name: Data and build tests
+        run: node scripts/test.mjs
+
+      # PR에서는 실행되지 않는다. main 배포 조건일 때만 artifact를 올린다.
+      - name: Upload Pages artifact
+        if: github.event_name != 'pull_request' && github.ref == 'refs/heads/main' && github.repository == 'kosta-ai-lab/ai-native-sdlc'
+        uses: actions/upload-pages-artifact@v4
+        with:
+          path: site/dist
+
+  deploy:
+    name: Deploy to GitHub Pages
+    needs: build
+    # PR 이벤트는 어떤 경우에도 배포하지 않는다. main의 push와 main에서의 수동 실행만 배포한다.
+    if: github.event_name != 'pull_request' && github.ref == 'refs/heads/main' && github.repository == 'kosta-ai-lab/ai-native-sdlc'
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    permissions:
+      contents: read
+      pages: write
+      id-token: write
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    concurrency:
+      group: pages
+      cancel-in-progress: false
+    steps:
+      - name: Configure GitHub Pages
+        uses: actions/configure-pages@v5
+
+      - name: Deploy artifact
+        id: deployment
+        uses: actions/deploy-pages@v4
