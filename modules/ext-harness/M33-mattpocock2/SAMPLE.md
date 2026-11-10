@@ -98,7 +98,7 @@ claude
 반복으로 등록해 두면 완료할 때 다음 회차가 알아서 생겼으면 좋겠어.
 ```
 
-질문 라운드에는 아래 결정대로 답합니다. 추천 답이 같으면 `yes`, 다르면 직접 적습니다.
+질문 라운드에는 기본으로 `전부 추천대로 진행할게`라고 답하고, 추천 답이 아래 결정과 다른 질문만 직접 적어 덧붙입니다.
 
 | 결정할 것 | 답 |
 |---|---|
@@ -129,14 +129,14 @@ claude
 ```
 
 ```text
-좋아, 이대로 만들어줘.
+다 좋아, 그대로 티켓 만들어줘.
 ```
 
 ```text
 !git add . && git commit -m "반복 할 일 스펙과 티켓"
 ```
 
-**티켓 구현** — 티켓마다 `/clear` 후 새로 시작 (파일 이름은 실제 생성된 이름으로 바꿉니다)
+**첫 티켓을 TDD로 구현** — 티켓마다 `/clear` 후 새로 시작 (파일 이름은 실제 생성된 이름으로 바꿉니다)
 
 ```text
 !git switch -c feature/recurring-todos
@@ -147,9 +147,14 @@ claude
 ```
 
 ```text
-/implement @.scratch/recurring-todos/issues/01-create-recurring-todo.md
-리뷰 기준점(fixed point)은 main 브랜치로 해줘.
+/tdd @.scratch/recurring-todos/issues/01-create-recurring-todo.md
 ```
+
+```text
+티켓 01의 완료 조건 체크박스를 갱신하고 커밋해줘.
+```
+
+**나머지 티켓 구현과 리뷰** — `/implement`가 tdd → code-review → 커밋까지 진행
 
 ```text
 /clear
