@@ -35,7 +35,7 @@ M33(mattpocock/skills), M35(gstack), M37(pstack)은 **기능을 만드는 과정
 ## 문서 구성
 
 - [GUIDE.md](GUIDE.md) — 개념 설명과 0~11단계 따라하기 (단계별 규칙·산출물·체크리스트)
-- [SAMPLE.md](SAMPLE.md) — 명령어와 프롬프트만 모은 실행용 요약
+- [SAMPLE.md](SAMPLE.md) — 예제 앱 `todo-app` 설명 (파일 구조·리뷰 기준 문서·실행 방법, 실습 후 바뀌는 점)
 - [todo-app/](todo-app/) — 실습 출발점이 되는 할 일 관리 CLI (Node.js, 의존성 없음, 테스트 5개). todo-app에 맞춘 리뷰 기준 문서 `docs/code-convention.yaml`(규칙 7개)·`docs/adr.yaml`(실습용 가상 결정 3개, 그중 1개는 일부러 관련 없는 항목) 포함. 강의 자료 저장소 밖으로 복사해서 사용
 
 ## 산출물 4종 (체크리스트)
@@ -43,7 +43,7 @@ M33(mattpocock/skills), M35(gstack), M37(pstack)은 **기능을 만드는 과정
 - [x] 가이드 — GUIDE.md 단계 목적·입력·산출물·체크리스트
 - [x] 규칙 — `docs/code-convention.yaml`, `docs/adr.yaml` (리뷰 기준이 되는 팀 규칙과 결정)
 - [x] 자동화 — mafia-codereview 플러그인 명령 (`/mafia-codereview:auto` 등 7개, 서브에이전트 리뷰)
-- [x] 샘플 — SAMPLE.md 동작 스텝·프롬프트
+- [x] 샘플 — SAMPLE.md 예제 앱 `todo-app` 설명
 
 ## 품질 기준
 

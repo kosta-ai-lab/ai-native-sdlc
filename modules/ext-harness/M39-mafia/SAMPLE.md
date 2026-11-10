@@ -1,173 +1,240 @@
-# 예제 실행 및 프롬프트
+# 예제 앱: `todo-app`
 
-GUIDE.md의 흐름을 명령어와 프롬프트만 모아 놓은 실행용 요약입니다.
-설명과 체크리스트는 [GUIDE.md](GUIDE.md)를 참고하세요.
+[GUIDE.md](GUIDE.md) 실습에서 기능을 추가하는 대상인 **할 일 관리 CLI**입니다.
+이 문서는 실습을 시작할 때의 **초기 상태**(코드 구성과 실행 방법)와, 실습을 마친 뒤 **무엇이 바뀌는지**를 설명합니다.
 
-## 1단계: 플러그인 설치
+---
 
-```bash
-claude plugin marketplace add vibemafiaclub/mafia-codereview-harness
+# 1. 초기 상태
+
+## 어떤 앱인가
+
+터미널에서 할 일을 **추가·완료·조회**하는 작은 프로그램입니다. 할 일에는 **마감일**을 붙일 수 있습니다.
+Node.js만 있으면 실행되며, 따로 설치할 패키지(의존성)는 없습니다.
+
+## 폴더 구성
+
+```
+todo-app/
+├── package.json        npm test 로 테스트를 실행하는 설정 (의존성 없음)
+├── .gitignore          실행 중 생기는 todos.json 과 리뷰 산출물 폴더(.review-artifacts/)를 git 에서 제외
+├── docs/
+│   ├── code-convention.yaml   팀 코딩 컨벤션 7개 (코드리뷰의 평가 기준)
+│   └── adr.yaml               아키텍처 결정 기록(ADR) 3개 (실습용 가상 기록)
+├── src/
+│   ├── todo.js         할 일 목록을 다루는 함수 (추가·완료·목록 문자열 만들기)
+│   ├── store.js        todos.json 파일 읽기·쓰기
+│   └── cli.js          터미널 명령 처리 (add / done / list)
+└── test/
+    └── todo.test.js    todo.js 의 동작을 확인하는 테스트 5개
 ```
 
-```bash
-claude plugin install mafia-codereview@mafia-codereview-harness
-```
-
-```bash
-claude plugin list
-```
-
-설치 후 Claude Code를 완전히 종료했다가 다시 실행합니다.
-
-## 2단계: 연습용 저장소 `todo-app` 준비
-
-이 모듈 폴더의 `todo-app`(리뷰 기준 문서 `docs/code-convention.yaml`, `docs/adr.yaml` 포함)을 강의 자료 저장소 밖으로 복사합니다. 터미널을 `M39-mafia` 폴더에서 열고 실행합니다.
-
-macOS / Linux / Git Bash:
-```bash
-cp -r todo-app ~/todo-app
-```
-
-Windows PowerShell:
-```powershell
-Copy-Item -Recurse todo-app $HOME\todo-app
-```
-
-```bash
-cd ~/todo-app
-```
-
-```bash
-git init -b main
-```
-
-```bash
-npm test
-```
-
-```bash
-git add .
-git commit -m "todo-app 초기 버전"
-```
-
-## 3단계: 기능 브랜치를 만들고 Claude Code 실행
-
-```bash
-git switch -c feature/recurring-todos
-```
-
-```bash
-claude
-```
-
-## 4단계: 프롬프트가 뜨면 자연어로 지시
-
-> 아래는 모두 **한 대화 창**에서 이어서 진행합니다. 중간에 `/clear` 하지 않습니다.
-
-**설계 논의** (코드는 아직 쓰지 않음)
-
-```text
-반복 할 일 기능을 추가하려고 해. 코드는 아직 쓰지 말고 설계부터 같이 정하자.
-지금은 "매주 월요일 분리수거"를 done 하면 다음 주 것을 손으로 다시 add 해야 해.
-내가 정한 것:
-- 주기는 매일(day)·매주(week)만. 매월은 이번엔 안 함
-- 반복 할 일을 done 하는 순간 같은 제목의 다음 회차를 새 할 일로 추가
-- 다음 마감일은 완료한 날이 아니라 원래 마감일 + 주기 (늦게 끝내도 요일이 밀리지 않게)
-- 반복 할 일은 마감일 필수. 명령은 add <제목> <마감일> --every day|week
-- 목록에는 "[ ] 2. 분리수거 (마감 2026-11-23, 매주)" 처럼 주기를 표시
-- 반복 중단·삭제는 이번엔 안 함
-docs/code-convention.yaml 과 docs/adr.yaml 을 읽고, 데이터 모양과 날짜 계산 방법을 제안해줘.
-```
-
-**구현**
-
-```text
-좋아, 그대로 구현해줘. 테스트는 test/todo.test.js 에 추가하고,
-2026-12-28 매주 반복을 완료하면 2027-01-04 회차가 생기는 테스트도 넣어줘.
-```
-
-```text
-!npm test
-```
-
-```text
-!git add . && git commit -m "반복 할 일 기능 구현"
-```
-
-**코드리뷰 파이프라인**
-
-```text
-/mafia-codereview:auto
-```
-
-단계별로 이렇게 답합니다.
-
-| 단계 | 답하기 예시 |
+| 파일 | 하는 일 |
 |---|---|
-| [1] 상태 점검 | `yes` (branch: feature/recurring-todos, base: main 확인) |
-| [2] 설계의도 논의점 | `마감일 없는 할 일을 반복으로 바꾸는 기능은 의도적으로 제외. 이미 완료된 할 일을 다시 done 하면 회차를 또 만들지 않아야 해. repeat 이 없으면 일반 할 일이야.` |
-| [3] 평가기준 논의점 | `GEN-001은 테스트 파일에는 적용하지 마. 주기 일수는 매직 넘버에 해당돼. ADR-003은 web 전용이니 제외.` |
-| [4] PR 본문 논의점 | `Breaking Changes 는 없음. 관련 이슈 없음, Related 에는 ADR-002 만.` |
-| [5] 코드리뷰 | (자동 진행, 답할 것 없음) |
-| [6] 리뷰 반영 판단 | `좋아, 제안대로 진행해줘.` |
+| `src/todo.js` | `addTodo`(새 할 일 추가, 번호는 1부터), `completeTodo`(해당 번호만 완료로), `formatTodos`(목록을 화면용 문자열로). 원본 목록을 바꾸지 않고 새 목록을 돌려줍니다. |
+| `src/store.js` | 할 일 목록을 `todos.json` 파일 하나에 저장하고 읽습니다. 파일이 없으면 빈 목록으로 시작합니다. |
+| `src/cli.js` | 터미널에서 받은 명령(`add`, `done`, `list`)을 `todo.js` 함수로 처리하고, 결과 목록을 출력합니다. |
+| `docs/code-convention.yaml` | 이 앱의 코딩 규칙. `mafia-codereview`가 리뷰할 때 근거로 씁니다. |
+| `docs/adr.yaml` | 이 앱에서 내린 설계 결정과 그 이유. 리뷰할 때 "결정을 어기지 않았는지" 확인하는 근거입니다. |
 
-리뷰 반영 커밋이 현재 브랜치에 없으면:
+## 리뷰 기준 문서 (`docs/`)
+
+다른 실습 모듈의 `todo-app`과 코드는 같고, 이 문서 두 개가 더 들어 있습니다. 코드를 고칠 때 지켜야 할 기준이자, 리뷰의 근거입니다.
+
+**`code-convention.yaml`** — 코딩 규칙 7개
+
+| id | 규칙 요약 |
+|---|---|
+| GEN-001 | 함수는 단일 책임. 50줄을 넘으면 분리를 검토 |
+| GEN-002 | 매직 넘버 금지. 이름 있는 상수로 |
+| GEN-003 | 잘못된 입력은 발생 지점에서 `Error`, 메시지 출력과 종료 코드 1은 `src/cli.js`에서만 |
+| NODE-001 | ES 모듈 사용, 외부 npm 의존성 추가 금지 |
+| NODE-002 | 테스트는 `node:test` + `node:assert/strict`, 공개 함수의 동작을 검증 |
+| TODO-001 | `src/todo.js`의 함수는 순수 함수 (입력을 바꾸지 않고 새 배열 반환) |
+| TODO-002 | 파일 읽기·쓰기는 `src/store.js`에서만 |
+
+**`adr.yaml`** — 설계 결정 3개
+
+| id | 결정 | 이 앱에 적용 |
+|---|---|---|
+| ADR-001 | 할 일은 `todos.json` 파일 하나에 저장. 필드를 추가하면 예전 파일에 그 필드가 없을 수 있으니 읽는 쪽에서 기본값 처리 | 예 |
+| ADR-002 | 날짜는 시간대 없는 `"YYYY-MM-DD"` 문자열. 계산은 UTC 기준으로 하고 바로 문자열로 되돌림 | 예 |
+| ADR-003 | 웹 화면은 목록을 브라우저에 캐시하지 않음 | 아니요 (웹 전용, 현재 CLI와 관계없음) |
+
+## 할 일 하나의 모양
+
+`todos.json`에는 할 일이 아래 모양으로 저장됩니다.
+
+```json
+[
+  { "id": 1, "title": "분리수거", "due": "2026-11-16", "done": false }
+]
+```
+
+| 항목 | 뜻 |
+|---|---|
+| `id` | 번호. 1부터 차례로 붙습니다. |
+| `title` | 제목. 비어 있으면 안 됩니다. |
+| `due` | 마감일. `YYYY-MM-DD` 형식이거나, 없으면 `null`. |
+| `done` | 완료했으면 `true`. |
+
+## 실행 방법
+
+`todo-app` 폴더 안에서 실행합니다.
+
+| 하고 싶은 것 | 명령 |
+|---|---|
+| 할 일 추가 | `node src/cli.js add <제목> [마감일]` |
+| 완료 표시 | `node src/cli.js done <번호>` |
+| 목록 보기 | `node src/cli.js list` |
+| 테스트 실행 | `npm test` |
+
+예시:
+
+```bash
+node src/cli.js add 분리수거 2026-11-16
+node src/cli.js add "우유 사기"
+node src/cli.js done 1
+```
+
+출력:
 
 ```text
-리뷰 반영 커밋이 지금 브랜치(feature/recurring-todos)에 없어. 워크트리의 변경을 이 브랜치로 가져와줘.
+[x] 1. 분리수거 (마감 2026-11-16)
+[ ] 2. 우유 사기
 ```
 
-**기준 문서 업데이트**
+- 제목에 띄어쓰기가 있으면 따옴표로 감쌉니다.
+- 명령을 실행할 때마다 현재 목록 전체가 출력됩니다.
+- 데이터를 처음부터 다시 시작하려면 `todos.json`을 지웁니다.
+
+  ```bash
+  node -e "require('fs').rmSync('todos.json', { force: true })"
+  ```
+
+잘못 입력하면 오류 메시지가 나옵니다.
+
+| 입력 | 오류 메시지 |
+|---|---|
+| 빈 제목 | `제목은 비어 있을 수 없습니다.` |
+| 형식이 틀린 마감일 (예: `11월 16일`) | `마감일은 YYYY-MM-DD 형식이어야 합니다.` |
+| 없는 번호를 `done` | `<번호>번 할 일을 찾을 수 없습니다.` |
+| `add`·`done`·`list` 외의 명령 | `명령은 add, done, list 중 하나여야 합니다.` |
+
+## 불편한 점 (실습에서 해결할 문제)
+
+"매주 월요일 분리수거"처럼 **반복되는 일**을 다루지 못합니다.
+
+```bash
+node src/cli.js add 분리수거 2026-11-16
+node src/cli.js done 1
+```
 
 ```text
-/mafia-codereview:update-docs
+[x] 1. 분리수거 (마감 2026-11-16)
 ```
 
-```text
-!git add docs && git commit -m "반복 할 일 작업의 결정을 기준 문서에 반영"
-```
+이번 주 분리수거를 끝내도 다음 주(2026-11-23) 분리수거는 생기지 않습니다. 매주 손으로 다시 `add` 해야 합니다.
 
-**PR 열기** (선택, GitHub 저장소와 `gh` 로그인 필요)
+---
 
-```bash
-gh pr create --base main --title "feat: 반복 할 일" --body-file .review-artifacts/feature/recurring-todos/pr-body.md
-```
+# 2. 실습을 마친 뒤 바뀌는 점
 
-## 5단계: 결과 확인
+GUIDE.md의 4단계(기능 구현)와 5~11단계(코드리뷰 파이프라인, 리뷰 반영, 기준 문서 업데이트)를 마치면 **반복 할 일** 기능이 추가되고 리뷰까지 끝난 상태가 됩니다.
+아래는 4단계에서 GUIDE.md의 설계 프롬프트대로 정했을 때의 모습입니다. 실제 코드와 메시지 문구는 에이전트가 만들기 때문에 조금씩 다를 수 있습니다.
 
-```bash
-ls .review-artifacts/feature/recurring-todos/
-```
+## 새 용어
 
-```bash
-npm test
-```
+| 용어 | 뜻 |
+|---|---|
+| **반복 할 일** | 완료하면 같은 제목의 다음 회차가 자동으로 생기는 할 일. 마감일이 반드시 있다. |
+| **반복 주기** | 다음 회차의 마감일을 정하는 간격. 매일(`day`) 또는 매주(`week`). |
+| **회차** | 반복 할 일이 만들어 낸 할 일 하나하나. |
 
-```bash
-node -e "require('fs').rmSync('todos.json', { force: true })"
-```
+이 용어들은 설계 대화와 리뷰 산출물(`design-intent.md`)에 쓰이고, 코드의 함수·테스트 이름에도 반영됩니다.
+
+## 바뀐 명령
+
+| 하고 싶은 것 | 명령 |
+|---|---|
+| 반복 할 일 추가 | `node src/cli.js add <제목> <마감일> --every day\|week` |
+| 일반 할 일 추가 | `node src/cli.js add <제목> [마감일]` (이전과 같음) |
+| 완료 표시 | `node src/cli.js done <번호>` (반복 할 일이면 다음 회차가 생김) |
+| 목록 보기 | `node src/cli.js list` (반복 할 일은 주기도 표시) |
+
+## 동작 예시
 
 ```bash
 node src/cli.js add 분리수거 2026-11-16 --every week
+```
+
+```text
+[ ] 1. 분리수거 (마감 2026-11-16, 매주)
 ```
 
 ```bash
 node src/cli.js done 1
 ```
 
+```text
+[x] 1. 분리수거 (마감 2026-11-16, 매주)
+[ ] 2. 분리수거 (마감 2026-11-23, 매주)
+```
+
+- 반복 할 일을 **완료하는 순간** 다음 회차가 새 할 일로 추가됩니다.
+- 다음 마감일은 **원래 마감일 + 주기**입니다. 늦게 완료해도 "매주 월요일"이 화요일로 밀리지 않습니다.
+- 회차를 완료하지 않고 넘어가도 회차가 쌓이지 않습니다. **완료할 때만** 다음 회차가 생깁니다.
+- 반복이 아닌 일반 할 일은 이전과 똑같이 동작합니다. 완료해도 새 할 일이 생기지 않습니다.
+- 달·해가 바뀌는 날짜도 올바르게 계산합니다. 예) 2026-12-28 마감인 매주 반복 할 일을 완료하면 다음 회차는 2027-01-04. (ADR-002에 따라 UTC 기준으로 계산)
+
+## 새로 거부되는 입력
+
+```bash
+node src/cli.js add "물 마시기" --every day      # 마감일 없는 반복 할 일
+node src/cli.js add 운동 2026-11-16 --every month  # 지원하지 않는 주기
+```
+
+둘 다 오류 메시지가 나옵니다. 반복 할 일에는 마감일이 꼭 있어야 하고, 주기는 `day`와 `week`만 됩니다. (GEN-003에 따라 오류는 `src/todo.js`에서 던지고, 메시지 출력과 종료 코드 1은 `src/cli.js`가 처리합니다)
+
+## 할 일 하나의 모양 (변경 후 예시)
+
+반복 주기를 기억하는 항목이 하나 늘어납니다. 이름은 설계 대화에서 정하며, 아래는 예시입니다.
+
+```json
+{ "id": 2, "title": "분리수거", "due": "2026-11-23", "done": false, "repeat": "week" }
+```
+
+ADR-001에 따라, 이 필드가 없는 예전 `todos.json`의 할 일은 **일반 할 일**로 읽습니다.
+
+## 바뀌는 파일
+
+| 파일 | 바뀌는 내용 |
+|---|---|
+| `src/todo.js` | 반복 주기를 가진 할 일 추가, 완료 시 다음 회차 생성, 목록에 주기 표시, 잘못된 반복 입력 거부. 주기 일수(1·7)는 이름 있는 상수로 (GEN-002) |
+| `src/cli.js` | `add`에서 `--every day\|week` 옵션 처리 |
+| `test/todo.test.js` | 반복 할 일 동작과 월말·연말 경계를 확인하는 테스트 추가 (기존 테스트 5개는 그대로 통과) |
+| `docs/code-convention.yaml`, `docs/adr.yaml` | 11단계 `/mafia-codereview:update-docs`가 이번 작업에서 정한 규칙·결정을 추가하거나 고침 |
+
+코드리뷰 파이프라인의 산출물은 `.review-artifacts/` 아래에 생기며, `.gitignore`로 git에서 제외됩니다.
+
+```
+.review-artifacts/feature/recurring-todos/
+├── design-intent.md       설계의도: 무엇을 왜 이렇게 만들었는지 (4단계 대화가 재료)
+├── code-quality-guide.md  평가기준: 이번 변경에 적용할 컨벤션·ADR 골라내기 (ADR-003은 빠짐)
+├── pr-body.md             PR 본문 초안
+└── review-comments.md     리뷰 코멘트. [p1]~[p4] 우선순위, 근거, 반영 판정(ACCEPT / REJECT)
+```
+
+리뷰에서 받아들인 지적은 `feature/recurring-todos` 브랜치에 **리뷰 반영 커밋**으로 들어갑니다. 실습을 마치면 이 브랜치에 구현 → 리뷰 반영 → 기준 문서 반영 커밋이 쌓입니다.
+
 ```bash
 git log --oneline main..HEAD
 ```
 
-기대 결과:
-- `.review-artifacts/feature/recurring-todos/`에 `design-intent.md`, `code-quality-guide.md`, `pr-body.md`, `review-comments.md` 4개 파일이 있다.
-- `code-quality-guide.md`에 ADR-001·ADR-002가 적용 방법과 함께 들어 있고, ADR-003은 빠져 있다.
-- `review-comments.md`의 코멘트는 `[p1]`~`[p4]`로 분류되고, 각각 근거와 판정(ACCEPT / REJECT)이 붙어 있다.
-- `done 1` 뒤 목록이 아래처럼 나온다.
+## 이번에 하지 않은 것 (Out of Scope)
 
-  ```text
-  [x] 1. 분리수거 (마감 2026-11-16, 매주)
-  [ ] 2. 분리수거 (마감 2026-11-23, 매주)
-  ```
+- 매월 반복 (말일 처리가 복잡해서 제외)
+- 반복 중단·삭제
+- 마감일 없는 할 일을 반복으로 바꾸는 기능
 
-- `feature/recurring-todos` 브랜치에 구현 → 리뷰 반영 → 기준 문서 반영 커밋이 있다.
+다음 실습 과제로 GUIDE.md의 '더 해보기'에서 이어서 해 볼 수 있습니다.
