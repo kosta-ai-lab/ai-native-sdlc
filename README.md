@@ -1,91 +1,100 @@
 # AI-Native SDLC
 
-> **2026-10-08 반영 상태:** 준비 문서 23개는 PR #5로 main에 병합되었습니다(병합 커밋 `9614297985689db627b8c303ee818f7ffb26f320`). 아래의 준비 브랜치·main 미반영 표기는 작성 당시 기록입니다. 현재 저장소는 PRIVATE이며 자료별 권리·내용 확인, 정식 라이선스 적용과 실제 공개 승인은 별도로 남아 있습니다.
+**AI와 함께 소프트웨어를 만드는 방법을 배우고, 실습하고, 발전시키는 교육 프로젝트입니다.**
 
+> 코딩 전에 청사진, 코딩 후에 검증.
 
-> AI 에이전트로 실제 제품 수준의 소프트웨어를 만드는 전주기 방법론과 실행 자산.
-> **코딩 전에 청사진, 코딩 후에 검증.**
+AI가 코드를 작성해 주더라도 무엇을 만들지 정하고, 설계를 검토하고, 결과를 검증하는 일은 필요합니다. 이 저장소는 요구사항부터 명세·설계·구현·테스트·배포까지 이어지는 개발 과정을 강의자료와 실행 예제로 다룹니다.
 
-KOSTA AI 에이전트 코딩 전문가 워크숍에서 출발한 공개 준비 프로젝트입니다.
-**현재 저장소는 비공개(private)입니다.** 전체 공개와 초안 포함, 초기 운영 책임·리뷰·기여 확인 방식은 [준비 기준](docs/PUBLIC_RELEASE_DECISIONS.md)으로 정했습니다. 이 브랜치의 문서 반영과 실제 공개는 별개이며, 기존 자료의 권리·내용 확인과 최종 공개 승인만 필수 확인으로 남깁니다.
+KOSTA AI 에이전트 코딩 전문가 워크숍에서 출발했으며, 강사와 개발자가 자료·사례·실습을 함께 보완합니다. Claude Code 중심의 예제를 포함하고, 특정 도구의 사용법뿐 아니라 다른 환경에도 적용할 수 있는 개발 원칙을 탐구합니다.
 
-## 처음 오셨다면
+[시작 가이드](docs/GETTING_STARTED.md) · [강의자료](courses/README.md) · [방법론](METHODOLOGY.md) · [기여하기](CONTRIBUTING.md)
 
-1. [시작 가이드](docs/GETTING_STARTED.md)에서 읽기 전용 탐색, 작은 TDD 예제, SDD 실습 중 목적에 맞는 경로를 고릅니다.
-2. 방법론은 [METHODOLOGY.md](METHODOLOGY.md), 교육 과정은 [courses/README.md](courses/README.md)에서 살펴봅니다.
-3. 가장 작은 코드 예제는 [web-task-system](samples/web-task-system/README.md)입니다. 실행 명령과 검증 한계는 시작 가이드에 명시했습니다.
-4. 질문·문서 수정·버그 제안은 [기여 가이드](CONTRIBUTING.md)를 읽어 주세요. 현재 비공개이므로 저장소 접근 권한이 필요합니다. 공개 후에는 같은 GitHub Issues·PR 경로로 참여하며, 외부 접근을 실제 확인합니다.
+## 무엇을 배울 수 있나요?
 
-API 키·고객 자료·개인정보·비공개 로그는 이슈나 PR에 올리지 않습니다. [보안 안내](SECURITY.md)을 먼저 확인하세요.
+- **요구사항과 명세:** 만들 기능과 완료 기준을 정하고, 구현과 연결합니다.
+- **설계와 모델링:** 도메인·API·객체 구조를 검토하고 설계 의도를 남깁니다.
+- **AI와 구현하기:** 작업 규칙·스킬·에이전트 구성을 활용해 개발 과정을 나눕니다.
+- **테스트와 검증:** BDD·TDD로 기대 동작을 명확히 하고 구현 결과를 확인합니다.
+- **배포와 운영:** CI/CD·아키텍처·보안 관점에서 개발 이후의 과정을 살펴봅니다.
 
-## 무엇인가
+## 어디서 시작하면 좋을까요?
 
-- 에이전트 코딩의 전주기(분석, 설계, 개발, 검증, 배포, 운영)를 **방법론(프로세스 표준)**으로 정의합니다.
-- 각 단계에 실행 자산을 쌓습니다. Claude Code 설정(CLAUDE.md·스킬·훅·서브에이전트)과 샘플 코드가 포함되며, 완성도와 검증 상태는 경로별로 다릅니다.
-- 구현체는 각 사가 자율적으로 만듭니다. 이 프로젝트는 표준·패턴·레퍼런스를 제공합니다.
+- **전체 흐름부터 이해하려면:** [방법론](METHODOLOGY.md)과 [시작 가이드](docs/GETTING_STARTED.md)를 읽어 보세요.
+- **작은 코드로 확인하려면:** [할 일 생성 예제](samples/web-task-system/README.md)에서 요구사항 → 명세 → 인수조건 → 테스트의 연결을 따라가세요.
+- **강의를 따라 실습하려면:** 아래 과정에서 관심 있는 주제를 선택하세요.
+- **교육자료를 보완하려면:** [기여 가이드](CONTRIBUTING.md)를 확인하고 문서 수정이나 작은 실습부터 제안해 주세요.
 
-## 왜인가
+### 강의와 실습
 
-명세와 구현을 **검증·CI/CD·보안·운영의 공학 규율**로 연결하는 것이 이 프로젝트의 목표입니다. 각 단계의 방법론과 실행 자산을 함께 발전시킵니다.
+- [Claude Code로 시작하는 바이브 코딩](courses/vibe-coding-with-claude-code/README.md)
+- [명세 기반 개발 실습](courses/spec-driven-development-practice/README.md) — OpenSpec·Spec Kit 예제
+- [Spec Kit을 활용한 소프트웨어 설계](courses/software-design-with-spec-kit/README.md)
+- [Claude Code Cloud 앱 개발](courses/Agentic%20Coding%20using%20Claude%20Code/README.md) — 골프 스코어카드 앱 만들기
 
-## 구조
+과정별 설명과 교재·실습 파일은 각 폴더에서 확인할 수 있습니다. 도구 계정·설치 환경·이용 비용은 과정마다 다르므로 해당 안내를 먼저 읽어 주세요.
 
-```
-modules/        라이프사이클 단계별 모듈 (각 모듈은 산출물 4종)
-  01-business-reinvention/   비즈니스 리인벤션
-  02-semantic-model/         시맨틱 모델 (온톨로지)
-  03-requirements/           유즈케이스·요구사항
-  04-sdd/                    명세 기반 개발
-  05-bdd/                    행위 기반 개발 (인수조건)
-  06-coding-tdd/             코딩 + TDD  (시드 모듈)
-  07-object-design/          객체설계 (SOLID·API)
-  08-ci/                     지속 통합 (테스트 게이트)
-  09-cd-architecture/        지속 배포·아키텍처 검증
-  10-security/               보안·규제·윤리
-  ext-embedded/              임베디드 환경 구축 (특화)
-  ext-harness/               하니스 엔지니어링 (특화)
-rfcs/           큰 변경 제안·합의 (상태머신 + 템플릿)
-decisions/      결정 기록 ADR
-references/methods/  참조 방법론 카탈로그
-samples/        참조 앱 (레퍼런스 구현)
-courses/        강의 개요·슬라이드·실습·참고자료
-docs/           심화 가이드·교육 매핑
-BACKLOG.md      앞으로 채울 항목
+## 빠른 시작: 작은 TDD 예제
+
+Node.js와 pnpm이 설치된 환경에서 실행합니다.
+
+```bash
+git clone https://github.com/kosta-ai-lab/ai-native-sdlc.git
+cd ai-native-sdlc/samples/web-task-system
+pnpm install --frozen-lockfile --ignore-scripts
+pnpm test
+pnpm exec tsc --noEmit
 ```
 
-## 각 모듈의 산출물 4종 (목표 형식)
+이 예제는 **‘할 일 생성’ 기능을 테스트로 확인하는 작은 코드 샘플**입니다. 웹 서버를 실행하거나 AI API를 호출하지 않습니다. 패키지 설치에는 인터넷 연결이 필요합니다.
 
-아래는 목표 형식이며, 모든 모듈이 네 종류를 완성했다는 뜻은 아닙니다. 실제 파일과 상태는 각 모듈의 README를 확인하세요.
+실행 후 다음 자료를 순서대로 읽으면 명세가 구현으로 이어지는 과정을 볼 수 있습니다.
 
-| 산출물 | 내용 |
-|--------|------|
-| 가이드 | 단계의 목적·입력·산출물·체크리스트 |
-| 규칙 | CLAUDE.md 조각, 이 단계에서 AI가 지킬 규칙 |
-| 자동화 | 스킬·훅·서브에이전트 (바로 불러 쓰는 것) |
-| 샘플 | 동작하는 참조 코드·프롬프트 |
+1. [요구사항](samples/web-task-system/docs/03-requirements.md)
+2. [명세](samples/web-task-system/docs/04-spec.md)
+3. [인수조건](samples/web-task-system/docs/05-acceptance.feature)
+4. [테스트](samples/web-task-system/test/todo.test.ts)와 [구현](samples/web-task-system/src/todo.ts)
 
-## 플랫폼
+## 저장소 둘러보기
 
-표준 플랫폼은 **Claude Code**입니다. 자산은 포터블하므로 추후 다른 도구로 옮길 수 있습니다.
+```text
+courses/              과정별 소개·교재·실습·참고자료
+modules/              개발 단계별 가이드와 실행 자산
+  01~10               비즈니스·요구사항·설계·구현·검증·배포·보안
+  ext-harness/        에이전트 하니스와 개발 도구 활용
+  ext-embedded/       임베디드 분야 확장
+samples/              요구사항부터 코드까지 연결하는 작은 예제
+references/methods/   관련 방법론과 참고자료
+rfcs/                 큰 변경에 대한 제안
+decisions/            설계·운영 결정 기록
+docs/                 시작 안내와 상세 정책
+```
+
+개발 단계별 자료는 [모듈 폴더](modules/)에서, 앞으로 보완할 주제는 [백로그](BACKLOG.md)에서 확인하세요.
+
+## 자료의 상태
+
+이 프로젝트는 계속 발전하는 교육 자료 모음입니다. **모든 모듈이 완성된 것은 아니며**, 개요·초안·실행 가능한 실습이 함께 있습니다. 각 과정과 모듈의 README를 기준으로 필요한 자료를 선택해 주세요. 예제는 학습용이며 운영 서비스에 그대로 적용하기 전에 별도 검토가 필요합니다.
+
+검증 환경·실행 범위·미실행 항목은 [검증 기록](docs/RELEASE_VERIFICATION_20261104.md)에서 확인할 수 있습니다. 과거의 테스트 통과가 이후 모든 변경이나 모든 도구·환경의 동작을 보장하지는 않습니다.
+
+## 함께 기여하기
+
+오탈자 수정, 설명 보강, 실습 오류 제보, 새로운 사례 제안을 환영합니다.
+
+1. 질문이나 개선 사항은 GitHub Issues에 남겨 주세요.
+2. 작은 변경은 별도 브랜치에서 수정한 뒤 Pull Request로 제안해 주세요.
+3. 큰 구조·방법론 변경은 [RFC](rfcs/)로 목적과 영향을 먼저 설명해 주세요.
+4. 사용한 자료의 출처와 기여 권한, 실제 실행한 검증 결과를 함께 적어 주세요.
+
+자세한 절차는 [기여 가이드](CONTRIBUTING.md), 협업 원칙은 [행동 기준](CODE_OF_CONDUCT.md)을 따릅니다. API 키·개인정보·고객 자료·비공개 로그는 올리지 마세요. 보안 문제는 공개 이슈에 상세를 남기지 말고 [보안 안내](SECURITY.md)를 확인해 주세요.
 
 ## 라이선스
 
-**교육자료는 CC BY-NC 4.0(저작자표시-비영리)을 적용하는 것으로 합의되었습니다.** 2026-10-29 윤성열(Andy)이 전달한 회의 합의를 반영합니다. **코드·실행용 자료는 Apache 2.0으로 분리 적용하는 것으로 선택·확정했습니다.** 이는 정책 결정이며 파일별 실제 권리자의 적용 허락·귀속·고지 완료를 뜻하지 않습니다. 제3자 자료는 원 조건을 유지합니다. 과거 React 공식 영어 문서는 [CC BY 4.0 예외](THIRD_PARTY_NOTICES.md)이며 교재 NC로 덮지 않습니다.
+자료의 용도에 따라 라이선스를 구분합니다.
 
-[LICENSE](LICENSE) · [적용 정책과 예외](docs/LICENSING_POLICY.md) · [공식 전문](docs/license-texts/CC-BY-NC-4.0.txt) · [표시 양식](docs/ATTRIBUTION_TEMPLATE.md)
+- **교재·설명 문서·슬라이드·설계 설명:** CC BY-NC 4.0
+- **실습 코드·테스트·실행용 설정·AI 작업 규칙 및 스킬:** Apache License 2.0
+- **제3자 자료:** 해당 자료의 원래 라이선스와 별도 고지를 따릅니다.
 
-비상업적 이용 범위에서 복제·공유·수정을 허용하고 저작자·라이선스·변경 사항을 표시합니다. 상업적 이용은 해당 권리자의 별도 허락을 확인합니다. 자료별 권리·노출 검수가 확인되지 않은 파일을 정책 합의만으로 공개하지 않습니다.
-
-## 상태
-
-**2026-11-04 공개 전 점검:** 기준 커밋은 317개 파일입니다. [검증 결과와 남은 판단](docs/RELEASE_VERIFICATION_20261104.md) · [기준 명세](docs/distribution-manifest-d698f205.csv). 대표 앱 시험 163건 통과, harness 12건 미실행. 현재·과거 미디어 검사 후 과거 강의의 연락처·계정 식별 표시와 일부 이미지의 공개 근거 확인이 남아 있어 비공개를 유지합니다.
-
-**비공개(private) 공개 준비 단계입니다.** 라이선스 합의 반영과 자료별 공개 준비를 진행합니다. 과거 2026-10-14/16 목표일은 경과했으며 새로운 공개일은 확정하지 않았습니다. [현재 검증 현황](docs/RELEASE_VERIFICATION_20261104.md)의 남은 항목과 최종 배포 SHA와 남은 공개 조건을 확인한 뒤 이미 승인된 공개 전환을 진행합니다.
-
-[GOVERNANCE.md](GOVERNANCE.md)와 [기여 안내](CONTRIBUTING.md)는 같은 준비 기준으로 맞췄습니다. 기존 오픈코어 [ADR 0002](decisions/0002-open-core-private-start.md)는 역사로 보존하고, 전체 공개 준비 방향은 [ADR 0004](decisions/0004-public-release-preparation.md)에 기록합니다.
-
-- [공개 준비 체크리스트](docs/PUBLIC_RELEASE_CHECKLIST.md): 완료·미검증·승인 대기 구분
-- [릴리스 노트 초안](docs/RELEASE_NOTES_DRAFT.md): 아직 릴리스가 아님
-- [행동 기준](CODE_OF_CONDUCT.md) · [보안 안내](SECURITY.md): 초기 총괄 Andy, 비공개 요약 연락 경로 지정
-
-자세한 내용은 [METHODOLOGY.md](METHODOLOGY.md), [CONTRIBUTING.md](CONTRIBUTING.md), [GOVERNANCE.md](GOVERNANCE.md)를 참고하세요.
+세부 적용 범위와 예외는 [LICENSE](LICENSE), [라이선스 정책](docs/LICENSING_POLICY.md), [제3자 자료 고지](THIRD_PARTY_NOTICES.md)를 확인해 주세요.
