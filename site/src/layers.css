@@ -13,8 +13,15 @@ html.is-layered .head__row{opacity:.55} /* 헤더 배경은 불투명 유지, �
 .linkbtn{display:inline-flex;align-items:baseline;flex-wrap:wrap;gap:0 8px;min-height:44px;padding:10px 0;border:0;background:none;font:inherit;font-weight:600;line-height:1.4;text-align:left;text-decoration:underline;text-decoration-color:rgba(17,19,17,.35);text-underline-offset:.22em;cursor:pointer}
 .linkbtn:hover{color:var(--accent);text-decoration-color:currentColor}
 .linkbtn__tail{font-size:14px;color:var(--accent);text-decoration:none}
-.area-index__open{display:flex;align-items:center;gap:10px;width:100%;min-height:52px;padding:0;border:0;border-bottom:1px solid var(--line);background:none;font-weight:600;text-align:left;cursor:pointer}
+.area-index__open{display:grid;grid-template-columns:1.8em minmax(0,1fr) auto;grid-template-areas:"num text go" ". meta .";align-items:center;column-gap:12px;row-gap:4px;width:100%;min-height:68px;padding:12px 0;border:0;border-bottom:1px solid var(--line);background:none;font-weight:600;text-align:left;cursor:pointer}
+.area-index__open .area-index__num{grid-area:num}
+.area-index__open .area-index__text{grid-area:text;word-break:keep-all;overflow-wrap:break-word}
+.area-index__open .area-index__go{grid-area:go}
+.area-index__open .area-index__meta{grid-area:meta}
 .area-index__open:hover .area-index__name{color:var(--accent)}
+.area-index__text{display:flex;flex-direction:column;min-width:0}
+.area-index__name{font-size:20px;font-weight:700;line-height:1.3}
+.area-index__hint{font-size:14.5px;font-weight:500;color:var(--muted);line-height:1.4}
 .area-index__go{margin-left:auto;flex:none;padding:3px 10px;border:1.5px solid var(--accent);border-radius:999px;font-family:var(--mono);font-size:11.5px;font-weight:600;color:var(--accent)}
 .area-index__open:hover .area-index__go{background:var(--accent);color:#fff}
 .area-index__open .area-index__meta{flex:none}
@@ -22,8 +29,17 @@ html.is-layered .head__row{opacity:.55} /* 헤더 배경은 불투명 유지, �
 /* ── 영역 펼침: 조립된 지도 도형이 공간으로 커진다 ── */
 .xl{--k:0;--b:0;position:fixed;left:0;right:0;top:var(--head);bottom:0;z-index:60;display:flex;flex-direction:column;padding:0 max(var(--gut),calc((100% - 1600px) / 2 + var(--gut))) 20px}
 .xl__back{position:absolute;inset:0;background:var(--paper);opacity:var(--k)}
-.xl__bar{position:relative;display:flex;align-items:center;gap:6px 20px;min-height:76px;opacity:var(--k)}
-.xl__hint{font-size:14px;color:var(--muted)}
+.xl__bar{position:relative;display:flex;flex-wrap:wrap;align-items:center;gap:8px 20px;min-height:76px;padding:8px 0;opacity:var(--k)}
+.xl__where{display:grid;gap:2px;min-width:0}
+.xl__current{font-size:18px;line-height:1.3}
+.xl__current-k{font-size:13px;color:var(--muted)}
+.xl__current-name{font-weight:750}
+.xl__nav{flex:1 1 auto;min-width:0}
+.xl__nav ul{display:flex;gap:6px;overflow-x:auto;scrollbar-width:thin;padding:2px}
+.xl__nav-btn{display:inline-flex;align-items:center;gap:6px;min-height:44px;padding:0 14px;border:1.5px solid var(--line);border-radius:999px;background:var(--paper);font-size:15px;font-weight:600;white-space:nowrap;cursor:pointer}
+.xl__nav-btn:hover{border-color:var(--accent);color:var(--accent)}
+.xl__nav-btn[aria-current="true"]{background:var(--ink);border-color:var(--ink);color:var(--paper)}
+.xl__nav-num{font-family:var(--mono);font-size:11px;opacity:.75}
 .xl__close{margin-left:auto;min-height:44px;padding:0 18px;background:var(--paper);cursor:pointer}
 .xl__close-mark{font-size:16px;line-height:1}
 .xl__field{position:relative;flex:1;min-height:0}
@@ -39,14 +55,27 @@ html.is-layered .head__row{opacity:.55} /* 헤더 배경은 불투명 유지, �
 .zone__name{font-weight:650;font-size:16px;line-height:1.25}
 .xl.is-wide .zone__name{writing-mode:vertical-rl;letter-spacing:.04em}
 .xl:not(.is-wide) .zone__tab{justify-content:center;gap:2px;padding:4px}
+.xl:not(.is-wide) .zone.is-selected{box-shadow:inset 0 0 0 1.5px var(--ink)}
 .xl:not(.is-wide) .zone__shape{display:none}
 .xl:not(.is-wide) .zone__name{font-size:12.5px;line-height:1.2;word-break:keep-all}
 .zone__body{position:absolute;left:0;top:0;overflow:auto;overscroll-behavior:contain;padding:30px 36px 44px;opacity:var(--b)}
 .zb__title{margin-top:10px;font-size:clamp(28px,3vw,44px);font-weight:650;line-height:1.15;letter-spacing:-.035em}
 .zb__lede{max-width:44rem}
-.zb__cols{margin-top:4px}
+.zb__jumps ul{display:flex;flex-wrap:wrap;gap:8px;margin-top:18px}
+.zb__jump{display:inline-flex;align-items:center;gap:8px;min-height:44px;padding:0 14px;border:1.5px solid var(--accent);border-radius:999px;background:transparent;color:var(--accent);font-size:15px;font-weight:650;cursor:pointer}
+.zb__jump:hover{background:var(--accent);color:#fff}
+.zb__jump-n{font-family:var(--mono);font-size:12px}
+/* 좁은 화면: 공개 자료 있는 주제 → 연결 강의·예제 → 준비 중 → 확장 순서로 한 줄 */
+.zb__cols{display:flex;flex-direction:column;margin-top:4px}
+.zb__col{display:contents}
+.zb__sec--avail{order:1}.zb__sec--rel{order:2}.zb__sec--prep{order:3}.zb__sec--ext{order:4}
 .zone__body--cols .zb__cols{display:grid;grid-template-columns:minmax(0,1.3fr) minmax(0,1fr);gap:44px;align-items:start}
-.zb__h{margin:30px 0 8px;font-family:var(--mono);font-size:12px;font-weight:600;letter-spacing:.12em;color:var(--muted)}
+.zone__body--cols .zb__col{display:block}
+.zb__sec{scroll-margin-top:12px}
+.zb__h{margin:30px 0 8px;font-size:17px;font-weight:750;letter-spacing:-.01em;color:var(--ink);scroll-margin-top:12px}
+.zb__h4{margin:22px 0 4px;font-size:15px;font-weight:700}
+.zb__note{margin-bottom:8px;font-size:14.5px;color:var(--muted)}
+.xl__where{order:1}.xl__nav{order:2}.xl .xl__close{order:3}
 .zb__col .topics{margin-top:0}
 .zb__rels{border-top:1px solid var(--ink)}
 .zb__rel{display:grid;grid-template-columns:minmax(0,1fr) auto;align-items:center;gap:4px 14px;padding:14px 0;border-bottom:1px solid var(--line)}
@@ -64,9 +93,10 @@ html.is-layered .head__row{opacity:.55} /* 헤더 배경은 불투명 유지, �
 .dl__sheet{position:absolute;top:calc(var(--head) + 16px);bottom:16px;left:0;right:0;display:flex;flex-direction:column;width:min(800px,calc(100% - 2 * var(--gut)));margin:0 auto;overflow:auto;overscroll-behavior:contain;background:var(--paper);border-radius:24px;box-shadow:0 30px 80px rgba(17,19,17,.28)}
 .dl__close{position:sticky;top:12px;z-index:2;align-self:flex-end;display:inline-flex;align-items:center;gap:10px;flex:none;min-height:44px;margin:12px 12px 0 0;padding:0 16px;border:1.5px solid var(--ink);border-radius:999px;background:var(--paper);font-size:15px;font-weight:650;cursor:pointer;opacity:var(--b)}
 .dl__close:hover{border-color:var(--accent);color:var(--accent)}
-.dl__x{position:relative;width:12px;height:12px}
-.dl__x::before,.dl__x::after{content:"";position:absolute;left:50%;top:-2px;bottom:-2px;width:1.8px;margin-left:-.9px;background:currentColor;transform:rotate(45deg)}
-.dl__x::after{transform:rotate(-45deg)}
+.dl__back{font-size:16px;line-height:1}
+.dl__small--top{margin-top:0;margin-bottom:8px}
+.dl__report{padding-top:14px;border-top:1px solid var(--line)}
+.dl__go .golink{flex:1}
 .dl__cover{display:grid;grid-template-columns:56px minmax(0,1fr);column-gap:16px;padding:8px 44px 26px;border-bottom:2px solid var(--ink)}
 .dl__cover>*:not(.dl__num){grid-column:2}
 .dl__num{grid-column:1;grid-row:1/span 3;padding-top:2px;font-family:var(--mono);font-size:26px;line-height:1;color:var(--accent)}
@@ -96,9 +126,14 @@ html.is-layered .head__row{opacity:.55} /* 헤더 배경은 불투명 유지, �
 @media (max-width:860px){
   .xl{padding:0 12px 12px}
   .xl__bar{min-height:60px}
-  .xl__label,.xl__hint{display:none}
-  .xl__bar{flex-wrap:nowrap}
-  .xl__bar::before{content:"영역 펼쳐 보기";flex:none;white-space:nowrap;font-family:var(--mono);font-size:12px;letter-spacing:.12em;color:var(--accent)}
+  .xl__label{display:none}
+  .xl__bar{flex-wrap:wrap;gap:6px 10px;min-height:0;padding:8px 0}
+  .xl__where{flex:1 1 0}
+  .xl__current{font-size:17px}
+  .xl .xl__close{order:2}
+  .xl__nav{order:3;flex:1 1 100%}
+  .xl__nav ul{flex-wrap:nowrap;padding-bottom:4px}
+  .xl__nav-btn{min-height:44px;padding:0 12px;font-size:14.5px}
   .xl .xl__close{width:auto;flex:none;padding:0 16px} /* 공통 모바일 .btn{width:100%} 재정의 */
   .zone__body{padding:20px 18px 32px}
   .zb__title{font-size:28px}

@@ -16,30 +16,35 @@
       "id": "problem",
       "title": "문제·요구사항",
       "summary": "무엇을 왜 만들지 정합니다. 사용자가 하려는 일을 살펴보고, 결과를 확인할 수 있는 요구사항으로 정리합니다.",
+      "hint": "무엇을 왜 만들지 정하기",
       "legacyStages": ["01", "02", "03"]
     },
     {
       "id": "spec",
       "title": "명세·설계",
       "summary": "만들 기능과 구조를 구체화하고, AI가 구현할 때 참고할 기준을 정합니다.",
+      "hint": "만들 기능과 구조를 구체화하기",
       "legacyStages": ["04", "07"]
     },
     {
       "id": "build",
       "title": "AI와 구현",
-      "summary": "작업 규칙·스킬·에이전트 구성을 활용해 AI와 함께 개발 과정을 나누어 진행합니다.",
+      "summary": "AI 코딩 도구가 따를 작업 규칙(CLAUDE.md)과 ‘테스트 먼저 작성’ 같은 자동화 스킬을 정해 두고, 그 기준에 맞춰 AI와 구현합니다.",
+      "hint": "작업 규칙·스킬을 정하고 AI와 구현하기",
       "legacyStages": ["06"]
     },
     {
       "id": "verify",
       "title": "테스트·검증",
       "summary": "기대 동작을 인수조건과 테스트로 먼저 정하고, AI가 만든 결과를 확인합니다.",
+      "hint": "원하는 대로 작동하는지 확인하기",
       "legacyStages": ["05"]
     },
     {
       "id": "deploy",
       "title": "배포·운영",
-      "summary": "CI/CD·아키텍처·보안 관점에서 개발 이후의 과정을 살펴봅니다.",
+      "summary": "코드가 바뀔 때 자동으로 검사하고 배포하는 방법을 살펴봅니다. 서비스 운영에 필요한 구조와 보안·규제·윤리 점검도 다룹니다.",
+      "hint": "자동 검사·배포와 운영 점검",
       "legacyStages": ["08", "09", "10"]
     }
   ],
@@ -93,8 +98,8 @@
       "summary": "요구사항부터 배포까지, AI와 함께 소프트웨어를 만드는 과정을 다루는 공개 교육 프로젝트입니다.",
       "areas": ["problem", "spec", "build", "verify", "deploy"],
       "actions": [
-        { "label": "프로젝트 살펴보기", "href": "#roadmap" },
-        { "label": "GitHub에서 보기", "url": "https://github.com/kosta-ai-lab/ai-native-sdlc" }
+        { "label": "개발 영역 보기", "href": "#roadmap" },
+        { "label": "저장소 열기", "url": "https://github.com/kosta-ai-lab/ai-native-sdlc" }
       ]
     },
     {
@@ -105,7 +110,7 @@
       "status": "available",
       "summary": "바이브 코딩, 명세 기반 개발, Spec Kit 설계, Claude Code Cloud 앱 개발 등 공개된 과정의 교재와 실습을 찾아보세요.",
       "collects": "course",
-      "actions": [{ "label": "강의자료 보기", "href": "#courses" }]
+      "actions": [{ "label": "강의 목록 보기", "href": "#courses" }]
     },
     {
       "id": "example",
@@ -115,7 +120,7 @@
       "status": "available",
       "summary": "작은 할 일 생성 기능으로 요구사항·명세·인수조건·테스트·구현이 어떻게 연결되는지 살펴보세요.",
       "areas": ["problem", "spec", "verify", "build"],
-      "actions": [{ "label": "예제 살펴보기", "href": "#example" }],
+      "actions": [{ "label": "예제 단계 보기", "href": "#example" }],
       "intro": "todo-readme",
       "steps": [
         { "label": "요구사항", "source": "todo-req", "area": "problem", "look": "유즈케이스 UC-01과 요구사항 R-01~R-03" },
@@ -138,6 +143,9 @@
       "instructorSource": "c-vibe",
       "duration": "1일 7블록",
       "audience": "AI 코딩 도구를 처음 쓰는 분. 기획자·PM·사업담당자, 그리고 도구가 낯선 개발자",
+      "goal": "자연어만으로 웹앱을 만들어 실제 URL로 배포합니다.",
+      "goalEvidence": "코드를 직접 쓰지 않고 자연어만으로 웹앱을 만들어 실제 URL로 배포한다",
+      "pick": "AI 코딩 도구가 처음이라면",
       "areas": ["build", "deploy"],
       "links": [
         { "label": "강의 안내", "source": "c-vibe" },
@@ -156,6 +164,9 @@
       "instructorSource": "c-sdd",
       "duration": "1일 8블록",
       "audience": "개발 경력 2년 이상, AI 코딩 도구 입문~중급",
+      "goal": "스펙을 먼저 정한 뒤, OpenSpec과 Spec Kit으로 같은 API를 만들어 비교합니다.",
+      "goalEvidence": "의도를 스펙에 먼저 고정하고, 두 SDD 도구로 같은 API를 만들어 비교·선택한다",
+      "pick": "개발 경험이 있다면",
       "areas": ["spec"],
       "links": [
         { "label": "강의 안내", "source": "c-sdd" },
@@ -174,6 +185,8 @@
       "instructorSource": "c-design",
       "duration": "1일 8블록",
       "audience": "설계 산출물을 실제로 만들어 본 적이 적은 현업 개발자",
+      "goal": "요구사항을 바탕으로 설계 다이어그램과 ADR을 만들고, 설계 결정을 읽습니다.",
+      "goalEvidence": "요구사항에서 유스케이스·도메인·ERD·시퀀스·상태·컴포넌트·ADR·추적성까지 이어 그리고, 그 산출물이 담은 설계 결정을 해석한다",
       "areas": ["problem", "spec"],
       "links": [
         { "label": "강의 안내", "source": "c-design" },
@@ -192,6 +205,8 @@
       "instructorSource": "courses-index",
       "duration": "4시간",
       "audience": "비개발자",
+      "goal": "Claude Code Cloud로 간단한 앱을 만들어 휴대폰에서 쓸 수 있게 배포합니다.",
+      "goalEvidence": "비개발자가 Claude Code Cloud를 이용해 간단한 앱을 비용 없이 개발해 휴대폰에서 바로 쓸 수 있도록 배포까지 할 수 있다",
       "areas": ["build", "deploy"],
       "links": [
         { "label": "강의 안내", "source": "c-agentic" },

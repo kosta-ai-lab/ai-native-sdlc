@@ -44,8 +44,10 @@ site/
 
 | 하고 싶은 일 | 고칠 곳 |
 |---|---|
-| 소개·참여 문구 수정 | `src/index.html` (승인 문구를 바꾸면 `check.mjs`의 `APPROVED_COPY`도 함께 고친다) |
-| 새 강의 추가 | `courses/README.md`와 루트 README에 오른 뒤, `sources.json`에 원본 항목을 추가하고 `portal.json courses[]`에 `areas`와 함께 한 항목을 추가한다 |
+| 소개·참여 문구 수정 | `src/index.html` (승인 문구를 바꾸면 `check.mjs`의 `APPROVED_COPY`도 함께 고친다. 상태·실행 조건 같은 필수 안내는 `REQUIRED_SCRIPT_COPY`) |
+| 강의 카드의 ‘배우는 것’ | `portal.json courses[].goal`(짧은 한 문장 요약)과 `goalEvidence`(강의 안내 ‘학습목표’ 줄 원문 그대로)를 함께 고친다. 요약에 무료·보장 같은 원문 밖 주장을 넣지 않는다 |
+| 첫 화면 추천 강의 | `courses[].pick`에 짧은 이름(예: ‘개발 경험이 있다면’)을 둔다. `goal`이 있어야 한다 |
+| 새 강의 추가 | `courses/README.md`와 루트 README에 오른 뒤, `sources.json`에 원본 항목을 추가하고 `portal.json courses[]`에 `areas`와 함께 한 항목을 추가한다. `goal`·`goalEvidence`는 강의 안내에 ‘학습목표’ 줄이 있을 때 넣는다(없으면 생략) |
 | 새 공개 자료·프로젝트 추가 | `portal.json resources[]`에 항목 하나(`areas`, `actions`)를 추가한다. 로드맵 영역 장면·영역 펼침·상세·무대의 연결이 자동으로 반영된다 |
 | 운영 서비스 추가 | 운영 여부를 실제로 확인한 뒤 `kind:"service"`로 추가한다. `status:"operating"`에는 `verified:{date,url}`가 필요하다. 새 도메인은 `scripts/check.mjs`의 `allowedExternal`과 `src/story.js`의 링크 허용 규칙 양쪽에 근거와 함께 추가하고, 링크의 보조 설명도 실제 목적지에 맞춘다. 빌드 검사뿐 아니라 브라우저에서 버튼 주소와 이동을 확인한다 |
 | 모듈 상태 변화 | 원본 README의 `상태·담당`이 바뀌면 `sources.json`의 `verify·status`와 `portal.json`의 `sourceStatus·owner`를 맞춘다. 목적이 "(작성 예정)"에서 실제 내용으로 바뀌면 `modulePending`을 `false`로 바꾼다 |
@@ -65,9 +67,10 @@ site/
 - **공개 항목:**
   - 상태 값, 근거 없는 "운영 중" 금지, 외부 주소 허용 목록, 사이트 안 이동 대상 존재
   - 예제가 요구사항→명세→인수조건→테스트→구현 순서인지
-- **강의:** 개수 상한 없이 각 항목의 README 강의 목록 제목과 강의 README 원제목 일치, 교재 PDF, 강사 근거, `_sample-course` 제외. 추가 강의가 검사를 통과하고 중복 id는 거부되는 회귀 시험을 포함한다.
+- **강의:** 개수 상한 없이 각 항목의 README 강의 목록 제목과 강의 README 원제목 일치, 교재 PDF, 강사 근거, `_sample-course` 제외. `goalEvidence`가 강의 안내 ‘학습목표’ 줄에 그대로 있는지, `goal` 60자 이내·보장/비용 표현 금지, `pick`은 `goal`과 함께. 추가 강의가 검사를 통과하고 중복 id는 거부되는 회귀 시험을 포함한다.
 - **화면 문구:**
-  - 승인 초안 제목·핵심 문장·메뉴·하단 링크 보존
+  - 승인된 첫 방문 UX 문구(제목·주/보조 행동·두 상태 라벨·GitHub 이동 예고·문서/코드 읽기 예제 안내·로그인 필요·이용조건)·메뉴·하단 링크 보존
+  - 화면 스크립트의 필수 안내(Node.js·pnpm 실행 조건, ‘연결 자료’·‘모듈 원문 상태’ 라벨, 상태 오해 방지 한 줄)
   - 홈 화면(index.html)의 내부 용어(시안·초안·검수·감사·미확정·TODO·preview) 금지
   - 배포 원본 전체(src·data)의 검토용 흔적(통합 시안·시안 비교·designs-v2 등)과 개인·내부 경로 금지
 - **메타데이터·CSP:** 승인 title·description과 같은 og 값, favicon, canonical·og:url·og:image·noindex·CNAME 없음. meta CSP 1개가 link/script보다 먼저 있고 정책이 정확히 일치, meta에서 무시되는 지시어(frame-ancestors 등) 없음, inline script·이벤트 속성·위험 DOM API 없음, 스크립트 순서, 스크립트가 쓰는 id 존재
@@ -118,6 +121,7 @@ site/
 ## 8. 이번 작업에서 하지 않은 것
 
 - 원격 commit·push·PR 수정, Pages 설정, 배포, 워크플로 원격 실행
-- 실제 브라우저 렌더링과 한국어 교정(관제 검수자가 수행)
+- 실제 브라우저 렌더링과 한국어 교정(관제 검수자가 수행). 첫 방문 UX 수정의 문구 전체 목록은 검토용으로 따로 넘겼다
+- 첫 방문 UX 수정의 사용자 시험(개발 경험자·비개발자 실제 과제 관찰)
 - origin/main의 새 커밋(강의 PDF·새 모듈 등) 병합과 그 자료의 sources/portal 반영. 새 자료는 담당·상태 확인 후 사람이 추가한다
 - 원본 README·LICENSE·CONTRIBUTING·modules·courses·samples 수정
