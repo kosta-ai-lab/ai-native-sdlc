@@ -18,6 +18,8 @@ Claude Code Cloud를 이용해 Golf Scorecard 앱을 개발하는 Agentic Coding
 - 화면 구성
 - 프로젝트 생성·구현·실행·테스트·빌드
 - 클라우드 배포
+- 앱 기능 확장 I: 라운드 기록 저장
+- 앱 기능 확장 II: Excel에서 조회·분석
 
 ## 학습 결과물
 - 휴대폰 브라우저에서 https://golf-scorecard-kohl-xi.vercel.app/ 페이지를 엽니다.
