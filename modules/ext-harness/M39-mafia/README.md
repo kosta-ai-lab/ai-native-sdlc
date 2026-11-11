@@ -33,6 +33,22 @@ vibemafiaclub의 MAFIA Code-Review harness를 Claude Code 플러그인으로 설
 
 [2]~[4]와 [6]은 초안을 보여 주며 **모호한 논의점**을 함께 묻고, 사람이 답하면 확정합니다. [5] 코드리뷰만 **사람 확인 없이 자동**으로 진행됩니다.
 
+### 자동 모드와 직접 명령 모드
+
+파이프라인은 `auto` 한 번으로 돌릴 수도 있고(**자동 모드**), 단계마다 명령을 하나씩 실행할 수도 있습니다(**직접 명령 모드**). `auto`는 아래 명령들을 순서대로 대신 실행할 뿐이므로 결과물은 같습니다. 두 모드는 섞어 쓸 수 있습니다.
+
+| 파이프라인 단계 | 직접 명령 | 산출물 |
+|---|---|---|
+| [1] 상태 점검 | (전용 명령 없음 — `git branch --show-current`, `git diff main...HEAD --stat`) | `.review-artifacts/{브랜치명}/` |
+| [2] 설계의도 작성 | `/mafia-codereview:write-intent` | `design-intent.md` |
+| [3] 평가기준 수립 | `/mafia-codereview:gen-criteria` | `code-quality-guide.md` |
+| [4] PR 본문 생성 | `/mafia-codereview:create-pr-body` | `pr-body.md` |
+| [5] 코드리뷰 실행 | `/mafia-codereview:review` | `review-comments.md` |
+| [6] 리뷰 반영 + QA | `/mafia-codereview:reflect-review` | `review-comments.md`에 판정 추가, 코드 수정 |
+| (파이프라인 밖) 기준 갱신 | `/mafia-codereview:update-docs` | `docs/code-convention.yaml`, `docs/adr.yaml` |
+
+처음 실습할 때는 **직접 명령 모드**를 권장합니다. 단계마다 어떤 명령이 어떤 파일을 만드는지 확인할 수 있고, 파일이 생기지 않았을 때 그 단계만 다시 실행하기 쉽습니다. `update-docs`는 `auto`에 포함되지 않으므로 두 모드 모두 직접 실행합니다.
+
 ### 핵심 개념 6가지
 
 #### 1. Code Convention (`docs/code-convention.yaml`)
@@ -68,7 +84,7 @@ Code Convention(공통 기준) + 이번 작업 관련 ADR(작업별 기준)을 �
 | 개념 | 설명 |
 |---|---|
 | **`.review-artifacts/{브랜치명}/`** | 모든 산출물이 저장되는 폴더. 브랜치마다 따로 생깁니다. 예) `.review-artifacts/feature/recurring-todos/` |
-| **단계별 명령** | `auto` 대신 단계를 하나씩 실행할 수도 있습니다: `write-intent`, `gen-criteria`, `create-pr-body`, `review`, `reflect-review` |
+| **단계별 명령** | 직접 명령 모드에서 쓰는 명령: `write-intent`, `gen-criteria`, `create-pr-body`, `review`, `reflect-review` (앞의 "자동 모드와 직접 명령 모드" 표 참고) |
 | **`update-docs`** | 작업에서 새로 정한 규칙·결정을 `code-convention.yaml`과 `adr.yaml`에 반영하는 명령. 두 문서의 **충돌·연쇄 수정·폐기 대상**을 찾아 MUST / RECOMMENDED로 제안합니다. |
 | **base branch** | 비교 기준 브랜치. 따로 말하지 않으면 `main`입니다. 변경분은 `git diff main...HEAD`로 봅니다. |
 | **ACCEPT / REJECT 판정** | 리뷰 반영 단계에서 코멘트마다 수용·거부와 그 근거를 `review-comments.md`에 덧붙입니다. |
@@ -79,7 +95,7 @@ Code Convention(공통 기준) + 이번 작업 관련 ADR(작업별 기준)을 �
 |---|---|
 | 설치 | `claude plugin marketplace add vibemafiaclub/mafia-codereview-harness` → `claude plugin install mafia-codereview@mafia-codereview-harness` |
 | 리뷰 기준 | `docs/code-convention.yaml`(항상 지키는 규칙)과 `docs/adr.yaml`(기술 결정과 이유) |
-| 파이프라인 | `/mafia-codereview:auto` 한 번으로 6단계 진행 |
+| 파이프라인 | 자동 모드(`/mafia-codereview:auto` 한 번으로 6단계 진행)와 직접 명령 모드(`write-intent` → `gen-criteria` → `create-pr-body` → `review` → `reflect-review`) |
 | 설계의도 | `design-intent.md` — 구현 대화에서 나온 결정·이유·제외 범위. 리뷰어가 의도적 결정을 존중하게 함 |
 | 평가기준 | `code-quality-guide.md` — 서브에이전트가 ADR 중 관련 항목만 추출해 컨벤션과 병합. 리뷰의 유일한 근거 |
 | 코드리뷰 | `review-comments.md` — 서브에이전트가 자동 리뷰. `[p1]`~`[p4]` 우선순위, 근거, side effect 명시 |

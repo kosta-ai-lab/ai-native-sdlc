@@ -225,6 +225,15 @@ ADR-001에 따라, 이 필드가 없는 예전 `todos.json`의 할 일은 **일�
 └── review-comments.md     리뷰 코멘트. [p1]~[p4] 우선순위, 근거, 반영 판정(ACCEPT / REJECT)
 ```
 
+각 파일을 만드는 명령은 아래와 같습니다. **자동 모드**에서는 `/mafia-codereview:auto` 한 번이 이 명령들을 차례로 실행하고, **직접 명령 모드**에서는 하나씩 직접 실행합니다. 어느 쪽이든 같은 파일이 만들어집니다.
+
+| 파일 | 만드는 명령 | GUIDE.md |
+|---|---|---|
+| `design-intent.md` | `/mafia-codereview:write-intent` (구현한 대화 창에서 실행) | 6단계 |
+| `code-quality-guide.md` | `/mafia-codereview:gen-criteria` | 7단계 |
+| `pr-body.md` | `/mafia-codereview:create-pr-body` | 8단계 |
+| `review-comments.md` | `/mafia-codereview:review` (판정은 `/mafia-codereview:reflect-review`가 추가) | 9·10단계 |
+
 리뷰에서 받아들인 지적은 `feature/recurring-todos` 브랜치에 **리뷰 반영 커밋**으로 들어갑니다. 실습을 마치면 이 브랜치에 구현 → 리뷰 반영 → 기준 문서 반영 커밋이 쌓입니다.
 
 ```bash
