@@ -28,7 +28,7 @@
   var states = [];
   var names = [];
   var view = { pieces: {}, labels: {}, lines: {}, cam: null, mats: null, lineGroup: null };
-  var last = { scene: -1, chapter: null };
+  var last = { scene: -1, chapter: null, mobile: null };
   var pending = false;
 
   /* ── DOM 도우미 ── */
@@ -56,6 +56,11 @@
     var s = src[id];
     if (!s || !safe(s.url)) return null;
     return el('a', { class: cls || 'link', href: s.url }, [label || s.title, ext(), el('span', { class: 'sr-only', text: ' (GitHub 원본)' })]);
+  }
+  function goLink(id, label, cls) {
+    var s = src[id];
+    if (!s || !safe(s.url)) return null;
+    return el('a', { class: cls || 'golink', href: s.url }, [el('span', { class: 'golink__label', text: label }), el('span', { class: 'golink__dest', text: 'GitHub' }), ext()]);
   }
   function chip(availability) {
     var label = (data.statusLabels.topic || {})[availability] || availability;
@@ -92,27 +97,57 @@
   }
 
   /* ── 본문 렌더 ── */
+  function hasDoc(t) { var s = src[t.module]; return !!(s && s.kind === 'file' && safe(s.url)); }
+  // 주제 상태 두 축: '연결 자료'(공개 자료가 있는지)와 '모듈 원문 상태'(모듈 문서 자체의 작성 상태)를 같은 위치·같은 중요도로 둔다.
   function moduleLine(t) {
-    var s = src[t.module];
-    return el('p', { class: 'module' }, [
-      el('span', { class: 'module__k', text: '모듈 원문 상태 ' }), t.sourceStatus,
-      el('span', { class: 'module__k', text: ' · 담당 ' }), t.owner,
-      t.modulePending ? el('span', { class: 'module__pending', text: ' · 목적 작성 예정' }) : null,
-      s && s.kind === 'file' ? el('span', null, [' · ', srcLink(t.module, '모듈 문서', 'link link--small')]) : null
+    return el('div', { class: 'status' }, [
+      el('dl', { class: 'status__pair' }, [
+        el('div', { class: 'status__row' }, [el('dt', { text: '연결 자료' }), el('dd', null, [chip(t.availability)])]),
+        el('div', { class: 'status__row' }, [el('dt', { text: '모듈 원문 상태' }), el('dd', { class: 'status__val', text: t.sourceStatus })])
+      ]),
+      el('p', { class: 'module' }, [
+        '담당 ' + t.owner,
+        t.modulePending ? el('span', { class: 'module__pending', text: ' · 목적 작성 예정' }) : null,
+        hasDoc(t) ? ' · ' : null,
+        hasDoc(t) ? srcLink(t.module, '모듈 문서 열기', 'link link--small') : null
+      ])
     ]);
   }
-  function sourceList(ids, label) {
+  function sourceList(ids, label, t) {
     var items = (ids || []).map(function (id) {
       var s = src[id];
       return s ? el('li', null, [el('span', { class: 'src__type', text: TYPE[s.type] || '자료' }), srcLink(id, s.title)]) : null;
     }).filter(Boolean);
-    return items.length ? el('ul', { class: 'src', 'aria-label': label }, items) : el('p', { class: 'empty', text: '아직 연결된 공개 자료가 없습니다.' });
+    if (items.length) return el('ul', { class: 'src', 'aria-label': label }, items);
+    return t ? null : el('p', { class: 'empty', text: '아직 연결된 공개 자료가 없습니다.' }); // 주제는 상태 줄의 '준비 중'으로 충분
+  }
+  function topicItem(t, attrs) {
+    return el('li', Object.assign({ class: 'topic topic--' + t.availability }, attrs || {}), [
+      el('h4', { class: 'topic__title', text: t.title }),
+      moduleLine(t),
+      sourceList(t.related, t.title + ' 연결된 공개 자료', t)
+    ]);
   }
   function relatedOf(areaId) {
     var out = [];
     data.resources.forEach(function (r) { if ((r.areas || []).indexOf(areaId) !== -1) out.push({ key: 'res:' + r.id, href: '#res-' + r.id, type: r.type, status: r.status, title: r.title }); });
     data.courses.forEach(function (c) { if (c.areas.indexOf(areaId) !== -1) out.push({ key: 'course:' + c.id, href: '#course-' + c.id, type: '강의', status: c.status, title: c.title }); });
     return out;
+  }
+
+  function renderPicks() {
+    var picks = data.courses.filter(function (c) { return c.pick; });
+    var list = $('pick-list');
+    if (!list) return;
+    list.textContent = '';
+    picks.forEach(function (c) {
+      list.appendChild(el('li', { class: 'pick' }, [
+        el('p', { class: 'pick__label', text: c.pick }),
+        el('a', { class: 'pick__title', href: '#course-' + c.id }, [c.title, el('span', { class: 'pick__go', 'aria-hidden': 'true', text: '↓' })]),
+        c.goal ? el('p', { class: 'pick__goal', text: c.goal }) : null
+      ]));
+    });
+    $('hero-picks').hidden = !picks.length;
   }
 
   function renderAreas() {
@@ -130,16 +165,12 @@
         el('p', { class: 'step__meta', text: '주요 주제 ' + topics.length + ' · 연결 자료 ' + rel.length }),
         openAreaBtn(a, 'btn btn--open step__open', '이 영역 펼쳐 보기'),
         el('ul', { class: 'topics', 'aria-label': a.title + ' 주요 주제' }, topics.map(function (t) {
-          return el('li', { class: 'topic', id: 'topic-' + t.id, tabindex: '-1' }, [
-            el('div', { class: 'topic__head' }, [el('h4', { class: 'topic__title', text: t.title }), chip(t.availability)]),
-            moduleLine(t),
-            sourceList(t.related, t.title + ' 연결된 공개 자료')
-          ]);
+          return topicItem(t, { id: 'topic-' + t.id, tabindex: '-1' });
         })),
         el('div', { class: 'related' }, [
-          el('h4', { class: 'related__title', text: '연결할 자료' }),
+          el('h4', { class: 'related__title', text: '이 영역과 연결된 강의·예제' }),
           rel.length ? el('ul', { class: 'related__list' }, rel.map(function (r) {
-            return el('li', { 'data-card': true }, [el('span', { class: 'src__type', text: r.type + ' · ' + ((data.statusLabels.resource || {})[r.status] || r.status) }), openItemBtn(r.key, r.title, 'linkbtn', r.title, ' 살펴보기')]);
+            return el('li', { 'data-card': true }, [el('span', { class: 'src__type', text: r.type + ' · ' + ((data.statusLabels.resource || {})[r.status] || r.status) }), openItemBtn(r.key, r.title, 'linkbtn', r.title, ' 정보 보기')]);
           })) : el('p', { class: 'empty', text: '아직 연결된 공개 자료가 없습니다.' }),
           exts.length ? el('p', { class: 'related__ext' }, ['연결되는 확장 주제: '].concat(exts.map(function (x, j) {
             return el('span', null, [j ? ', ' : '', el('a', { class: 'link', href: '#ext-' + x.id, text: x.title })]);
@@ -155,14 +186,14 @@
       el('div', { class: 'exts' }, data.extensions.map(function (x) {
         var s = src[x.module];
         return el('article', { class: 'ext', id: 'ext-' + x.id, tabindex: '-1', 'aria-labelledby': 'ext-' + x.id + '-title' }, [
-          el('div', { class: 'topic__head' }, [el('h4', { class: 'ext__title', id: 'ext-' + x.id + '-title', text: x.title }), chip(x.availability)]),
+          el('h4', { class: 'ext__title', id: 'ext-' + x.id + '-title', text: x.title }),
           el('p', { class: 'ext__summary', text: x.summary }),
           el('p', { class: 'ext__from' }, ['연결 영역 · '].concat((x.relatedAreas || []).map(function (id, j) {
             return el('span', null, [j ? ', ' : '', el('a', { class: 'link', href: '#area-' + id, text: areaTitle(id) })]);
           }))),
           moduleLine(x),
-          sourceList(x.related, x.title + ' 세부 주제'),
-          s ? el('p', { class: 'ext__module' }, [srcLink(x.module, s.kind === 'dir' ? '모듈 폴더 보기' : '모듈 문서 보기', 'link')]) : null
+          sourceList(x.related, x.title + ' 세부 주제', x),
+          s && s.kind === 'dir' ? el('p', { class: 'ext__module' }, [srcLink(x.module, '모듈 폴더 열기', 'link')]) : null // 파일 모듈은 상태 줄에 링크가 있다
         ]);
       }))
     ]));
@@ -170,10 +201,16 @@
     var idx = $('area-index');
     idx.textContent = '';
     data.areas.forEach(function (a, i) {
-      idx.appendChild(el('li', null, [el('button', { type: 'button', class: 'area-index__open', 'data-open-area': a.id, 'aria-label': a.title + ' 영역 펼쳐 보기' }, [
-        el('span', { class: 'area-index__num', 'aria-hidden': 'true', text: num(i) }), el('span', { class: 'area-index__name', text: a.title }),
-        el('span', { class: 'area-index__meta', text: '주제 ' + data.topics.filter(function (t) { return t.area === a.id; }).length }),
-        el('span', { class: 'area-index__go', 'aria-hidden': 'true', text: '펼치기' })
+      var ts = data.topics.filter(function (t) { return t.area === a.id; });
+      var open = ts.filter(function (t) { return t.availability === 'available'; }).length;
+      idx.appendChild(el('li', null, [el('button', { type: 'button', class: 'area-index__open', 'data-open-area': a.id, 'aria-label': a.title + (a.hint ? ' — ' + a.hint : '') + ', 주제 ' + ts.length + '개 중 공개 자료 있음 ' + open + '개. 영역 열기' }, [
+        el('span', { class: 'area-index__num', 'aria-hidden': 'true', text: num(i) }),
+        el('span', { class: 'area-index__text' }, [
+          el('span', { class: 'area-index__name', text: a.title }),
+          a.hint ? el('span', { class: 'area-index__hint', text: a.hint }) : null
+        ]),
+        el('span', { class: 'area-index__meta', text: '주제 ' + ts.length + ' · 공개 자료 ' + open }),
+        el('span', { class: 'area-index__go', 'aria-hidden': 'true', text: '열기' })
       ])]));
     });
     data.extensions.forEach(function (x) {
@@ -184,48 +221,70 @@
     });
   }
 
+  // 버튼 이름에 결과를 드러낸다: 페이지 안 이동은 이름 그대로(↓), 외부 원문은 'GitHub' 표시, 상세는 한 단계만.
+  function actionLink(a, primary) {
+    var cls = 'btn ' + (primary ? 'btn--ink' : 'btn--line');
+    if (a.href) return el('a', { class: cls, href: a.href }, [a.label, el('span', { class: 'btn__go', 'aria-hidden': 'true', text: '↓' })]);
+    if (a.url && safe(a.url)) return el('a', { class: cls, href: a.url }, [a.label, el('span', { class: 'btn__dest', text: '(GitHub)' }), ext()]);
+    return null;
+  }
+  var MAT_ORDER = { collection: 0, example: 1, project: 2 };
+  function matOrder() {
+    return data.resources.map(function (r, i) { return { r: r, i: i }; }).sort(function (a, b) {
+      var x = r0(a.r), y = r0(b.r);
+      return x !== y ? x - y : a.i - b.i;
+    }).map(function (o) { return o.r; });
+    function r0(r) { return r.kind in MAT_ORDER ? MAT_ORDER[r.kind] : 9; }
+  }
   function renderMaterials() {
     var list = $('material-list');
     list.textContent = '';
-    data.resources.forEach(function (r, i) {
+    matOrder().forEach(function (r, i) {
       var count = r.collects === 'course' ? ' ' + data.courses.length + '개' : '';
-      list.appendChild(el('li', { class: 'mat', id: 'res-' + r.id, tabindex: '-1', 'data-card': true }, [
+      var inline = r.collects === 'course' ? el('ul', { class: 'mat__courses', 'aria-label': '공개 강의 ' + data.courses.length + '개 — 강의 목록에서 보기' }, data.courses.map(function (c) {
+        return el('li', null, [el('a', { class: 'link', href: '#course-' + c.id }, [c.title]), el('span', { class: 'mat__course-aud', text: c.audience })]);
+      })) : null;
+      var detail = r.kind === 'project' ? openItemBtn('res:' + r.id, r.title, 'btn btn--open', '함께 읽을 원문 목록') : null;
+      list.appendChild(el('li', { class: 'mat mat--' + r.kind, id: 'res-' + r.id, tabindex: '-1', 'data-card': true }, [
         el('span', { class: 'mat__num', 'aria-hidden': 'true', text: num(i) }),
         el('div', { class: 'mat__body' }, [
           el('p', { class: 'mat__type' }, [el('span', { text: r.type + count }), resChip(r.status)]),
           el('h3', { class: 'mat__title', text: r.title }),
           el('p', { class: 'mat__summary', text: r.summary }),
+          inline,
           r.areas ? el('p', { class: 'mat__areas', text: '로드맵 · ' + r.areas.map(areaTitle).join(' · ') }) : null,
-          el('div', { class: 'mat__actions' }, [openItemBtn('res:' + r.id, r.title, 'btn btn--open', '자료 살펴보기')].concat(r.actions.map(function (a, j) {
-            if (a.href) return el('a', { class: 'btn ' + (j === 0 ? 'btn--ink' : 'btn--line'), href: a.href, text: a.label });
-            if (a.url && safe(a.url)) return el('a', { class: 'btn ' + (j === 0 ? 'btn--ink' : 'btn--line'), href: a.url }, [a.label, ext(), el('span', { class: 'sr-only', text: ' (GitHub)' })]);
-            return null;
-          })))
+          el('div', { class: 'mat__actions' }, r.actions.map(function (a, j) { return actionLink(a, j === 0); }).concat([detail]))
         ])
       ]));
     });
   }
 
+  // 강의 카드: 공식명 · 대상 · 학습목표(강의 안내 원문) · 원문 바로 열기. 추가 정보는 한 단계 상세.
   function renderCourses() {
     var list = $('course-list');
     list.textContent = '';
     data.courses.forEach(function (c, i) {
       var note = c.instructorSource === 'courses-index' ? ' (강의 목록 표기)' : '';
-      list.appendChild(el('li', { class: 'course', id: 'course-' + c.id, tabindex: '-1', 'data-card': true }, [
+      list.appendChild(el('li', { class: 'course', id: 'course-' + c.id, tabindex: '-1', 'data-card': true, 'aria-labelledby': 'course-' + c.id + '-title' }, [
         el('span', { class: 'course__num', 'aria-hidden': 'true', text: num(i) }),
         el('div', { class: 'course__main' }, [
           el('p', { class: 'course__series' }, [el('span', { text: c.series }), resChip(c.status)]),
-          el('h3', { class: 'course__title', text: c.title }),
+          el('h3', { class: 'course__title', id: 'course-' + c.id + '-title', text: c.title }),
           el('p', { class: 'course__full', text: c.fullTitle }),
-          el('p', { class: 'course__areas', text: '로드맵 · ' + c.areas.map(areaTitle).join(' · ') }),
-          openItemBtn('course:' + c.id, c.title, 'btn btn--open course__open', '강의 살펴보기')
+          el('dl', { class: 'course__key' }, [
+            el('div', null, [el('dt', { text: '대상' }), el('dd', { text: c.audience })]),
+            c.goal ? el('div', null, [el('dt', { text: '배우는 것' }), el('dd', { text: c.goal })]) : null
+          ])
         ]),
-        el('dl', { class: 'course__meta' }, [
-          el('div', null, [el('dt', { text: '대상' }), el('dd', { text: c.audience })]),
-          el('div', null, [el('dt', { text: '분량' }), el('dd', { text: c.duration })]),
-          el('div', null, [el('dt', { text: '강사' }), el('dd', { text: c.instructor + note })])
-        ]),
-        el('ul', { class: 'course__links', 'aria-label': c.title + ' 원본 자료' }, c.links.map(function (l) { return el('li', null, [srcLink(l.source, l.label)]); }))
+        el('div', { class: 'course__side' }, [
+          el('ul', { class: 'course__go', 'aria-label': c.title + ' 원문 바로 열기 (GitHub)' }, c.links.map(function (l) { return el('li', null, [goLink(l.source, l.label + ' 열기')]); })),
+          el('dl', { class: 'course__meta' }, [
+            el('div', null, [el('dt', { text: '분량' }), el('dd', { text: c.duration })]),
+            el('div', null, [el('dt', { text: '강사' }), el('dd', { text: c.instructor + note })]),
+            el('div', null, [el('dt', { text: '로드맵' }), el('dd', { text: c.areas.map(areaTitle).join(' · ') })])
+          ]),
+          openItemBtn('course:' + c.id, c.title, 'btn btn--open course__open', '강의 정보 더 보기')
+        ])
       ]));
     });
   }
@@ -241,7 +300,7 @@
         el('span', { class: 'chain__num', 'aria-hidden': 'true', text: num(i) }),
         el('p', { class: 'chain__label', text: s.label + ' · ' + areaTitle(s.area) }),
         srcLink(s.source, f ? f.title : s.label, 'chain__link'),
-        el('p', { class: 'chain__look', text: s.look }),
+        el('p', { class: 'chain__look', text: '확인할 것: ' + s.look }),
         f ? el('p', { class: 'chain__path', text: f.path }) : null
       ]));
     });
@@ -365,12 +424,15 @@
   /* ── 스크롤 연동 ── */
   function headH() { var h = $('head'); return h ? h.getBoundingClientRect().height : 64; }
   function refY() {
-    if (narrowQ.matches) {
-      var st = $('stage').getBoundingClientRect();
-      var bottom = headH() + st.height;
-      return bottom + (window.innerHeight - bottom) * 0.3;
-    }
+    if (narrowQ.matches) return headH() + (window.innerHeight - headH()) * 0.3;
     return window.innerHeight * 0.5;
+  }
+  // 모바일: 무대가 화면 아래에서 들어와 위쪽에 닿을 때까지 흩어진 도형 → 조립된 지도(장면 2)
+  function mobileScene() {
+    var r = $('stage').getBoundingClientRect();
+    var vh = window.innerHeight || 1;
+    var q = (vh - r.top) / (vh * 0.85);
+    return 2 * (q < 0 ? 0 : q > 1 ? 1 : q);
   }
   function measure() {
     steps = Array.prototype.slice.call(document.querySelectorAll('#story [data-step]'));
@@ -400,18 +462,22 @@
     var i = Math.min(n - 1, Math.floor(f));
     var t = f - i;
     var p = n > 1 ? f / (n - 1) : 0;
-    applyState(M.stateAt(states, f));
+    var mobile = !reduced && narrowQ.matches;
+    var fm = mobile ? mobileScene() : f;
+    applyState(M.stateAt(states, fm));
     var story = $('story');
     story.setAttribute('data-progress', reduced ? 'reduced' : p.toFixed(4));
     story.setAttribute('data-scene', String(i));
     story.setAttribute('data-scene-progress', reduced ? '0' : t.toFixed(4));
     $('stage-svg').setAttribute('data-scene', String(i));
-    $('hud-fill').style.transform = 'scaleX(' + (reduced ? 1 : p).toFixed(4) + ')';
+    $('hud-fill').style.transform = 'scaleX(' + (reduced ? 1 : mobile ? fm / 2 : p).toFixed(4) + ')';
     steps.forEach(function (s, k) { s.style.setProperty('--t', reduced ? '1' : String(k < i ? 1 : k === i ? Math.round(t * 1000) / 1000 : 0)); });
     var shown = Math.min(n - 1, Math.round(f));
-    if (shown !== last.scene) {
+    if (shown !== last.scene || mobile !== last.mobile) {
       last.scene = shown;
-      $('hud-label').textContent = reduced ? '로드맵 지도' : num(shown) + ' / ' + num(n - 1) + ' · ' + (names[shown] || '');
+      last.mobile = mobile;
+      // 학습 진도가 아니라 이 페이지 안의 위치임을 이름으로 밝힌다
+      $('hud-label').textContent = reduced ? '개발 과정 지도' : mobile ? '개발 과정 지도 · 영역별로 모입니다' : '페이지 안내 ' + (shown + 1) + '/' + n + ' · ' + (names[shown] || '');
       steps.forEach(function (s, k) { s.classList.toggle('is-current', k === shown); });
     }
     var chapter = chapterFor(Math.round(f));
@@ -480,6 +546,7 @@
     data = res[0];
     res[1].sources.forEach(function (s) { src[s.id] = s; });
     data.areas.forEach(function (a) { areaById[a.id] = a; });
+    renderPicks();
     renderAreas();
     renderMaterials();
     renderCourses();
@@ -497,8 +564,8 @@
     if (typeof ResizeObserver === 'function') new ResizeObserver(remeasure).observe($('story'));
     if (document.fonts && document.fonts.ready) document.fonts.ready.then(remeasure);
     if (window.KLayers) window.KLayers.init({
-      data: data, src: src, TYPE: TYPE, el: el, svg: svg, ext: ext, num: num, safe: safe, srcLink: srcLink, chip: chip, resChip: resChip,
-      moduleLine: moduleLine, sourceList: sourceList, areaTitle: areaTitle, relatedOf: relatedOf, layout: lay, shapeEl: shapeEl,
+      data: data, src: src, TYPE: TYPE, el: el, svg: svg, ext: ext, num: num, safe: safe, srcLink: srcLink, goLink: goLink, chip: chip, resChip: resChip,
+      moduleLine: moduleLine, sourceList: sourceList, topicItem: topicItem, actionLink: actionLink, issues: REPO + '/issues', areaTitle: areaTitle, relatedOf: relatedOf, layout: lay, shapeEl: shapeEl,
       pieceRect: function (id) { var p = view.pieces['area:' + id]; return p ? p.g.getBoundingClientRect() : null; },
       afterClose: function () { last.scene = -1; schedule(); }
     });

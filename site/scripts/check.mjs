@@ -20,31 +20,40 @@ const FORBIDDEN_CLAIMS = [
 ];
 // 홈 화면(index.html)에 노출하지 않는 내부 제작·검수 용어
 const INTERNAL_TERMS = [/시안/, /감사/, /검수/, /초안/, /내부\s*메모/, /TODO/, /미확정/, /preview/i];
-// 승인 초안(PORTAL_DRAFT.ko.md)의 제목·핵심 문장. 화면에 그대로 있어야 한다.
+// 승인된 첫 방문 UX 수정(2026-11-11)의 제목·핵심 문장과, 지켜야 할 제한·이용조건 문구. 화면에 그대로 있어야 한다.
 const APPROVED_COPY = [
   'kosta-ai-lab',
-  'AI와 함께 만드는 소프트웨어,',
-  '함께 발전시키는 <em>개발 방식</em>',
-  'AI가 코드를 작성하는 시대에도 무엇을 만들지 정하고, 설계를 검토하고, 결과를 확인하는 과정은 중요합니다.',
-  '우리는 AI-Native 소프트웨어 개발의 방법과 경험을 나누고, 교재·예제·도구를 함께 발전시킵니다.',
-  '로드맵 둘러보기', '공개 자료 보기',
-  '왜 함께 공개하나요?',
-  '한 사람의 경험이 다른 사람의 출발점이 되고, 새로운 시도와 피드백이 더 나은 개발 방식으로 이어지기 때문입니다.',
+  'AI와 함께 개발하고, <em>경험과 자료</em>를 나눕니다',
+  'kosta-ai-lab은 AI로 소프트웨어를 만드는 경험과 강의자료, 코드 예제를 공유합니다.',
+  'AI에게 무엇을 만들지 설명하고, 설계를 검토하고, 결과를 확인하는 방법을 다룹니다.',
+  '개발 경험자를 중심으로, 기획자와 입문자도',
+  '>강의자료 보기<', '>개발 주제별로 찾기<',
+  '경험과 자료를 공개하는 이유',
   'KOSTA AI 에이전트 코딩 전문가 워크숍에서 출발한 AI-Native SDLC 프로젝트는 강사와 개발자가 자료·사례·실습을 함께 보완합니다.',
   '경험을 나눕니다.', '결과를 확인합니다.', '함께 보완합니다.',
-  '무엇을 다루고, 어디로 이어질까요?',
-  '이 흐름은 전체를 이해하기 위한 개요이며, 모든 사람이 따라야 하는 고정 학습 순서는 아닙니다.',
-  '지금 살펴볼 수 있는 것',
+  '개발 과정별로 주제와 자료를 찾아보세요',
+  '순서대로 읽지 않아도 됩니다.',
+  '이 흐름은 개요이며 고정된 학습 순서가 아닙니다.',
+  '<strong>연결 자료</strong>', '<strong>모듈 원문 상태</strong>', '(완성·실행 보장 아님)', '(강의·예제 상태 아님)',
+  '지금 열어 볼 수 있는 공개 자료',
+  '브라우저 뒤로 가기로 돌아옵니다.',
+  '실제 웹앱 데모가 아니라, GitHub에서 문서와 코드를 읽는 예제입니다.',
   '작은 수정부터 새로운 사례까지',
-  '기여 방법 보기', '오류·개선 제안', 'GitHub 조직 방문',
-  '>소개<', '[ 01 ] 소개', '[ 02 ] 로드맵', '[ 03 ] 서비스·자료', '[ 04 ] 참여하기',
+  '기여 방법 보기', '오류·개선 제안 (GitHub)', 'GitHub 조직 방문', '(GitHub 로그인 필요)',
+  '<dd>CC BY-NC 4.0</dd>', '<dd>Apache License 2.0</dd>', '원래 라이선스와 별도 고지를 따릅니다',
+  '>소개<', '[ 01 ] 소개', '[ 02 ] 로드맵', '[ 03 ] 공개 자료', '[ 04 ] 참여하기',
   '>GitHub<', '>기여 안내<', '>라이선스<', '>보안 안내<'
 ];
+// 화면 스크립트에 남아야 하는 제한·상태 안내 문구(파일별)
+const REQUIRED_SCRIPT_COPY = {
+  'story.js': ['직접 실행하려면 Node.js와 pnpm이 필요하고, 패키지 설치에는 인터넷 연결이 필요합니다.', "'연결 자료'", "'모듈 원문 상태'", '목적 작성 예정', "'배우는 것'"],
+  'layers.js': ['(완성·실행 보장 아님)', '(강의·예제 상태 아님)', '원문은 GitHub에서 열립니다. 브라우저 뒤로 가기로 돌아옵니다.', '실제 웹앱 데모가 아니라']
+};
 // 검토용 시안 표시·비교 링크(제작 단계 흔적)와 개인·내부 주소
 const REVIEW_MARKERS = [/통합\s*시안/, /시안\s*비교/, /미확정/, /제작\s*제안/, /designs-v2/, /designs-integrated/, /\bEgo\b/];
 const PRIVATE_MARKERS = [/\/Users\//, /\/home\/[a-z]/, /\.hermes/, /ts\.net/, /tail[0-9a-f]{5,}/, /127\.0\.0\.1/, /localhost/, /:18483/];
-const APPROVED_TITLE = 'kosta-ai-lab — AI와 함께 만드는 소프트웨어, 함께 발전시키는 개발 방식';
-const APPROVED_DESCRIPTION = 'kosta-ai-lab은 AI-Native 소프트웨어 개발의 방법과 경험을 나누고, 교재·예제·도구를 함께 발전시킵니다. 로드맵과 공개 자료로 연결합니다.';
+const APPROVED_TITLE = 'kosta-ai-lab — AI와 함께 개발하고, 경험과 자료를 나눕니다';
+const APPROVED_DESCRIPTION = 'kosta-ai-lab은 AI로 소프트웨어를 만드는 경험과 강의자료, 코드 예제를 공유합니다. 강의 목록과 개발 주제별 지도에서 필요한 자료를 바로 열 수 있습니다.';
 // meta CSP 정책(GitHub Pages는 HTTP 헤더를 정할 수 없다). 스크립트는 같은 출처 파일만, 스타일은 CSSOM·속성 갱신을 위해 unsafe-inline 유지,
 // 무대 SVG는 문서 안 요소, 데이터는 같은 출처 JSON fetch.
 export const REQUIRED_CSP = {
@@ -63,7 +72,8 @@ const META_IGNORED_CSP = ['frame-ancestors', 'report-uri', 'report-to', 'sandbox
 const SCRIPT_ORDER = /<script src="motion-core\.js" defer><\/script>\s*<script src="layers\.js" defer><\/script>\s*<script src="story\.js" defer><\/script>/;
 // story.js·layers.js가 찾는 고정 요소
 const REQUIRED_IDS = ['head', 'main', 'toc', 'toc-toggle', 'story', 'top', 'top-title', 'intro', 'roadmap', 'materials', 'courses', 'example', 'join',
-  'stage', 'stage-svg', 'cam', 'stage-msg', 'hud-label', 'hud-fill', 'area-index', 'area-steps', 'material-list', 'course-list', 'example-steps', 'example-note', 'layers'];
+  'stage', 'stage-svg', 'cam', 'stage-msg', 'hud-label', 'hud-fill', 'area-index', 'area-steps', 'material-list', 'course-list', 'example-steps', 'example-note', 'layers',
+  'hero-picks', 'pick-list', 'status-legend'];
 // 배포 주소: GitHub Pages 프로젝트 하위 경로와, 사용자 도메인을 붙였을 때의 루트
 export const SERVE_BASES = [BASE_PATH, '/'];
 
@@ -89,6 +99,9 @@ const TRACKING = [/localStorage/, /sessionStorage/, /indexedDB/, /document\.cook
 function allowedExternal(url) {
   return url === ORG_URL || url === REPO_URL || url.startsWith(REPO_URL + '/');
 }
+
+const GOAL_MAX = 60;
+const GOAL_PROMISE = /무료|비용\s*없이|보장|누구나|반드시|완벽|100\s*%/;
 
 export function collectProblems({ dist = null, repoRoot = REPO_ROOT, siteDir = SITE_DIR, dataDir = DATA_DIR, srcDir = path.join(siteDir, 'src') } = {}) {
   const problems = [];
@@ -134,6 +147,7 @@ export function collectProblems({ dist = null, repoRoot = REPO_ROOT, siteDir = S
     if (areaIds.has(a.id)) bad(`영역: 중복 id ${a.id}`);
     areaIds.add(a.id);
     if (!a.summary) bad(`영역 ${a.id}: summary 누락`);
+    if ('hint' in a && (typeof a.hint !== 'string' || !a.hint || a.hint.length > 30)) bad(`영역 ${a.id}: hint는 30자 이내 짧은 행동 설명`);
     for (const st of a.legacyStages || []) {
       if (legacy.has(st)) bad(`영역: 이전 단계 ${st}가 두 영역에 연결됨`);
       legacy.set(st, a.id);
@@ -251,6 +265,21 @@ export function collectProblems({ dist = null, repoRoot = REPO_ROOT, siteDir = S
         notes.push(`${where}: courses/README.md 표의 링크 경로가 실제 폴더 '${folder}'와 다름 — 사이트는 실제 폴더로 연결(원본은 수정하지 않음)`);
       }
     }
+    // 학습목표: 카드에는 짧은 요약(goal), 근거는 강의 안내 원문 학습목표 줄의 인용(goalEvidence)으로 분리한다.
+    //  - goalEvidence는 원문 학습목표 줄에 그대로 있어야 한다(원문 인용).
+    //  - goal은 한 문장 요약: 짧게, 원문에 없는 보장·비용 주장 금지(사람이 원문과 대조해 검토).
+    if ('goal' in c || 'goalEvidence' in c) {
+      const line = courseReadme ? (readRepo(courseReadme.path).split('\n').find((l) => /학습\s?목표/.test(l) && !/^#/.test(l.trim())) || '') : '';
+      if (typeof c.goal !== 'string' || !c.goal) bad(`${where}: goal(카드 한 문장 요약) 필요`);
+      else {
+        if (c.goal.length > GOAL_MAX) bad(`${where}: goal은 ${GOAL_MAX}자 이내 한 문장 요약 — 현재 ${c.goal.length}자`);
+        if (GOAL_PROMISE.test(c.goal)) bad(`${where}: goal에 원문 근거 없는 보장·비용 표현 금지 — ${c.goal}`);
+      }
+      if (typeof c.goalEvidence !== 'string' || !c.goalEvidence) bad(`${where}: goalEvidence(원문 학습목표 인용) 필요`);
+      else if (!line) bad(`${where}: 강의 안내에 '학습목표' 줄이 없어 근거를 확인할 수 없음`);
+      else if (!line.includes(c.goalEvidence)) bad(`${where}: goalEvidence가 원문 학습목표 줄과 다름 — ${line.trim()}`);
+    }
+    if ('pick' in c && (typeof c.pick !== 'string' || !c.pick || !c.goal)) bad(`${where}: pick(첫 화면 추천 이름)은 goal과 함께만`);
     const inst = ref(`${where} instructorSource`, c.instructorSource);
     if (inst && !readRepo(inst.path).includes(c.instructor)) bad(`${where}: 강사 '${c.instructor}'가 ${inst.path}에 없음`);
   }
@@ -263,6 +292,10 @@ export function collectProblems({ dist = null, repoRoot = REPO_ROOT, siteDir = S
   // 5) 승인 문구·홈 화면 용어·과장·추적 표현
   const html = fs.readFileSync(path.join(srcDir, 'index.html'), 'utf8');
   for (const s of APPROVED_COPY) if (!html.includes(s)) bad(`index.html: 승인 문구 누락 — ${s}`);
+  for (const [n, list] of Object.entries(REQUIRED_SCRIPT_COPY)) {
+    const text = fs.readFileSync(path.join(srcDir, n), 'utf8');
+    for (const s of list) if (!text.includes(s)) bad(`${n}: 필수 안내 문구 누락 — ${s}`);
+  }
   const visibleHtml = html.replace(/<!--[\s\S]*?-->/g, '').replace(/<script[\s\S]*?<\/script>/g, '');
   for (const re of INTERNAL_TERMS) if (re.test(visibleHtml)) bad(`index.html: 홈 화면에 내부 용어 ${re}`);
   const codeFiles = SRC_FILES.filter((n) => /\.(js|css|html|svg)$/.test(n));

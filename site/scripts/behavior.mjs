@@ -1,8 +1,10 @@
 #!/usr/bin/env node
 // kosta-ai-lab 포털 동작 회귀 (Apache-2.0). Node 내장 모듈만 사용한다. 배포 대상이 아니다.
 // 최소 DOM + 가짜 시계(rAF·타이머) + 가짜 history 위에서 실제 화면 스크립트(motion-core.js → layers.js → story.js)를 실행해
-//   스크롤 연동, 영역 펼침 시작→중간→끝 기하, 영역 전환, 자료 상세 열기·중첩, Escape/history/초점/스크롤 잠금·복원,
+//   스크롤 연동, 영역 펼침 시작→중간→끝 기하, 영역 전환, 자료 상세(한 단계), Escape/history/초점/스크롤 잠금·복원,
 //   빠른 닫기·재열기, resize, 모션 축소, 데이터 오류, 이전 주소 형식을 확인한다.
+//   첫 방문 UX: 첫 화면 추천 강의, 강의 카드의 대상·학습목표·원문 직접 링크, 주제 상태 두 축, 영역 안 바로 가기·현재 영역 표시,
+//   모바일 비고정 지도·영역 선택(현재 포함), 상세 닫기 버튼의 복귀 위치 이름.
 // 브라우저 모델: Chrome inert 초점 fixup(비관적), history 전환 때 이전 초점(section) 복원(popstate 전·후·늦게).
 // 실제 브라우저 렌더·성능·스크린리더를 대신하지 않는다.
 // 사용: node scripts/behavior.mjs [--dist [폴더]]   (기본: site/src + site/data, --dist: 빌드 산출물)
@@ -99,7 +101,7 @@ function page({ reduce = false, narrow = false, hash = '', failFetch = false, fi
     mk('header', { id: 'head' }, [mk('button', { id: 'toc-toggle' }, [mk('span', { class: 'toc-toggle__label' })]), mk('nav', { id: 'toc' }, ['top', 'intro', 'roadmap', 'materials', 'join'].map((c) => mk('a', { 'data-chapter': c, href: '#' + c })))]),
     mk('main', { id: 'main' }, [
       mk('div', { id: 'story' }, [
-        step('top'),
+        mk('section', { id: 'top', 'data-step': '', tabindex: '-1' }, [mk('div', { id: 'hero-picks', hidden: '' }, [mk('ul', { id: 'pick-list' })])]),
         mk('div', { id: 'stage' }, [mk('span', { id: 'hud-label' }), mk('span', { id: 'hud-fill' }), mk('svg', { id: 'stage-svg' }, [mk('g', { id: 'cam' })]), mk('p', { id: 'stage-msg', hidden: '' })]),
         mk('div', {}, [step('intro'), mk('section', { id: 'roadmap', 'data-step': '', tabindex: '-1' }, [mk('ol', { id: 'area-index' })]), mk('div', { id: 'area-steps' }), mk('section', { id: 'materials', 'data-step': '', tabindex: '-1' }, [mk('ol', { id: 'material-list' })])])
       ]),
@@ -207,9 +209,27 @@ export async function runBehavior({ codeDir = path.join(SITE_DIR, 'src'), dataDi
     const want = { steps: M.sceneNames(portal).length, topics: portal.topics.length, items: portal.resources.length, courses: portal.courses.length, example: exRes ? exRes.steps.length : 0, pieces: portal.areas.length + portal.topics.length + portal.extensions.length };
     const have = { steps: p.D.querySelectorAll('#story [data-step]').length, topics: p.D.querySelectorAll('#area-steps li.topic').length, items: p.D.querySelectorAll('#material-list [tabindex]').length, courses: p.D.querySelectorAll('#course-list [tabindex]').length, example: p.D.getElementById('example-steps').children.length, pieces: p.D.querySelectorAll('#cam [data-piece]').length };
     check('DOM: 장면·주제·공개 항목·강의·예제 단계·무대 조각 수 = 데이터에서 계산한 값', JSON.stringify(have) === JSON.stringify(want), { have, want });
-    check('DOM: 여는 버튼 수(영역 목록·영역 장면 = 영역 수, 자료·강의 = 항목 수, 영역 관련 자료)', p.D.querySelectorAll('#area-index [data-open-area]').length === portal.areas.length && p.D.querySelectorAll('#area-steps [data-open-area]').length === portal.areas.length && p.D.querySelectorAll('#material-list [data-open-item]').length === portal.resources.length && p.D.querySelectorAll('#course-list [data-open-item]').length === portal.courses.length && p.D.querySelectorAll('#area-steps .related [data-open-item]').length > 0);
+    check('DOM: 여는 버튼 수(영역 목록·영역 장면 = 영역 수, 상세는 프로젝트·강의만, 영역 관련 자료)', p.D.querySelectorAll('#area-index [data-open-area]').length === portal.areas.length && p.D.querySelectorAll('#area-steps [data-open-area]').length === portal.areas.length && p.D.querySelectorAll('#material-list [data-open-item]').length === portal.resources.filter((r) => r.kind === 'project').length && p.D.querySelectorAll('#course-list [data-open-item]').length === portal.courses.length && p.D.querySelectorAll('#area-steps .related [data-open-item]').length > 0);
+    const picks = portal.courses.filter((c) => c.pick);
+    const pickLinks = p.D.querySelectorAll('#pick-list a');
+    check('첫 화면 추천: pick 강의 수만큼, 강의 카드로 이동·학습목표 표시', !p.D.getElementById('hero-picks').hidden === picks.length > 0 && pickLinks.length === picks.length && picks.every((c, i) => pickLinks[i].getAttribute('href') === '#course-' + c.id && pickLinks[i].textContent.includes(c.title) && p.D.getElementById('pick-list').textContent.includes(c.goal)), pickLinks.length);
+    const colRes = portal.resources.filter((r) => r.collects === 'course');
+    check('공개 자료: 강의 모음은 모달 없이 같은 페이지 강의 카드로 바로(강의 수만큼 링크)', colRes.every((r) => { const card = p.D.getElementById('res-' + r.id); return card && !card.querySelector('[data-open-item]') && card.querySelectorAll('a[href^="#course-"]').length === portal.courses.length && !!card.querySelector('a[href="#courses"]'); }));
+    const srcById = new Map(sources.sources.map((s) => [s.id, s]));
+    const courseOk = portal.courses.every((c) => {
+      const card = p.D.getElementById('course-' + c.id);
+      const go = card ? card.querySelectorAll('.course__go a') : [];
+      return card && go.length === c.links.length && c.links.every((l, i) => go[i].getAttribute('href') === srcById.get(l.source).url && go[i].textContent.includes(l.label) && go[i].textContent.includes('GitHub'))
+        && card.textContent.includes(c.title) && card.textContent.includes(c.audience) && (!c.goal || card.textContent.includes(c.goal));
+    });
+    check('강의 카드: 공식명·대상·학습목표·원문 직접 링크(이름에 GitHub 예고)', courseOk);
+    const topicEls = p.D.querySelectorAll('#area-steps li.topic');
+    const allTopics = portal.topics;
+    check('주제 상태 두 축: 연결 자료(제공 상태)와 모듈 원문 상태(원문값)를 한 묶음에', topicEls.length === allTopics.length && topicEls.every((li, i) => { const s = li.querySelector('.status'); return s && s.textContent.includes('연결 자료') && s.textContent.includes(portal.statusLabels.topic[allTopics[i].availability]) && s.textContent.includes('모듈 원문 상태') && s.textContent.includes(allTopics[i].sourceStatus) && s.textContent.includes(allTopics[i].owner); }));
+    check('영역 목록: 큰 이름 + 짧은 행동 설명 + 공개 자료 수', portal.areas.every((a) => { const b = p.D.querySelector('#area-index [data-open-area="' + a.id + '"]'); return b && b.textContent.includes(a.title) && (!a.hint || b.textContent.includes(a.hint)) && /공개 자료 \d/.test(b.textContent); }));
     p.scrollTo(514 + 900 * 3 + 450);
     check('A 스크롤 연동 유지: 장면 4 중간', st.getAttribute('data-scene') === '4' && st.getAttribute('data-scene-progress') === '0.5000');
+    check('데스크톱 무대 안내: 학습 진도가 아닌 페이지 위치(페이지 안내 n/N)', /^페이지 안내 \d+\/\d+ · /.test(p.D.getElementById('hud-label').textContent), p.D.getElementById('hud-label').textContent);
     const y0 = p.W.scrollY;
     const progress0 = st.getAttribute('data-progress');
     const camBefore = p.D.getElementById('cam').getAttribute('transform');
@@ -235,6 +255,12 @@ export async function runBehavior({ codeDir = path.join(SITE_DIR, 'src'), dataDi
     check('끝: open, 선택 공간 864×700, 다른 공간 76px 압축', xl.getAttribute('data-state') === 'open' && end[2] === 864 && end[3] === 700 && prob[2] === 76 && prob[0] === 0 && end[0] === 84, { end, prob });
     check('프레임 계측: data-frames > 30, trace 기록', Number(xl.getAttribute('data-frames')) > 30 && p.W.KLayers.trace.some((t) => t.what === 'area:opening' && t.kind === 'anim-end'), xl.getAttribute('data-frames'));
     check('선택 공간 본문: 주제·관련 자료·범례', xl.querySelectorAll('.zone.is-selected .topic').length === portal.topics.filter((t) => t.area === 'spec').length && xl.querySelectorAll('.zone.is-selected [data-open-item]').length > 0 && /공개 자료 있음/.test(xl.textContent));
+    const specTopics = portal.topics.filter((t) => t.area === 'spec');
+    check('영역 본문: 공개 자료 있는 주제와 준비 중 주제를 나눠 묶음', xl.querySelectorAll('.zone.is-selected .zb__sec--avail .topic').length === specTopics.filter((t) => t.availability === 'available').length && xl.querySelectorAll('.zone.is-selected .zb__sec--prep .topic').length === specTopics.filter((t) => t.availability !== 'available').length);
+    check('현재 영역 이름이 바(스크롤 밖)에 표시, 영역 선택 목록에 현재 포함', p.D.getElementById('xl-current-name').textContent === portal.areas.find((a) => a.id === 'spec').title && xl.querySelectorAll('.xl__nav [data-zone-tab]').length === portal.areas.length && xl.querySelector('.xl__nav [aria-current="true"]').getAttribute('data-zone-tab') === 'spec');
+    const jump = xl.querySelector('.zone.is-selected [data-zone-jump="zb-rel"]');
+    p.click(jump);
+    check('영역 안 바로 가기: 연결 강의·예제 묶음으로 스크롤·초점(겹 화면 유지)', jump && p.D.scrolledTo && p.D.scrolledTo.getAttribute('id') === 'zb-rel' && p.D.active === p.D.scrolledTo && p.root.getAttribute('data-layers') === '1');
     check('스크롤 잠금 중 A 상태 불변', st.getAttribute('data-progress') === progress0 && p.D.getElementById('cam').getAttribute('transform') === camBefore);
 
     // 다른 영역으로 전환(압축 공간 클릭)
@@ -252,6 +278,7 @@ export async function runBehavior({ codeDir = path.join(SITE_DIR, 'src'), dataDi
     check('상세 열기: 깊이2, 영역 화면 inert, history d=2', p.root.getAttribute('data-layers') === '2' && xl.inert && !dl1.inert && p.W.history.state.d === 2 && dl1.getAttribute('data-item') === relBtn.getAttribute('data-open-item'));
     dl1.querySelector('.dl__sheet').rect = { x: 320, y: 80, w: 800, h: 800 };
     check('상세 초점 = 상세 제목', p.D.active && /dl-title-/.test(p.D.active.getAttribute('id') || ''));
+    check('영역 위 상세: 닫기 버튼 이름 = 현재 영역으로 돌아감', dl1.querySelector('.dl__close').textContent.includes('‘' + portal.areas.find((a) => a.id === 'verify').title + '’ 영역으로'), dl1.querySelector('.dl__close').textContent);
     p.advance(300);
     check('상세 중간: opening, clip 진행 중', dl1.getAttribute('data-state') === 'opening' && Number(dl1.getAttribute('data-t')) > 0.2 && Number(dl1.getAttribute('data-t')) < 0.8);
     p.advance(500);
@@ -301,21 +328,17 @@ export async function runBehavior({ codeDir = path.join(SITE_DIR, 'src'), dataDi
     check('브라우저 뒤로: 영역 닫힘, 초점 복원', p.root.getAttribute('data-layers') === '0' && p.D.active === opener);
     p.advance(700);
 
-    // 자료 목록 → 강의 모음 상세 → 중첩 강의 상세 → 연속 Escape
-    const colBtn = p.D.querySelector('#material-list [data-open-item="res:courses"]');
-    p.click(colBtn);
-    const dCol = p.D.querySelector('[data-item="res:courses"]');
-    check('강의 모음 상세: 강의 수만큼 버튼', dCol && dCol.querySelectorAll('[data-open-item^="course:"]').length === portal.courses.length);
-    p.advance(700);
-    const cBtn = dCol.querySelector('[data-open-item="course:sdd"]');
+    // 강의 카드 → 강의 상세(한 단계): 학습목표·원문·GitHub 이동 예고·오류 제보, 닫기 이름 = 강의 목록으로
+    const cBtn = p.D.querySelector('#course-list [data-open-item="course:sdd"]');
     p.click(cBtn);
     const dC = p.D.querySelector('[data-item="course:sdd"]');
     const sdd = portal.courses.find((c) => c.id === 'sdd');
-    check('중첩 상세: 깊이2, 강의 원본 링크·대상·분량·강사', p.root.getAttribute('data-layers') === '2' && dCol.inert && dC.querySelectorAll('.dl__src a').length >= sdd.links.length && dC.textContent.includes(sdd.audience) && dC.textContent.includes(sdd.duration) && dC.textContent.includes(sdd.instructor));
+    check('강의 상세: 깊이1, 원문 링크·대상·배우는 것·분량·강사·GitHub 이동 예고·오류 제보', p.root.getAttribute('data-layers') === '1' && dC.querySelectorAll('.dl__src a').length >= sdd.links.length && dC.textContent.includes(sdd.audience) && (!sdd.goal || dC.textContent.includes(sdd.goal)) && dC.textContent.includes(sdd.duration) && dC.textContent.includes(sdd.instructor) && /브라우저 뒤로 가기로 돌아옵니다/.test(dC.textContent) && !!dC.querySelector('a[href$="/issues"]'));
+    check('강의 상세 닫기 버튼 이름 = 강의 목록으로', /강의 목록으로/.test(dC.querySelector('.dl__close').textContent));
+    check('상세 안에서 다른 상세를 여는 버튼 없음(겹침 제거)', !dC.querySelector('[data-open-item]'));
     p.key('Escape'); p.key('Escape');
-    check('연속 Escape 2회: 둘째는 history 정리 후 실행', p.root.getAttribute('data-layers') === '1');
     p.advance(40);
-    check('연속 Escape 결과: 모두 닫힘, 초점 = 자료 카드 버튼', p.root.getAttribute('data-layers') === '0' && p.D.active === colBtn && p.W.history.state == null, p.root.getAttribute('data-layers'));
+    check('Escape: 닫힘, 초점 = 강의 카드 버튼, history 정리', p.root.getAttribute('data-layers') === '0' && p.D.active === cBtn && p.W.history.state == null, p.root.getAttribute('data-layers'));
     p.advance(700);
 
     // 상세 안의 페이지 내 링크(#roadmap) → 모두 닫고 이동
@@ -329,10 +352,11 @@ export async function runBehavior({ codeDir = path.join(SITE_DIR, 'src'), dataDi
     check('상세 안 #roadmap: 닫고 이동', prevented && p.root.getAttribute('data-layers') === '0' && p.W.location.sets.includes('#roadmap'));
     p.advance(700);
 
-    // 예제 상세 5단계
-    p.click(p.D.querySelector('#material-list [data-open-item="res:example"]'));
+    // 예제 상세 5단계(로드맵 영역의 연결 자료에서)
+    p.click(p.D.querySelector('#area-steps [data-open-item="res:example"]'));
     const dE = p.D.querySelector('[data-item="res:example"]');
-    check('예제 상세: 데이터 단계 수·볼 곳', dE.querySelectorAll('.dl__link-step').length === exRes.steps.length && /볼 곳: /.test(dE.textContent));
+    check('예제 상세: 데이터 단계 수·확인할 것·문서/코드 읽기 예제 안내·Node.js pnpm 조건', dE.querySelectorAll('.dl__link-step').length === exRes.steps.length && /확인할 것: /.test(dE.textContent) && /실제 웹앱 데모가 아니라/.test(dE.textContent) && /Node\.js와 pnpm/.test(dE.textContent));
+    check('로드맵에서 연 상세 닫기 이름 = 로드맵으로', /로드맵으로/.test(dE.querySelector('.dl__close').textContent));
     p.key('Escape'); p.advance(700);
 
     // 모든 강의 상세: 원본 링크 수 = links + 같은 폴더 추가 원본
@@ -384,7 +408,63 @@ export async function runBehavior({ codeDir = path.join(SITE_DIR, 'src'), dataDi
     const xl = p.D.getElementById('explore');
     const sel = geom(xl.querySelector('[data-zone="deploy"]'));
     const other = geom(xl.querySelector('[data-zone="problem"]'));
-    check('모바일(336px 필드): 선택 공간 아래 전체 폭, 나머지 4개 상단 한 줄', !xl.classList.contains('is-wide') && sel[0] === 0 && sel[2] === 336 && sel[1] === 64 && other[3] === 56 && other[1] === 0, { sel, other });
+    check('모바일(336px 필드): 선택 공간이 필드 전체, 나머지는 접히고 세로 탭은 숨김(Tab 순서 제외)', !xl.classList.contains('is-wide') && sel[0] === 0 && sel[1] === 0 && sel[2] === 336 && sel[3] === 512 && other[3] === 0 && xl.querySelectorAll('.zone__tab').every((b) => b.hidden), { sel, other });
+    check('모바일 영역 선택: 현재 영역 포함 전체 목록, 현재 표시', xl.querySelectorAll('.xl__nav [data-zone-tab]').length === portal.areas.length && xl.querySelector('.xl__nav [aria-current="true"]').getAttribute('data-zone-tab') === 'deploy' && p.D.getElementById('xl-current-name').textContent === portal.areas.find((a) => a.id === 'deploy').title);
+    p.click(xl.querySelector('.xl__nav [data-zone-tab="problem"]'));
+    p.advance(700);
+    check('모바일 영역 바꾸기: 현재 영역 이름·표시 갱신, history 추가 없음', xl.getAttribute('data-area') === 'problem' && p.D.getElementById('xl-current-name').textContent === portal.areas[0].title && xl.querySelector('.xl__nav [aria-current="true"]').getAttribute('data-zone-tab') === 'problem' && p.W.history.state.d === 1);
+    p.key('Escape'); p.advance(800);
+    // 무대 도형이 화면 밖(비고정 지도를 지나 내려온 경우): 누른 버튼 위치에서 커진다
+    p.D.querySelectorAll('#cam [data-piece]').forEach((g) => { if (g.rect) g.rect = { x: g.rect.x, y: -3000, w: 92, h: 92 }; });
+    const ob = p.D.querySelector('#area-index [data-open-area="verify"]');
+    ob.rect = { x: 20, y: 500, w: 320, h: 68 };
+    p.click(ob);
+    const g0 = geom(xl.querySelector('[data-zone="verify"]'));
+    check('모바일: 무대가 화면 밖이면 누른 버튼 위치에서 시작', g0[0] === 8 && g0[1] === 384 && g0[2] === 320 && g0[3] === 68, g0);
+    p.advance(800);
+    p.key('Escape'); p.advance(300);
+    const gc = geom(xl.querySelector('[data-zone="verify"]'));
+    p.advance(800);
+    const gEnd = geom(xl.querySelector('[data-zone="verify"]'));
+    check('모바일: 닫을 때 그 버튼 위치로 돌아감', gc[2] < 336 && gEnd[0] === 8 && gEnd[1] === 384 && gEnd[2] === 320, { gc, gEnd });
+  }
+  {
+    // 390 reduced: 가로 영역 목록 안에서 선택 버튼이 보이도록 목록 scrollLeft만 조정(문서·본문 스크롤 이동 없음)
+    const p = page({ narrow: true, reduce: true });
+    await tick(); await tick();
+    p.layoutSteps();
+    const fl = p.D.querySelector('.xl__field'); fl.rect = { x: 12, y: 170, w: 366, h: 600 }; fl.cw = 366; fl.ch = 600;
+    const xl = p.D.getElementById('explore');
+    const ul = xl.querySelector('.xl__nav ul');
+    ul.rect = { x: 12, y: 110, w: 366, h: 52 };
+    xl.querySelectorAll('.xl__nav [data-zone-tab]').forEach((b, i) => {
+      b.getBoundingClientRect = () => { const left = 12 + i * 150 - (Number(ul.scrollLeft) || 0); return { left, right: left + 140, top: 114, bottom: 158, width: 140, height: 44 }; };
+    });
+    const scrolls0 = p.W.scrolls.length;
+    p.click(p.D.querySelector('#area-index [data-open-area="verify"]'));
+    const sl1 = ul.scrollLeft;
+    const vb = xl.querySelector('.xl__nav [data-zone-tab="verify"]').getBoundingClientRect();
+    check('390 reduced 열기: 선택 버튼(04)이 가로 목록 안에 보이게 scrollLeft만 조정', sl1 > 0 && vb.left >= 12 && vb.right <= 378 && p.W.scrolls.length === scrolls0 && p.D.scrolledTo == null, { sl1, vb });
+    (p.W.ls.resize || []).forEach((f) => f());
+    check('resize: 이미 보이면 scrollLeft 그대로', ul.scrollLeft === sl1, ul.scrollLeft);
+    p.click(xl.querySelector('.xl__nav [data-zone-tab="problem"]'));
+    const pb = xl.querySelector('.xl__nav [data-zone-tab="problem"]').getBoundingClientRect();
+    check('전환(01): 왼쪽 버튼도 목록 안으로(scrollLeft 0 이상), 문서 스크롤 없음', ul.scrollLeft >= 0 && ul.scrollLeft < sl1 && pb.left >= 12 && p.W.scrolls.length === scrolls0 && p.D.scrolledTo == null, { sl: ul.scrollLeft, pb });
+    p.key('Escape'); p.advance(50);
+  }
+  {
+    // 모바일 지도: sticky가 아니며, 지도가 화면에 들어오는 만큼 조립(장면 0→2). 안내는 진도 숫자 대신 '개발 과정 지도'.
+    const p = page({ narrow: true });
+    await tick(); await tick();
+    p.layoutSteps();
+    const stage = p.D.getElementById('stage');
+    const states = M.buildStates(portal, M.layout(portal));
+    const scaleOf = () => Number(/scale\(([\d.]+)\)/.exec(p.D.getElementById('cam').getAttribute('transform'))[1]);
+    stage.rect = { x: 0, y: 2000, w: 360, h: 300 }; p.scrollTo(100);
+    const s0 = scaleOf();
+    stage.rect = { x: 0, y: 60, w: 360, h: 300 }; p.scrollTo(900);
+    const s2 = scaleOf();
+    check('모바일 지도: 화면 밖 = 흩어진 장면, 들어오면 조립된 지도(장면 2)', s0 === Math.round(states[0]['cam.s'] * 100) / 100 && s2 === Math.round(states[2]['cam.s'] * 100) / 100 && p.D.getElementById('hud-label').textContent.startsWith('개발 과정 지도'), { s0, s2 });
   }
   {
     const p = page({ failFetch: true });

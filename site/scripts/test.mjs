@@ -106,6 +106,13 @@ test('check는 변조된 포털 데이터를 잡아낸다', () => {
   expectProblem(tamperedProblems((d) => { d.areas[0].summary += ' 통합 시안'; }), '검토용 흔적');
   expectProblem(tamperedProblems((d, s) => { s.note = '/Users/someone/work'; }), '개인·내부 경로');
   expectProblem(tamperedProblems((d, s) => { s.sources.find((x) => x.id === 'todo-req').path = 'samples/missing.md'; }), 'git 추적 파일 아님');
+  // 학습목표(goal)는 강의 안내 원문 학습목표 줄에서 빼기만 허용: 새 주장(무료·보장)·바꿔 쓰기 금지
+  expectProblem(tamperedProblems((d) => { d.courses[0].goal = '무료로 ' + d.courses[0].goal; }), '보장·비용 표현 금지');
+  expectProblem(tamperedProblems((d) => { d.courses[0].goal = d.courses[2].goalEvidence + ' 그리고 더 많은 내용을 함께 다룹니다'; }), '이내 한 문장 요약');
+  expectProblem(tamperedProblems((d) => { d.courses[1].goalEvidence = d.courses[1].goalEvidence.replace('비교·선택한다', '완벽히 익힌다'); }), '원문 학습목표 줄과 다름');
+  expectProblem(tamperedProblems((d) => { delete d.courses[1].goalEvidence; }), 'goalEvidence(원문 학습목표 인용) 필요');
+  expectProblem(tamperedProblems((d) => { delete d.courses[0].goal; }), 'pick(첫 화면 추천 이름)은 goal과 함께만');
+  expectProblem(tamperedProblems((d) => { d.areas[0].hint = '아주 긴 설명 '.repeat(8); }), 'hint는 30자 이내');
 });
 
 test('check는 화면 원본의 검토 흔적·CSP·메타·경로 위반을 잡아낸다', () => {
@@ -125,7 +132,10 @@ test('check는 화면 원본의 검토 흔적·CSP·메타·경로 위반을 잡
   expectProblem(tamperedSrcProblems(html, (t) => t.replace('<meta name="twitter:card"', '<link rel="canonical" href="https://github.com/kosta-ai-lab">\n  <meta name="twitter:card"')), 'canonical');
   expectProblem(tamperedSrcProblems(html, (t) => t.replace('<script src="layers.js" defer></script>\n  <script src="story.js" defer></script>', '<script src="story.js" defer></script>\n  <script src="layers.js" defer></script>')), '스크립트는 motion-core.js');
   expectProblem(tamperedSrcProblems(html, (t) => t.replace('id="area-index"', 'id="area-list"')), 'id="area-index"');
-  expectProblem(tamperedSrcProblems(html, (t) => t.replace('로드맵 둘러보기', '로드맵 보기')), '승인 문구 누락');
+  expectProblem(tamperedSrcProblems(html, (t) => t.replace('개발 주제별로 찾기', '로드맵 보기')), '승인 문구 누락');
+  expectProblem(tamperedSrcProblems(html, (t) => t.replace('실제 웹앱 데모가 아니라, GitHub에서 문서와 코드를 읽는 예제입니다.', '코드 예제입니다.')), '승인 문구 누락');
+  expectProblem(tamperedSrcProblems('layers.js', (t) => t.replace(' (강의·예제 상태 아님)', '')), '필수 안내 문구 누락');
+  expectProblem(tamperedSrcProblems('story.js', (t) => t.replace('직접 실행하려면 Node.js와 pnpm이 필요하고', '바로 실행할 수 있고')), '필수 안내 문구 누락');
   expectProblem(tamperedSrcProblems('story.js', (t) => t.replace("new URL('data/' + name, document.baseURI)", "new URL('/data/' + name, document.baseURI)")), '절대 경로 fetch');
   expectProblem(tamperedSrcProblems('layers.js', (t) => t + '\n// /Users/someone/.hermes\n'), '개인·내부 경로');
   expectProblem(tamperedSrcProblems('story.js', (t) => t + "\nvar x = document.body.innerHTML;\n"), 'innerHTML');
@@ -348,7 +358,7 @@ test('서버(기본 /ai-native-sdlc/): 하위 경로, 리다이렉트, 차단 �
     assert.equal(res.status, 301); assert.equal(res.headers.location, BASE_PATH);
     res = await request(port, BASE_PATH);
     assert.equal(res.status, 200); assert.match(res.headers['content-type'], /text\/html/);
-    assert.match(res.body, /AI와 함께 만드는 소프트웨어,/);
+    assert.match(res.body, /AI와 함께 개발하고, <em>경험과 자료<\/em>를 나눕니다/);
     assert.equal(res.headers['content-security-policy'], undefined);
     for (const p of ['/other', '/ai-native-sdlc/app.js', '/ai-native-sdlc/data/learning.json', '/ai-native-sdlc/%2e%2e/package.json', '/ai-native-sdlc/..%2fscripts%2fbuild.mjs', `/ai-native-sdlc/${MARKER}`, '/ai-native-sdlc/.nojekyll', '/designs-integrated/index.html']) {
       res = await request(port, p);
@@ -365,7 +375,7 @@ test('서버(--base /): / 에서 바로 index를 주고 자기 자신으로 리�
     let res = await request(port, '/');
     assert.equal(res.status, 200, '루트는 리다이렉트 없이 200');
     assert.equal(res.headers.location, undefined);
-    assert.match(res.body, /AI와 함께 만드는 소프트웨어,/);
+    assert.match(res.body, /AI와 함께 개발하고, <em>경험과 자료<\/em>를 나눕니다/);
     res = await request(port, '/index.html');
     assert.equal(res.status, 200);
     for (const p of ['/ai-native-sdlc/', '/ai-native-sdlc', '/.site-build', '/%2e%2e/package.json']) {
