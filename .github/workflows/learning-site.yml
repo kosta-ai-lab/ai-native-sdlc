@@ -4,13 +4,12 @@
 # - main push 또는 main에서의 수동 실행: 같은 검사를 통과한 site/dist만 Pages로 배포한다.
 # - 배포 전에 저장소 Settings → Pages → Source를 "GitHub Actions"로 바꿔야 한다(docs/LEARNING_SITE_OPERATIONS.md).
 #
-# Action 버전 출처: GitHub Docs "Using custom workflows with GitHub Pages" 예시(2026-11-10 확인)
+# - 산출물은 site/dist만 올린다. 사이트는 상대 경로만 써서 /ai-native-sdlc/ 하위 경로와 사용자 도메인 루트(/) 모두에서 동작한다.
+#   사용자 도메인(CNAME)은 정해지지 않아 설정하지 않는다.
+#
+# Action 버전: GitHub Docs "Using custom workflows with GitHub Pages" 예시 major(2026-11-11 확인)
 #   actions/checkout@v6 · actions/configure-pages@v5 · actions/upload-pages-artifact@v4 · actions/deploy-pages@v4
-# TODO(maintainer): 출처마다 권장 메이저가 다르다(2026-11-10 관측).
-#   action README: checkout v7 · upload-pages-artifact v3 · deploy-pages v4
-#   starter-workflows pages/static.yml: checkout v4 · configure-pages v5 · upload-pages-artifact v3 · deploy-pages v5
-#   releases Latest: checkout v7.0.1 · configure-pages v6.0.0 · upload-pages-artifact v5.0.0 · deploy-pages v5.0.1
-#   변경점과 플로팅 메이저 태그를 확인한 뒤 올릴지 결정한다(docs/LEARNING_SITE_OPERATIONS.md 5절).
+#   올릴 때는 공식 문서·릴리스 노트를 확인하고 site/scripts/check.mjs의 ACTION_MAJORS도 함께 바꾼다.
 
 name: Learning site
 
@@ -53,10 +52,10 @@ jobs:
       - name: Build site
         run: node scripts/build.mjs
 
-      - name: Static check (sources vs git ls-files, claims, assets, workflow, dist allowlist)
+      - name: Static check (sources vs git ls-files, copy, meta CSP, relative paths, workflow, dist reproducibility)
         run: node scripts/check.mjs --dist
 
-      - name: Data and build tests
+      - name: Data, build, server and behavior tests
         run: node scripts/test.mjs
 
       # PR에서는 실행되지 않는다. main 배포 조건일 때만 artifact를 올린다.

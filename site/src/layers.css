@@ -1,0 +1,118 @@
+/* kosta-ai-lab 포털 — 영역 펼침 · 자료 상세 (Apache-2.0). story.css의 서체·색·버튼 토큰을 그대로 쓴다. */
+html{scrollbar-gutter:stable}
+html.is-layered{overflow:hidden}
+html.is-layered .head__row{opacity:.55} /* 헤더 배경은 불투명 유지, 내용만 흐리게 */
+
+/* ── 스토리 안의 여는 버튼 ── */
+.btn--open{border-color:var(--accent);color:var(--accent);background:transparent;cursor:pointer}
+.btn--open:hover{background:var(--accent);color:#fff}
+.btn__mark{width:11px;height:11px;border:1.6px solid currentColor;border-radius:3px;box-shadow:3px -3px 0 -1.2px var(--paper),3px -3px 0 0 currentColor}
+.btn--open:hover .btn__mark{box-shadow:3px -3px 0 -1.2px var(--accent),3px -3px 0 0 currentColor}
+.step__open{margin-top:16px}
+.course__open{margin-top:14px;min-height:44px;padding:0 18px}
+.linkbtn{display:inline-flex;align-items:baseline;flex-wrap:wrap;gap:0 8px;min-height:44px;padding:10px 0;border:0;background:none;font:inherit;font-weight:600;line-height:1.4;text-align:left;text-decoration:underline;text-decoration-color:rgba(17,19,17,.35);text-underline-offset:.22em;cursor:pointer}
+.linkbtn:hover{color:var(--accent);text-decoration-color:currentColor}
+.linkbtn__tail{font-size:14px;color:var(--accent);text-decoration:none}
+.area-index__open{display:flex;align-items:center;gap:10px;width:100%;min-height:52px;padding:0;border:0;border-bottom:1px solid var(--line);background:none;font-weight:600;text-align:left;cursor:pointer}
+.area-index__open:hover .area-index__name{color:var(--accent)}
+.area-index__go{margin-left:auto;flex:none;padding:3px 10px;border:1.5px solid var(--accent);border-radius:999px;font-family:var(--mono);font-size:11.5px;font-weight:600;color:var(--accent)}
+.area-index__open:hover .area-index__go{background:var(--accent);color:#fff}
+.area-index__open .area-index__meta{flex:none}
+
+/* ── 영역 펼침: 조립된 지도 도형이 공간으로 커진다 ── */
+.xl{--k:0;--b:0;position:fixed;left:0;right:0;top:var(--head);bottom:0;z-index:60;display:flex;flex-direction:column;padding:0 max(var(--gut),calc((100% - 1600px) / 2 + var(--gut))) 20px}
+.xl__back{position:absolute;inset:0;background:var(--paper);opacity:var(--k)}
+.xl__bar{position:relative;display:flex;align-items:center;gap:6px 20px;min-height:76px;opacity:var(--k)}
+.xl__hint{font-size:14px;color:var(--muted)}
+.xl__close{margin-left:auto;min-height:44px;padding:0 18px;background:var(--paper);cursor:pointer}
+.xl__close-mark{font-size:16px;line-height:1}
+.xl__field{position:relative;flex:1;min-height:0}
+.zone{position:absolute;overflow:hidden;background:var(--stage);background:color-mix(in srgb,var(--ink) calc((1 - var(--k)) * 100%),var(--stage))}
+.zone.is-selected{background:var(--paper);background:color-mix(in srgb,var(--ink) calc((1 - var(--k)) * 100%),var(--paper));box-shadow:inset 0 3px 0 var(--accent),inset 0 0 0 1.5px var(--ink)}
+.zone__tab{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;gap:12px;width:100%;padding:18px 6px;border:0;background:transparent;cursor:pointer;opacity:var(--k);text-align:center}
+.zone__tab:hover{background:rgba(45,75,240,.08)}
+.zone__tab:hover .zone__shape-fill{fill:var(--accent)}
+.zone__tab:focus-visible{outline-offset:-4px}
+.zone__num{font-family:var(--mono);font-size:12px;color:var(--accent)}
+.zone__shape{width:30px;height:30px;flex:none}
+.zone__shape-fill{fill:var(--ink)}
+.zone__name{font-weight:650;font-size:16px;line-height:1.25}
+.xl.is-wide .zone__name{writing-mode:vertical-rl;letter-spacing:.04em}
+.xl:not(.is-wide) .zone__tab{justify-content:center;gap:2px;padding:4px}
+.xl:not(.is-wide) .zone__shape{display:none}
+.xl:not(.is-wide) .zone__name{font-size:12.5px;line-height:1.2;word-break:keep-all}
+.zone__body{position:absolute;left:0;top:0;overflow:auto;overscroll-behavior:contain;padding:30px 36px 44px;opacity:var(--b)}
+.zb__title{margin-top:10px;font-size:clamp(28px,3vw,44px);font-weight:650;line-height:1.15;letter-spacing:-.035em}
+.zb__lede{max-width:44rem}
+.zb__cols{margin-top:4px}
+.zone__body--cols .zb__cols{display:grid;grid-template-columns:minmax(0,1.3fr) minmax(0,1fr);gap:44px;align-items:start}
+.zb__h{margin:30px 0 8px;font-family:var(--mono);font-size:12px;font-weight:600;letter-spacing:.12em;color:var(--muted)}
+.zb__col .topics{margin-top:0}
+.zb__rels{border-top:1px solid var(--ink)}
+.zb__rel{display:grid;grid-template-columns:minmax(0,1fr) auto;align-items:center;gap:4px 14px;padding:14px 0;border-bottom:1px solid var(--line)}
+.zb__rel-type{grid-column:1;font-family:var(--mono);font-size:12px;color:var(--muted)}
+.zb__rel-title{grid-column:1;font-size:17px;font-weight:700;line-height:1.4}
+.zb__rel-open{grid-column:2;grid-row:1/span 2;min-height:44px;padding:0 16px}
+.zb__look{flex-basis:100%;padding-bottom:6px;font-size:14px;color:var(--muted)}
+.zb__ext-list{border-top:1px solid var(--ink)}
+.zb__ext{padding:14px 0;border-bottom:1px solid var(--line)}
+.zone .legend{margin-top:28px}
+
+/* ── 자료 상세: 카드가 제자리에서 펼쳐진다 ── */
+.dl{--k:0;--b:0;position:fixed;inset:0}
+.dl__scrim{position:absolute;inset:0;background:rgba(17,19,17,.5);opacity:var(--k)}
+.dl__sheet{position:absolute;top:calc(var(--head) + 16px);bottom:16px;left:0;right:0;display:flex;flex-direction:column;width:min(800px,calc(100% - 2 * var(--gut)));margin:0 auto;overflow:auto;overscroll-behavior:contain;background:var(--paper);border-radius:24px;box-shadow:0 30px 80px rgba(17,19,17,.28)}
+.dl__close{position:sticky;top:12px;z-index:2;align-self:flex-end;display:inline-flex;align-items:center;gap:10px;flex:none;min-height:44px;margin:12px 12px 0 0;padding:0 16px;border:1.5px solid var(--ink);border-radius:999px;background:var(--paper);font-size:15px;font-weight:650;cursor:pointer;opacity:var(--b)}
+.dl__close:hover{border-color:var(--accent);color:var(--accent)}
+.dl__x{position:relative;width:12px;height:12px}
+.dl__x::before,.dl__x::after{content:"";position:absolute;left:50%;top:-2px;bottom:-2px;width:1.8px;margin-left:-.9px;background:currentColor;transform:rotate(45deg)}
+.dl__x::after{transform:rotate(-45deg)}
+.dl__cover{display:grid;grid-template-columns:56px minmax(0,1fr);column-gap:16px;padding:8px 44px 26px;border-bottom:2px solid var(--ink)}
+.dl__cover>*:not(.dl__num){grid-column:2}
+.dl__num{grid-column:1;grid-row:1/span 3;padding-top:2px;font-family:var(--mono);font-size:26px;line-height:1;color:var(--accent)}
+.dl__title{margin-top:6px;font-size:clamp(26px,3vw,38px);font-weight:650;line-height:1.2;letter-spacing:-.03em}
+.dl__body{padding:4px 44px 48px 116px;opacity:var(--b)}
+.dl__lede{margin-top:20px;font-size:19px;line-height:1.6}
+.dl__body .mat__actions{margin-top:26px}
+.dl__src{border-top:1px solid var(--ink)}
+.dl__src li{border-bottom:1px solid var(--line)}
+.dl__facts{display:grid;gap:8px;margin-top:22px;font-size:16px}
+.dl__facts div{display:grid;grid-template-columns:4em 1fr;gap:12px}
+.dl__facts dt{padding-top:3px;font-family:var(--mono);font-size:12px;color:var(--muted)}
+.dl__small{margin-top:18px;font-size:15px;color:var(--muted)}
+.dl__courses{border-top:1px solid var(--ink)}
+.dl__course{display:grid;grid-template-columns:32px minmax(0,1fr) auto;align-items:center;gap:6px 14px;padding:16px 0;border-bottom:1px solid var(--line)}
+.dl__course-num{align-self:start;padding-top:2px;font-family:var(--mono);font-size:14px;color:var(--accent)}
+.dl__course-title{margin-top:2px;font-size:17px;font-weight:700;line-height:1.4}
+.dl__course-meta{margin-top:2px;font-size:14px;color:var(--muted)}
+.dl__course .btn{min-height:44px;padding:0 16px}
+.dl__chain{position:relative;margin-top:20px}
+.dl__chain::before{content:"";position:absolute;left:12px;top:12px;bottom:12px;width:2px;background:var(--ink)}
+.dl__link-step{position:relative;padding:0 0 22px 48px}
+.dl__link-step .chain__num{position:absolute;left:0;top:0;display:grid;place-items:center;width:26px;height:26px;border-radius:50%;background:var(--accent);color:#fff;font-family:var(--mono);font-size:11px}
+.dl__link-step .chain__link{padding-top:0}
+.xl.is-closing,.dl.is-closing{pointer-events:none}
+
+@media (max-width:860px){
+  .xl{padding:0 12px 12px}
+  .xl__bar{min-height:60px}
+  .xl__label,.xl__hint{display:none}
+  .xl__bar{flex-wrap:nowrap}
+  .xl__bar::before{content:"영역 펼쳐 보기";flex:none;white-space:nowrap;font-family:var(--mono);font-size:12px;letter-spacing:.12em;color:var(--accent)}
+  .xl .xl__close{width:auto;flex:none;padding:0 16px} /* 공통 모바일 .btn{width:100%} 재정의 */
+  .zone__body{padding:20px 18px 32px}
+  .zb__title{font-size:28px}
+  .zb__rel{grid-template-columns:1fr}
+  .zb__rel-open{grid-column:1;grid-row:auto;justify-self:start;width:auto}
+  .dl__sheet{top:0;bottom:0;width:100%;border-radius:0}
+  .dl__cover{grid-template-columns:36px minmax(0,1fr);column-gap:12px;padding:4px 20px 20px}
+  .dl__num{font-size:20px}
+  .dl__body{padding:4px 20px 40px}
+  .dl__lede{font-size:17px}
+  .dl__course{grid-template-columns:28px minmax(0,1fr)}
+  .dl__course .btn{grid-column:2;justify-self:start;width:auto}
+  .dl__body .mat__actions .btn{width:auto;flex:1 1 auto}
+}
+@media (max-width:400px){
+  .area-index__open .area-index__meta{display:none}
+}

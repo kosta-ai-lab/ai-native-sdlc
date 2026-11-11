@@ -8,10 +8,10 @@
 ```text
 site/
   package.json        스크립트만 있고 의존성은 없다(Node 내장 모듈만 사용)
-  src/                index.html(소개 문구) · styles.css · lib.js · app.js · favicon.svg
+  src/                index.html(승인 문구·메타·meta CSP) · story.css · layers.css · motion-core.js · layers.js · story.js · favicon.svg
   data/portal.json    로드맵 영역·주제·확장 주제, 공개 항목(프로젝트·강의·예제) 연결
   data/sources.json   원본 링크 manifest(path·url·status·type·evidence·verify)
-  scripts/            build · check · test · serve · lib
+  scripts/            build · check · test · behavior(최소 DOM 동작 회귀) · serve · lib
   dist/               빌드 산출물(.gitignore의 dist/ 규칙으로 추적하지 않음)
 .github/workflows/learning-site.yml
 ```
@@ -24,11 +24,12 @@ site/
 
 | 명령 | 하는 일 |
 |---|---|
-| `node scripts/build.mjs` | 허용 목록 파일만 `site/dist`로 복사하고 `.nojekyll`과 빌드 표식 `.site-build`를 쓴다 |
+| `node scripts/build.mjs` | 화면 파일 7개와 `site/data/*.json`만 `site/dist`로 바이트 그대로 복사하고 `.nojekyll`과 빌드 표식 `.site-build`를 쓴다 |
 | `node scripts/build.mjs --out <저장소 밖 폴더>` | 빈 폴더이거나 이전 빌드 표식이 있는 폴더에만 빌드한다 |
-| `node scripts/check.mjs --dist` | 정적 검사와 산출물 허용 목록 검사(4절) |
-| `node scripts/test.mjs` | 데이터·해시·갱신 대응·빌드 안전성·미리보기 서버 테스트 |
-| `node scripts/serve.mjs --port 0` | `site/dist`만 `http://127.0.0.1:<빈 포트>/ai-native-sdlc/`로 제공한다 |
+| `node scripts/check.mjs --dist` | 정적 검사와 산출물 검사(4절) |
+| `node scripts/test.mjs` | 데이터·검사 변조 검출·화면 동작 회귀(src·dist, 두 base)·갱신 대응·빌드 재현성·미리보기 서버 테스트 |
+| `node scripts/behavior.mjs [--dist]` | 최소 DOM·가짜 시계에서 실제 화면 스크립트를 실행하는 동작 회귀만 따로 실행 |
+| `node scripts/serve.mjs --port 0 [--base /ai-native-sdlc/ \| --base /]` | `site/dist`만 `http://127.0.0.1:<빈 포트>/ai-native-sdlc/`(기본) 또는 루트 `/`로 제공한다 |
 | `npm run verify` | build → check --dist → test |
 
 **출력 경로 안전 규칙**
@@ -37,7 +38,7 @@ site/
 - 표식에 없는 파일이 하나라도 있으면 **아무것도 지우지 않고** 중단한다.
 - 정리할 때는 이전 표식에 적힌 파일 가운데 사이트 정적 파일 이름 형식(`*.html|css|js|json|svg`, `data/` 아래 포함)인 것만 지운다. `..`나 절대 경로가 적힌 표식 항목은 무시한다. 재귀 삭제는 하지 않는다.
 
-**미리보기 서버:** 127.0.0.1에만 바인딩한다. 빌드 표식이 있는 폴더만 제공한다. `/`는 302, `/ai-native-sdlc`는 301로 보내고, 점 파일·상위 경로·알 수 없는 확장자는 404로 처리한다.
+**미리보기 서버:** 127.0.0.1에만 바인딩한다. 빌드 표식이 있는 폴더만 제공한다. 기본 base에서는 `/`를 302, `/ai-native-sdlc`를 301로 보낸다. `--base /`에서는 `/`에서 바로 index를 준다(자기 자신으로 리다이렉트하지 않음). 점 파일·상위 경로·알 수 없는 확장자는 404다. GitHub Pages와 같게 CSP 응답 헤더를 보내지 않으므로 index.html의 meta CSP가 그대로 적용된다.
 
 ## 3. 내용 갱신
 
@@ -45,11 +46,11 @@ site/
 |---|---|
 | 소개·참여 문구 수정 | `src/index.html` (승인 문구를 바꾸면 `check.mjs`의 `APPROVED_COPY`도 함께 고친다) |
 | 새 강의 추가 | `courses/README.md`와 루트 README에 오른 뒤, `sources.json`에 원본 항목을 추가하고 `portal.json courses[]`에 `areas`와 함께 한 항목을 추가한다 |
-| 새 공개 자료·프로젝트 추가 | `portal.json resources[]`에 항목 하나(`areas`, `actions`)를 추가한다. 로드맵 패널과 노드의 연결 수가 자동으로 반영된다 |
-| 운영 서비스 추가 | 운영 여부를 실제로 확인한 뒤 `kind:"service"`로 추가한다. `status:"operating"`에는 `verified:{date,url}`가 필요하다. 새 도메인은 `scripts/check.mjs`의 `allowedExternal`과 `src/app.js`의 `safeUrl` 양쪽 허용 목록에 근거와 함께 추가하고, 링크의 보조 설명도 실제 목적지에 맞춘다. 빌드 검사뿐 아니라 브라우저에서 버튼 주소와 이동을 확인한다 |
+| 새 공개 자료·프로젝트 추가 | `portal.json resources[]`에 항목 하나(`areas`, `actions`)를 추가한다. 로드맵 영역 장면·영역 펼침·상세·무대의 연결이 자동으로 반영된다 |
+| 운영 서비스 추가 | 운영 여부를 실제로 확인한 뒤 `kind:"service"`로 추가한다. `status:"operating"`에는 `verified:{date,url}`가 필요하다. 새 도메인은 `scripts/check.mjs`의 `allowedExternal`과 `src/story.js`의 링크 허용 규칙 양쪽에 근거와 함께 추가하고, 링크의 보조 설명도 실제 목적지에 맞춘다. 빌드 검사뿐 아니라 브라우저에서 버튼 주소와 이동을 확인한다 |
 | 모듈 상태 변화 | 원본 README의 `상태·담당`이 바뀌면 `sources.json`의 `verify·status`와 `portal.json`의 `sourceStatus·owner`를 맞춘다. 목적이 "(작성 예정)"에서 실제 내용으로 바뀌면 `modulePending`을 `false`로 바꾼다 |
 | 주제에 자료 연결 | `sources.json`에 원본을 추가하고 주제의 `related`에 id를 넣는다. 연결 자료가 생기면 `availability`를 `available`로 바꾼다. 검사가 "연결 자료가 있는데 준비 중" 또는 그 반대를 막는다 |
-| 새 영역 | `areas[]`에 추가한다. 기존 id와 `legacyStages`를 바꾸지 않으면 기존 링크가 유지된다. 승인된 다섯 영역 이름은 검사로 고정되어 있으므로, 영역 체계를 바꾸려면 기획 승인 후 검사도 함께 고친다 |
+| 새 영역 | 승인된 다섯 영역 이름은 검사로 고정되어 있고, 영역 펼침 배치(`layers.js`)도 다섯 영역을 전제로 한다. 영역 체계를 바꾸려면 기획·디자인 승인 후 검사와 배치를 함께 고친다 |
 
 선후관계·고정 학습 순서는 데이터에 넣지 않는다(검사가 `prerequisites`, `order` 등의 필드를 막는다). 근거 자료로 정해지면 기획 승인을 거쳐 추가한다.
 
@@ -68,10 +69,12 @@ site/
 - **화면 문구:**
   - 승인 초안 제목·핵심 문장·메뉴·하단 링크 보존
   - 홈 화면(index.html)의 내부 용어(시안·초안·검수·감사·미확정·TODO·preview) 금지
+  - 배포 원본 전체(src·data)의 검토용 흔적(통합 시안·시안 비교·designs-v2 등)과 개인·내부 경로 금지
+- **메타데이터·CSP:** 승인 title·description과 같은 og 값, favicon, canonical·og:url·og:image·noindex·CNAME 없음. meta CSP 1개가 link/script보다 먼저 있고 정책이 정확히 일치, meta에서 무시되는 지시어(frame-ancestors 등) 없음, inline script·이벤트 속성·위험 DOM API 없음, 스크립트 순서, 스크립트가 쓰는 id 존재
   - 과장·추적 표현과 저장 API 금지
-- **자산:** 상대 경로, 원격 폰트·CDN 금지
-- **워크플로:** 권한 범위와 main 전용 배포 조건(5절)
-- **`--dist`:** 허용 목록과의 정확한 일치, 소스와 바이트 동일, 원본 교재 미포함, 하위 경로 해석
+- **자산:** 상대 경로(스킴·`/`·`..` 금지), 데이터 경로 `new URL('data/' + name, document.baseURI)`, 원격 폰트·CDN 금지
+- **워크플로:** 권한 범위, main 전용 배포 조건, configure/deploy는 deploy job에만, needs·page_url, build job의 build·check·test, action major(5절)
+- **`--dist`:** 허용 목록과의 정확한 일치, 소스와 바이트 동일(재현성), 원본 교재·스크립트·CNAME 미포함, 빌드 표식에 로컬 경로 없음, `/ai-native-sdlc/`와 `/` 양쪽 해석
 
 ## 5. GitHub Actions 워크플로
 
@@ -89,19 +92,9 @@ site/
 - 동시 실행: PR은 같은 ref의 이전 실행을 취소하고, 배포는 `pages` 그룹에서 취소 없이 실행한다. `actions/checkout`은 `persist-credentials: false`다.
 - Node.js: `ubuntu-latest` 기본 Node를 쓰고 로그에 버전을 남긴다.
 
-### Action 버전 근거 (2026-11-10 확인)
+### Action 버전 근거 (2026-11-11 확인)
 
-| Action | Pages 문서 예시(사용) | 각 action README 예시 | starter-workflows `pages/static.yml` | releases 페이지 Latest |
-|---|---|---|---|---|
-| checkout | v6 | v7 | v4 | v7.0.1 |
-| configure-pages | v5 | (태그 표기 없음) | v5 | v6.0.0 |
-| upload-pages-artifact | v4 | v3 | v3 | v5.0.0 |
-| deploy-pages | v4 | v4 | v5 | v5.0.1 |
-
-- 출처: [GitHub Docs — Using custom workflows with GitHub Pages](https://docs.github.com/en/pages/getting-started-with-github-pages/using-custom-workflows-with-github-pages), 각 action 저장소 README·releases, starter-workflows.
-- 이 워크플로는 Pages 공식 문서 예시를 따랐고, starter의 `path: '.'` 대신 `site/dist`로 한정했다.
-
-**TODO(메인테이너):** 출처마다 권장 메이저가 다르다. 병합 전에 변경점(특히 upload-pages-artifact v4의 dotfile 제외, v5의 `include-hidden-files`)과 플로팅 메이저 태그를 확인하고 결정한다. 태그를 API로 직접 조회하지는 않았다. Actions 방식 배포에는 Jekyll이 돌지 않으므로 `.nojekyll`이 artifact에서 빠져도 동작한다.
+[GitHub Docs — Using custom workflows with GitHub Pages](https://docs.github.com/en/pages/getting-started-with-github-pages/using-custom-workflows-with-github-pages) 예시를 따른다: `actions/checkout@v6` · `actions/configure-pages@v5` · `actions/upload-pages-artifact@v4` · `actions/deploy-pages@v4`, deploy job의 `needs: build`, `github-pages` environment와 `page_url`, job 권한 `pages: write`·`id-token: write`. starter의 `path: '.'` 대신 `site/dist`로 한정했다. 버전을 올릴 때는 공식 문서·릴리스 노트를 확인하고 `site/scripts/check.mjs`의 `ACTION_MAJORS`도 함께 바꾼다. Actions 방식 배포에는 Jekyll이 돌지 않으므로 `.nojekyll`이 artifact에서 빠져도 동작한다.
 
 ## 6. 첫 배포 절차 (검토 승인 후, 메인테이너가 수행)
 
@@ -109,7 +102,7 @@ site/
 2. Settings → Pages → Source를 **GitHub Actions**로 바꾼다. 2026-11-10 조회에서 Pages는 404였다.
 3. Settings → Environments → `github-pages` 배포 브랜치가 `main`만 허용하는지 확인한다.
 4. main에 병합한다. 경로 조건에 걸리지 않으면 `Learning site`를 main에서 수동 실행한다.
-5. `https://kosta-ai-lab.github.io/ai-native-sdlc/`에서 확인한다: 메뉴 이동, 영역·확장 주제 선택, `#area/spec`·`#stage/04`·`#path/todo` 새로고침, 강의·예제 링크, 키보드, 동작 줄이기, 모바일 폭.
+5. 배포 주소(예상 `https://kosta-ai-lab.github.io/ai-native-sdlc/`, 실제 주소는 배포 후 확인)에서 확인한다: 스크롤 스토리, 영역 펼침→상세→닫기 복귀, Escape·뒤로·Tab, `#area-spec`·`#stage/04`·`#path/todo` 새로고침, 강의·예제 원본 링크, 동작 줄이기, 모바일 폭, 콘솔의 CSP 위반 없음.
 6. 문제가 있으면 직전 성공 실행을 재실행하거나 되돌리는 PR을 올린다.
 
 ## 7. 편집·운영 메모 (공개 화면에 싣지 않음)
@@ -126,4 +119,5 @@ site/
 
 - 원격 commit·push·PR 수정, Pages 설정, 배포, 워크플로 원격 실행
 - 실제 브라우저 렌더링과 한국어 교정(관제 검수자가 수행)
+- origin/main의 새 커밋(강의 PDF·새 모듈 등) 병합과 그 자료의 sources/portal 반영. 새 자료는 담당·상태 확인 후 사람이 추가한다
 - 원본 README·LICENSE·CONTRIBUTING·modules·courses·samples 수정

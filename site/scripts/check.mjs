@@ -4,12 +4,13 @@
 //  - 원본 링크 manifest를 git ls-files와 대조하고, 상태·담당 문자열을 원문에서 확인한다.
 //  - 포털 데이터의 참조 무결성, 제공 상태의 근거, 승인 문구 보존, 과장·추적 표현 금지, 외부 자산 금지를 검사한다.
 //  - Pages 워크플로의 권한·배포 조건을 확인한다.
-//  - --dist: 빌드 산출물이 허용 목록과 정확히 같은지 확인한다.
+//  - 화면 원본(src): 승인 문구·메타데이터·meta CSP·상대 경로·검토용 흔적/개인 경로 금지를 확인한다.
+//  - --dist: 빌드 산출물이 허용 목록과 같고, 원본과 바이트가 같으며(재현성), /ai-native-sdlc/ 와 / 양쪽에서 해석되는지 확인한다.
 import fs from 'node:fs';
 import path from 'node:path';
 import {
-  REPO_ROOT, SITE_DIR, SRC_DIR, DATA_DIR, DEFAULT_OUT, DIST_ALLOWLIST, REPO_URL, ORG_URL,
-  readJSON, repoUrl, gitTrackedFiles, assetRefs, anchorRefs, listFiles, isMain
+  REPO_ROOT, SITE_DIR, DATA_DIR, DEFAULT_OUT, BASE_PATH, MARKER, REPO_URL, ORG_URL, SRC_FILES,
+  readJSON, repoUrl, gitTrackedFiles, assetRefs, anchorRefs, listFiles, distAllowlist, isMain
 } from './lib.mjs';
 
 const FORBIDDEN_CLAIMS = [
@@ -36,9 +37,51 @@ const APPROVED_COPY = [
   '지금 살펴볼 수 있는 것',
   '작은 수정부터 새로운 사례까지',
   '기여 방법 보기', '오류·개선 제안', 'GitHub 조직 방문',
-  '>소개<', '>로드맵<', '>서비스·자료<', '>참여하기<',
+  '>소개<', '[ 01 ] 소개', '[ 02 ] 로드맵', '[ 03 ] 서비스·자료', '[ 04 ] 참여하기',
   '>GitHub<', '>기여 안내<', '>라이선스<', '>보안 안내<'
 ];
+// 검토용 시안 표시·비교 링크(제작 단계 흔적)와 개인·내부 주소
+const REVIEW_MARKERS = [/통합\s*시안/, /시안\s*비교/, /미확정/, /제작\s*제안/, /designs-v2/, /designs-integrated/, /\bEgo\b/];
+const PRIVATE_MARKERS = [/\/Users\//, /\/home\/[a-z]/, /\.hermes/, /ts\.net/, /tail[0-9a-f]{5,}/, /127\.0\.0\.1/, /localhost/, /:18483/];
+const APPROVED_TITLE = 'kosta-ai-lab — AI와 함께 만드는 소프트웨어, 함께 발전시키는 개발 방식';
+const APPROVED_DESCRIPTION = 'kosta-ai-lab은 AI-Native 소프트웨어 개발의 방법과 경험을 나누고, 교재·예제·도구를 함께 발전시킵니다. 로드맵과 공개 자료로 연결합니다.';
+// meta CSP 정책(GitHub Pages는 HTTP 헤더를 정할 수 없다). 스크립트는 같은 출처 파일만, 스타일은 CSSOM·속성 갱신을 위해 unsafe-inline 유지,
+// 무대 SVG는 문서 안 요소, 데이터는 같은 출처 JSON fetch.
+export const REQUIRED_CSP = {
+  'default-src': ["'self'"],
+  'script-src': ["'self'"],
+  'style-src': ["'self'", "'unsafe-inline'"],
+  'img-src': ["'self'", 'data:'],
+  'font-src': ["'self'"],
+  'connect-src': ["'self'"],
+  'object-src': ["'none'"],
+  'base-uri': ["'self'"],
+  'form-action': ["'none'"]
+};
+// meta로 전달하면 브라우저가 무시하고 콘솔에 경고하는 지시어
+const META_IGNORED_CSP = ['frame-ancestors', 'report-uri', 'report-to', 'sandbox'];
+const SCRIPT_ORDER = /<script src="motion-core\.js" defer><\/script>\s*<script src="layers\.js" defer><\/script>\s*<script src="story\.js" defer><\/script>/;
+// story.js·layers.js가 찾는 고정 요소
+const REQUIRED_IDS = ['head', 'main', 'toc', 'toc-toggle', 'story', 'top', 'top-title', 'intro', 'roadmap', 'materials', 'courses', 'example', 'join',
+  'stage', 'stage-svg', 'cam', 'stage-msg', 'hud-label', 'hud-fill', 'area-index', 'area-steps', 'material-list', 'course-list', 'example-steps', 'example-note', 'layers'];
+// 배포 주소: GitHub Pages 프로젝트 하위 경로와, 사용자 도메인을 붙였을 때의 루트
+export const SERVE_BASES = [BASE_PATH, '/'];
+
+export function parseCsp(text) {
+  const out = {};
+  for (const part of text.split(';')) {
+    const [dir, ...vals] = part.trim().split(/\s+/);
+    if (dir) out[dir.toLowerCase()] = vals;
+  }
+  return out;
+}
+/** 상대 경로인지: 스킴·프로토콜 상대·루트 절대·상위 폴더·data: 금지 */
+export function isRelativeRef(v) {
+  return !!v && !/^[a-z][a-z0-9+.-]*:/i.test(v) && !v.startsWith('/') && !v.startsWith('\\') && !v.split(/[?#]/)[0].split('/').includes('..');
+}
+
+// GitHub Docs "Using custom workflows with GitHub Pages" 예시 major (2026-11-11 확인)
+const ACTION_MAJORS = { 'actions/checkout': 'v6', 'actions/configure-pages': 'v5', 'actions/upload-pages-artifact': 'v4', 'actions/deploy-pages': 'v4' };
 const AREA_TITLES = ['문제·요구사항', '명세·설계', 'AI와 구현', '테스트·검증', '배포·운영'];
 const PERCENT_ALLOWED = ['100% 통과'];
 const TRACKING = [/localStorage/, /sessionStorage/, /indexedDB/, /document\.cookie/, /navigator\.sendBeacon/, /gtag\(|google-analytics|googletagmanager/];
@@ -47,7 +90,7 @@ function allowedExternal(url) {
   return url === ORG_URL || url === REPO_URL || url.startsWith(REPO_URL + '/');
 }
 
-export function collectProblems({ dist = null, repoRoot = REPO_ROOT, siteDir = SITE_DIR, dataDir = DATA_DIR } = {}) {
+export function collectProblems({ dist = null, repoRoot = REPO_ROOT, siteDir = SITE_DIR, dataDir = DATA_DIR, srcDir = path.join(siteDir, 'src') } = {}) {
   const problems = [];
   const notes = [];
   const bad = (msg) => problems.push(msg);
@@ -152,7 +195,7 @@ export function collectProblems({ dist = null, repoRoot = REPO_ROOT, siteDir = S
     (x.relatedAreas || []).forEach((id) => { if (!areaIds.has(id)) bad(`확장 주제 ${x.id}: 없는 영역 ${id}`); });
     checkTopicLike('확장 주제', x);
   }
-  if ([...extIds].sort().join() !== 'embedded,harness') bad('확장 주제: 에이전트 하니스와 임베디드가 있어야 함');
+  for (const need of ['harness', 'embedded']) if (!extIds.has(need)) bad('확장 주제: 에이전트 하니스와 임베디드가 있어야 함');
 
   // 4) 공개 항목(resources·courses)
   const statusKeys = Object.keys(portal.statusLabels.resource);
@@ -162,7 +205,7 @@ export function collectProblems({ dist = null, repoRoot = REPO_ROOT, siteDir = S
     if (a.source) ref(where, a.source);
     if (!a.href && !a.url && !a.source) bad(`${where}: href|url|source 중 하나 필요`);
   };
-  const html = fs.readFileSync(path.join(SRC_DIR, 'index.html'), 'utf8');
+  const html0 = fs.readFileSync(path.join(srcDir, 'index.html'), 'utf8');
   const itemIds = new Set();
   for (const r of portal.resources) {
     const where = `자료 ${r.id}`;
@@ -173,13 +216,15 @@ export function collectProblems({ dist = null, repoRoot = REPO_ROOT, siteDir = S
     if (r.status === 'operating' && !(r.verified && r.verified.date && r.verified.url)) bad(`${where}: 운영 확인 기록 없이 '운영 중' 표시 금지`);
     if (r.kind === 'service' && r.status === 'operating' && !allowedExternal(r.verified?.url || '')) notes.push(`${where}: 운영 서비스 주소를 검사 허용 목록에 추가해야 함`);
     (r.areas || []).forEach((id) => { if (!areaIds.has(id)) bad(`${where}: 없는 영역 ${id}`); });
-    (r.actions || []).forEach((a, i) => { checkActionUrl(`${where} 행동 ${i + 1}`, a); if (a.href && !html.includes(`id="${a.href.slice(1)}"`)) bad(`${where}: 이동할 구역 ${a.href} 없음`); });
+    (r.actions || []).forEach((a, i) => { checkActionUrl(`${where} 행동 ${i + 1}`, a); if (a.href && !html0.includes(`id="${a.href.slice(1)}"`)) bad(`${where}: 이동할 구역 ${a.href} 없음`); });
     if (r.intro) ref(`${where} intro`, r.intro);
     (r.steps || []).forEach((st, i) => { ref(`${where} 단계 ${i + 1}`, st.source); if (!areaIds.has(st.area)) bad(`${where} 단계 ${i + 1}: 없는 영역`); });
   }
   const ex = portal.resources.find((r) => r.kind === 'example');
   const exOrder = ['todo-req', 'todo-spec', 'todo-acc', 'todo-test', 'todo-impl'];
-  if (!ex || ex.steps.map((s) => s.source).join() !== exOrder.join()) bad('예제: 요구사항→명세→인수조건→테스트→구현 원본 순서여야 함');
+  // 기준 5단계가 이 순서로 들어 있어야 한다(단계 추가는 허용).
+  const exSeq = ex ? ex.steps.map((s) => s.source).filter((id) => exOrder.includes(id)) : [];
+  if (!ex || exSeq.join() !== exOrder.join()) bad('예제: 요구사항→명세→인수조건→테스트→구현 원본 순서여야 함');
   if (portal.resources.some((r) => r.kind === 'service')) notes.push('서비스 항목이 있음 — 운영 확인 기록을 검토하세요');
 
   if (!portal.courses.length) bad('강의: 공개 강의 항목이 하나 이상 필요함');
@@ -216,28 +261,80 @@ export function collectProblems({ dist = null, repoRoot = REPO_ROOT, siteDir = S
   for (const [k, v] of Object.entries(portal.links || {})) if (!allowedExternal(v)) bad(`links.${k}: 허용되지 않은 주소 ${v}`);
 
   // 5) 승인 문구·홈 화면 용어·과장·추적 표현
+  const html = fs.readFileSync(path.join(srcDir, 'index.html'), 'utf8');
   for (const s of APPROVED_COPY) if (!html.includes(s)) bad(`index.html: 승인 문구 누락 — ${s}`);
   const visibleHtml = html.replace(/<!--[\s\S]*?-->/g, '').replace(/<script[\s\S]*?<\/script>/g, '');
   for (const re of INTERNAL_TERMS) if (re.test(visibleHtml)) bad(`index.html: 홈 화면에 내부 용어 ${re}`);
-  const texts = {
-    'data/portal.json': fs.readFileSync(path.join(dataDir, 'portal.json'), 'utf8'),
-    'src/index.html': html,
-    'src/app.js': fs.readFileSync(path.join(SRC_DIR, 'app.js'), 'utf8'),
-    'src/lib.js': fs.readFileSync(path.join(SRC_DIR, 'lib.js'), 'utf8')
-  };
+  const codeFiles = SRC_FILES.filter((n) => /\.(js|css|html|svg)$/.test(n));
+  const code = Object.fromEntries(codeFiles.map((n) => [n, fs.readFileSync(path.join(srcDir, n), 'utf8')]));
+  const jsNames = codeFiles.filter((n) => n.endsWith('.js'));
+  const js = jsNames.map((n) => code[n]).join('\n');
+  const css = codeFiles.filter((n) => n.endsWith('.css')).map((n) => code[n]).join('\n');
+  const texts = { 'data/portal.json': fs.readFileSync(path.join(dataDir, 'portal.json'), 'utf8'), 'src/index.html': html };
+  for (const n of jsNames) texts['src/' + n] = code[n];
   for (const [name, text] of Object.entries(texts)) {
     for (const re of FORBIDDEN_CLAIMS) if (re.test(text)) bad(`${name}: 금지 표현 ${re}`);
     let scrub = text;
     for (const ok of PERCENT_ALLOWED) scrub = scrub.split(ok).join('');
+    // JS는 화면에 보이는 한글 문자열만 본다(clip-path·크기 계산의 100% 등은 표현이 아님).
+    if (name.endsWith('.js')) scrub = (scrub.replace(/\/\*[\s\S]*?\*\//g, '').match(/'[^'\n]*'/g) || []).filter((m) => /[가-힣]/.test(m)).join('\n');
     if (/\d+\s*%/.test(scrub)) bad(`${name}: 근거 없는 백분율 표현`);
     if (name.endsWith('.js')) for (const re of TRACKING) if (re.test(text)) bad(`${name}: 저장·추적 API 사용 금지 ${re}`);
   }
+  // 검토용 시안 흔적·개인 로컬 경로·내부 주소가 배포 원본에 남지 않게 한다(데이터 포함).
+  const shipped = { ...Object.fromEntries(codeFiles.map((n) => ['src/' + n, code[n]])) };
+  for (const n of fs.readdirSync(dataDir).filter((x) => x.endsWith('.json'))) shipped['data/' + n] = fs.readFileSync(path.join(dataDir, n), 'utf8');
+  for (const [name, text] of Object.entries(shipped)) {
+    for (const re of REVIEW_MARKERS) if (re.test(text)) bad(`${name}: 검토용 흔적 ${re}`);
+    for (const re of PRIVATE_MARKERS) if (re.test(text)) bad(`${name}: 개인·내부 경로 ${re}`);
+  }
 
-  // 6) 외부 자산·상대 경로
-  const css = fs.readFileSync(path.join(SRC_DIR, 'styles.css'), 'utf8');
+  // 6) 메타데이터·CSP·외부 자산·상대 경로
+  const head = (/<head>([\s\S]*?)<\/head>/.exec(html) || [])[1] || '';
+  if (!/^<!doctype html>\s*<html lang="ko"[ >]/i.test(html)) bad('index.html: <html lang="ko"> 필요');
+  const title = (/<title>([^<]*)<\/title>/.exec(head) || [])[1];
+  const metaContent = (attr, name) => {
+    const re = new RegExp(`<meta\\s+${attr}="${name.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}"\\s+content="([^"]*)"`, 'i');
+    return (re.exec(head) || [])[1];
+  };
+  const desc = metaContent('name', 'description');
+  if (title !== APPROVED_TITLE) bad(`index.html: title은 승인 문구 '${APPROVED_TITLE}'만 — ${title}`);
+  if (desc !== APPROVED_DESCRIPTION) bad('index.html: description은 승인 문구만');
+  if (metaContent('property', 'og:title') !== APPROVED_TITLE) bad('index.html: og:title = title 이어야 함');
+  if (metaContent('property', 'og:description') !== APPROVED_DESCRIPTION) bad('index.html: og:description = description 이어야 함');
+  if (!/<link rel="icon" href="favicon\.svg" type="image\/svg\+xml">/.test(head)) bad('index.html: favicon.svg 링크 필요');
+  // 도메인이 정해지지 않았으므로 절대 주소 메타(canonical·og:url·og:image)와 검색 차단(noindex)을 두지 않는다.
+  if (/rel="canonical"|property="og:url"|property="og:image"|name="twitter:image"/i.test(head)) bad('index.html: 도메인 미정 — canonical/og:url/og:image 고정 금지');
+  if (/noindex/i.test(head)) bad('index.html: 검토용 noindex가 남아 있음');
+  for (const m of head.matchAll(/<meta\b[^>]*\bcontent="([^"]*)"/gi)) if (/https?:\/\//i.test(m[1]) && !/^https:\/\/github\.com\/kosta-ai-lab/.test(m[1])) bad(`index.html: 메타에 외부 주소 ${m[1]}`);
+
+  // CSP: GitHub Pages는 응답 헤더를 정할 수 없으므로 meta로 선언한다. 다른 자원보다 먼저 와야 적용된다.
+  const cspTags = [...head.matchAll(/<meta\s+http-equiv="Content-Security-Policy"\s+content="([^"]*)">/gi)];
+  if (cspTags.length !== 1) bad(`index.html: meta CSP는 정확히 1개 (현재 ${cspTags.length})`);
+  else {
+    const at = head.indexOf(cspTags[0][0]);
+    const firstRes = head.search(/<(link|script|style)\b/i);
+    if (firstRes >= 0 && firstRes < at) bad('index.html: meta CSP가 link/script보다 먼저 와야 함');
+    const csp = parseCsp(cspTags[0][1]);
+    for (const [dir, want] of Object.entries(REQUIRED_CSP)) {
+      const have = (csp[dir] || []).slice().sort().join(' ');
+      if (have !== want.slice().sort().join(' ')) bad(`CSP: ${dir}는 '${want.join(' ')}' 이어야 함 (현재 '${(csp[dir] || []).join(' ')}')`);
+    }
+    for (const dir of META_IGNORED_CSP) if (dir in csp) bad(`CSP: ${dir}는 meta에서 무시되고 콘솔 경고를 낸다 — 넣지 않음`);
+    for (const dir of Object.keys(csp)) if (!(dir in REQUIRED_CSP)) bad(`CSP: 검토되지 않은 지시어 ${dir}`);
+  }
+  if (/<script(?![^>]*\bsrc=)[^>]*>/i.test(html)) bad('index.html: inline script 금지(CSP script-src self)');
+  if (/\son[a-z]+\s*=/i.test(html.replace(/<!--[\s\S]*?-->/g, '')) || /javascript:/i.test(html)) bad('index.html: 이벤트 속성·javascript: 금지');
+  if (/<iframe|<object|<embed|<base\b|<form\b/i.test(html)) bad('index.html: iframe/object/embed/base/form 금지');
+  if (!SCRIPT_ORDER.test(head)) bad('index.html: 스크립트는 motion-core.js → layers.js → story.js 순서의 defer 상대 경로');
+  for (const re of [/\binnerHTML\b/, /\bouterHTML\b/, /insertAdjacentHTML/, /document\.write/, /\beval\(/, /new Function/, /setTimeout\(\s*['"]/, /setAttribute\(\s*['"]on/i, /setAttribute\(\s*['"]style['"]/]) {
+    if (re.test(js)) bad(`스크립트: CSP·안전 위반 가능 API ${re}`);
+  }
+  for (const id of REQUIRED_IDS) if (!html.includes(`id="${id}"`)) bad(`index.html: 스크립트가 쓰는 id="${id}" 없음`);
+
   for (const r of assetRefs(html)) {
-    if (/^(https?:)?\/\//i.test(r.value) || r.value.startsWith('/') || r.value.startsWith('data:')) bad(`index.html: 외부·절대 자산 참조 금지 — ${r.value}`);
-    else if (!fs.existsSync(path.join(siteDir, r.value.startsWith('data/') ? r.value : path.join('src', r.value)))) bad(`index.html: 없는 자산 ${r.value}`);
+    if (!isRelativeRef(r.value)) bad(`index.html: 상대 경로가 아닌 자산 참조 — ${r.value}`);
+    else if (!fs.existsSync((r.value.startsWith('data/') ? path.join(siteDir, r.value) : path.join(srcDir, r.value)))) bad(`index.html: 없는 자산 ${r.value}`);
   }
   for (const href of anchorRefs(html)) {
     if (href.startsWith('#')) {
@@ -253,16 +350,22 @@ export function collectProblems({ dist = null, repoRoot = REPO_ROOT, siteDir = S
       }
       continue;
     }
-    if (href.startsWith('/') || /^[a-z]+:/i.test(href)) bad(`index.html: 허용되지 않는 링크 — ${href}`);
-    else if (!fs.existsSync(path.join(siteDir, href.startsWith('data/') ? href : path.join('src', href)))) bad(`index.html: 없는 내부 링크 ${href}`);
+    if (!isRelativeRef(href)) bad(`index.html: 허용되지 않는 링크 — ${href}`);
+    else if (!fs.existsSync((href.startsWith('data/') ? path.join(siteDir, href) : path.join(srcDir, href)))) bad(`index.html: 없는 내부 링크 ${href}`);
   }
-  if (/@import|url\(\s*['"]?(https?:)?\/\//i.test(css)) bad('styles.css: 외부 import/url 금지');
-  if (/fonts\.googleapis|fonts\.gstatic|cdn\.|unpkg|jsdelivr/i.test(html + css + texts['src/app.js'])) bad('외부 폰트·CDN 참조 금지');
-  if (/https?:\/\//.test(texts['src/lib.js'])) bad('lib.js: 외부 URL 금지');
-  for (const u of texts['src/app.js'].match(/https?:\/\/[^'"\s)]+/g) || []) {
-    if (!allowedExternal(u) && u !== 'http://www.w3.org/2000/svg') bad(`app.js: 허용되지 않은 URL ${u}`);
+  if (/@import|url\(\s*['"]?(https?:)?\/\//i.test(css)) bad('CSS: 외부 import/url 금지');
+  if (/fonts\.googleapis|fonts\.gstatic|cdn\.|unpkg|jsdelivr/i.test(html + css + js)) bad('외부 폰트·CDN 참조 금지');
+  for (const n of jsNames) {
+    for (const u of code[n].match(/https?:\/\/[^'"\s)]+/g) || []) {
+      if (!allowedExternal(u) && u !== 'http://www.w3.org/2000/svg') bad(`${n}: 허용되지 않은 URL ${u}`);
+    }
+    if (/fetch\(\s*['"`]\//.test(code[n]) || /new URL\(\s*['"`]\//.test(code[n])) bad(`${n}: 절대 경로 fetch 금지`);
   }
-  if (/fetch\(\s*['"]\//.test(texts['src/app.js'])) bad('app.js: 절대 경로 fetch 금지');
+  if (!/new URL\('data\/' \+ name, document\.baseURI\)/.test(code['story.js'])) bad("story.js: 데이터는 문서 기준 상대 경로 new URL('data/' + name, document.baseURI)로 읽어야 함");
+  for (const [name, text] of Object.entries(code)) {
+    if (/(?:href|src)\s*[=:]\s*['"]\.\.\//.test(text) || /designs-integrated|designs-v2/.test(text)) bad(`${name}: 상위 폴더·시안 경로 의존 금지`);
+  }
+  for (const p of [path.join(repoRoot, 'CNAME'), path.join(siteDir, 'CNAME'), path.join(srcDir, 'CNAME')]) if (fs.existsSync(p)) bad(`CNAME 생성 금지(도메인 미정): ${path.relative(repoRoot, p)}`);
 
   // 7) 워크플로
   const wfPath = path.join(repoRoot, '.github/workflows/learning-site.yml');
@@ -287,27 +390,52 @@ export function collectProblems({ dist = null, repoRoot = REPO_ROOT, siteDir = S
     if (!/path:\s*site\/dist\s*$/m.test(wf)) bad('워크플로: Pages artifact path는 site/dist');
     const uploadCond = /- name: Upload Pages artifact\s*\n\s+if:\s*(.+)/.exec(wf);
     if (!uploadCond || !/refs\/heads\/main/.test(uploadCond[1]) || !/pull_request/.test(uploadCond[1])) bad('워크플로: Pages artifact 업로드는 main 배포 조건에서만');
+    // PR에서는 검사만: configure/deploy는 deploy job에만, 검사 3단계는 build job에서 실행
+    const noComment = (t) => t.replace(/^\s*#.*$/gm, '');
+    if (/configure-pages|deploy-pages/.test(noComment(head))) bad('워크플로: configure-pages/deploy-pages는 deploy job에만');
+    if (!/needs:\s*build/.test(deploy)) bad('워크플로: deploy job은 needs: build');
+    if (!/url:\s*\$\{\{\s*steps\.deployment\.outputs\.page_url\s*\}\}/.test(deploy)) bad('워크플로: environment url은 steps.deployment.outputs.page_url');
+    for (const cmd of ['node scripts/build.mjs', 'node scripts/check.mjs --dist', 'node scripts/test.mjs']) if (!head.includes('run: ' + cmd)) bad(`워크플로: build job에서 ${cmd} 실행 필요`);
+    for (const [act, major] of Object.entries(ACTION_MAJORS)) {
+      const used = [...wf.matchAll(new RegExp(`uses:\\s*${act.replace('/', '\\/')}@(\\S+)`, 'g'))].map((m) => m[1]);
+      if (!used.length) bad(`워크플로: ${act} 사용 필요`);
+      for (const v of used) if (v !== major) bad(`워크플로: ${act}@${v} — GitHub Docs 예시 major ${major}와 다름(변경 시 확인 후 이 표를 갱신)`);
+    }
+    if (/CNAME|cname:/.test(noComment(wf))) bad('워크플로: 사용자 도메인 설정 금지(도메인 미정)');
   }
 
-  // 8) 산출물 허용 목록
+  // 8) 산출물: 허용 목록·원본과 바이트 동일(재현성)·두 base 경로 해석
   if (dist) {
     if (!fs.existsSync(dist)) bad(`dist 없음: ${dist} (먼저 build)`);
     else {
+      const allow = distAllowlist(siteDir);
       const files = listFiles(dist);
-      const extra = files.filter((f) => !DIST_ALLOWLIST.includes(f));
-      const missing = DIST_ALLOWLIST.filter((f) => !files.includes(f));
+      const extra = files.filter((f) => !allow.includes(f));
+      const missing = allow.filter((f) => !files.includes(f));
       if (extra.length) bad(`dist: 허용 목록 밖 파일 ${extra.join(', ')}`);
       if (missing.length) bad(`dist: 누락 ${missing.join(', ')}`);
-      if (files.some((f) => /\.(pdf|pptx|docx|md|ts|feature)$/i.test(f))) bad('dist: 원본 교재·문서 복사 금지');
+      if (files.some((f) => /\.(pdf|pptx|docx|md|ts|feature|mjs|log|txt)$/i.test(f))) bad('dist: 원본 교재·문서·스크립트·로그 복사 금지');
+      if (files.includes('CNAME')) bad('dist: CNAME 금지(도메인 미정)');
       for (const f of files) {
-        const srcFile = f.startsWith('data/') ? path.join(siteDir, f) : path.join(siteDir, 'src', f);
-        if (fs.existsSync(srcFile) && !fs.readFileSync(srcFile).equals(fs.readFileSync(path.join(dist, f)))) bad(`dist: 소스와 다른 파일 ${f} (다시 build)`);
+        if (f === MARKER || f === '.nojekyll') continue;
+        const srcFile = f.startsWith('data/') ? path.join(siteDir, f) : path.join(srcDir, f);
+        if (!fs.existsSync(srcFile)) bad(`dist: 원본 없는 파일 ${f}`);
+        else if (!fs.readFileSync(srcFile).equals(fs.readFileSync(path.join(dist, f)))) bad(`dist: 소스와 다른 파일 ${f} (다시 build)`);
       }
-      const distHtml = fs.readFileSync(path.join(dist, 'index.html'), 'utf8');
-      for (const r of assetRefs(distHtml)) {
-        const resolved = new URL(r.value, 'http://127.0.0.1/ai-native-sdlc/');
-        if (!resolved.pathname.startsWith('/ai-native-sdlc/')) bad(`dist: 하위 경로 밖으로 해석되는 참조 ${r.value}`);
-        else if (!fs.existsSync(path.join(dist, resolved.pathname.slice('/ai-native-sdlc/'.length)))) bad(`dist: 없는 자산 ${r.value}`);
+      if (files.includes(MARKER)) {
+        const marker = fs.readFileSync(path.join(dist, MARKER), 'utf8');
+        if (/\/Users\/|\/home\/|[A-Z]:\\|\d{4}-\d\d-\d\dT/.test(marker)) bad('dist: 빌드 표식에 로컬 경로·시각 금지');
+      }
+      const distHtml = fs.existsSync(path.join(dist, 'index.html')) ? fs.readFileSync(path.join(dist, 'index.html'), 'utf8') : '';
+      const dataNames = files.filter((f) => f.startsWith('data/'));
+      for (const base of SERVE_BASES) {
+        const page = new URL(base, 'https://example.invalid');
+        const refs = [...assetRefs(distHtml).map((r) => r.value), ...anchorRefs(distHtml).filter((h) => !/^(#|https:)/.test(h)), ...dataNames];
+        for (const v of refs) {
+          const resolved = new URL(v, page);
+          if (resolved.origin !== page.origin || !resolved.pathname.startsWith(base)) bad(`dist(${base}): base 밖으로 해석되는 참조 ${v}`);
+          else if (!files.includes(decodeURIComponent(resolved.pathname.slice(base.length)))) bad(`dist(${base}): 없는 자산 ${v}`);
+        }
       }
       notes.push(`dist: ${files.length}개 파일 (${files.join(', ')})`);
     }

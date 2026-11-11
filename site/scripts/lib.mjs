@@ -1,4 +1,5 @@
 // kosta-ai-lab 포털 사이트 스크립트 공통 모듈 (Apache-2.0). Node 내장 모듈만 사용한다.
+// 원본: site/src(화면) + site/data(데이터) → 산출물: site/dist(Pages 배포 대상, 하위 경로·루트 모두 상대 경로로 동작).
 import fs from 'node:fs';
 import os from 'node:os';
 import path from 'node:path';
@@ -16,18 +17,24 @@ export const REPO_URL = 'https://github.com/kosta-ai-lab/ai-native-sdlc';
 export const ORG_URL = 'https://github.com/kosta-ai-lab';
 export const MARKER = '.site-build';
 
-// 배포 산출물 허용 목록. 이 밖의 파일은 dist에 들어가지 않는다.
-export const COPY_PLAN = [
-  { from: 'src/index.html', to: 'index.html' },
-  { from: 'src/styles.css', to: 'styles.css' },
-  { from: 'src/lib.js', to: 'lib.js' },
-  { from: 'src/app.js', to: 'app.js' },
-  { from: 'src/favicon.svg', to: 'favicon.svg' },
-  { from: 'data/portal.json', to: 'data/portal.json' },
-  { from: 'data/sources.json', to: 'data/sources.json' }
-];
+// 배포 화면 파일. 스크립트 실행 순서는 index.html이 정한다(motion-core → layers → story).
+export const SRC_FILES = ['index.html', 'story.css', 'layers.css', 'motion-core.js', 'layers.js', 'story.js', 'favicon.svg'];
+// 데이터는 site/data의 *.json 전체를 그대로 복사한다(파일 추가를 고정 목록으로 막지 않는다).
+const DATA_NAME = /^[a-z0-9][a-z0-9_-]*\.json$/;
+export function dataFiles(siteDir = SITE_DIR) {
+  return fs.readdirSync(path.join(siteDir, 'data')).filter((n) => DATA_NAME.test(n)).sort();
+}
+/** 배포 산출물 계획(원본 → dist). 이 밖의 파일은 dist에 들어가지 않는다. */
+export function copyPlan(siteDir = SITE_DIR) {
+  return [
+    ...SRC_FILES.map((n) => ({ from: 'src/' + n, to: n })),
+    ...dataFiles(siteDir).map((n) => ({ from: 'data/' + n, to: 'data/' + n }))
+  ];
+}
 export const GENERATED = ['.nojekyll', MARKER];
-export const DIST_ALLOWLIST = [...COPY_PLAN.map((c) => c.to), ...GENERATED].sort();
+export function distAllowlist(siteDir = SITE_DIR) {
+  return [...copyPlan(siteDir).map((c) => c.to), ...GENERATED].sort();
+}
 
 export function readJSON(file) {
   return JSON.parse(fs.readFileSync(file, 'utf8'));
@@ -121,7 +128,9 @@ export function build(outArg, opts = {}) {
   const siteDir = opts.siteDir || SITE_DIR;
   fs.mkdirSync(outDir, { recursive: true });
   // 아무것도 지우기 전에, 빌드가 만들지 않은 파일이 있는지 먼저 확인한다.
-  const known = new Set([...DIST_ALLOWLIST, ...previousBuildFiles(outDir)]);
+  const plan = copyPlan(siteDir);
+  const allow = distAllowlist(siteDir);
+  const known = new Set([...allow, ...previousBuildFiles(outDir)]);
   const foreign = listFiles(outDir).filter((f) => !known.has(f));
   if (foreign.length) {
     const e = new Error(`출력 폴더에 빌드가 만들지 않은 파일이 있음: ${foreign.join(', ')} — 아무것도 지우지 않고 중단합니다`);
@@ -129,14 +138,14 @@ export function build(outArg, opts = {}) {
     throw e;
   }
   cleanPreviousBuild(outDir);
-  for (const { from, to } of COPY_PLAN) {
+  for (const { from, to } of plan) {
     const src = path.join(siteDir, from);
     const dest = path.join(outDir, to);
     fs.mkdirSync(path.dirname(dest), { recursive: true });
     fs.copyFileSync(src, dest);
   }
   fs.writeFileSync(path.join(outDir, '.nojekyll'), '');
-  const files = DIST_ALLOWLIST.slice();
+  const files = allow.slice();
   fs.writeFileSync(path.join(outDir, MARKER), JSON.stringify({ tool: 'kosta-ai-lab portal build', files }, null, 2) + '\n');
   return { outDir, files };
 }
