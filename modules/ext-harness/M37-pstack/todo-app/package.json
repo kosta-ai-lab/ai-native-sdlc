@@ -1,0 +1,9 @@
+{
+  "name": "todo-app",
+  "version": "1.0.0",
+  "description": "mattpocock/skills 실습용 할 일 관리 CLI",
+  "type": "module",
+  "scripts": {
+    "test": "node --test"
+  }
+}

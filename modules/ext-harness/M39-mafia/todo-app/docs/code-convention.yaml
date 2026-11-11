@@ -1,0 +1,30 @@
+# todo-app 팀 코딩 컨벤션 (mafia-codereview 실습용)
+# 스키마: id / rule / stacks
+# stacks 가 [all] 이면 모든 작업에 적용, [node] 이면 Node.js 코드에 적용
+
+general:
+  - id: GEN-001
+    rule: 함수는 단일 책임 원칙을 따른다. 50줄을 넘으면 분리를 검토한다.
+    stacks: [all]
+  - id: GEN-002
+    rule: 매직 넘버를 사용하지 않는다. 의미 있는 이름의 상수로 선언한다.
+    stacks: [all]
+  - id: GEN-003
+    rule: 잘못된 입력은 발생 지점에서 Error 를 던져 거부한다. 사용자에게 보여 줄 메시지와 종료 코드 1 처리는 CLI 진입점(src/cli.js)에서만 한다.
+    stacks: [all]
+
+node:
+  - id: NODE-001
+    rule: ES 모듈(import/export)을 사용한다. 외부 npm 의존성을 추가하지 않고 Node.js 내장 모듈만 쓴다.
+    stacks: [node]
+  - id: NODE-002
+    rule: 테스트는 node:test 와 node:assert/strict 로 작성하고, 공개 함수의 동작(입력과 출력)을 검증한다. 내부 구현을 직접 검사하지 않는다.
+    stacks: [node]
+
+todo:
+  - id: TODO-001
+    rule: src/todo.js 의 함수는 순수 함수로 유지한다. 전달받은 배열과 객체를 변경하지 않고 새 배열을 반환한다.
+    stacks: [node]
+  - id: TODO-002
+    rule: 파일 읽기와 쓰기는 src/store.js 에서만 한다. 다른 모듈은 todos.json 에 직접 접근하지 않는다.
+    stacks: [node]

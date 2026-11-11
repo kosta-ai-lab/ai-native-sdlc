@@ -1,51 +1,6 @@
-# 개념
+# OpenWiki의 기본 사이클
 
-OpenWiki는 **코드 저장소를 읽고, 서로 링크된 마크다운 위키를 만들어 주고, 코드가 바뀌면 그 위키를 갱신해 주는 CLI 도구**입니다.
-LangChain 팀이 만든 무료 오픈소스(MIT 라이선스)이며 npm 패키지 `openwiki`로 배포됩니다.
-
-README가 "사람이 처음 읽는 소개글"이라면, OpenWiki가 만드는 위키는
-**코딩 에이전트(Claude Code 등)가 저장소를 이해하려고 꺼내 읽는 기억 장치**에 가깝습니다.
-위키는 저장소 안 `openwiki/` 폴더에 일반 마크다운 파일로 저장되므로 사람도 그대로 읽고, git으로 버전 관리할 수 있습니다.
-
-> 이 가이드는 OpenWiki 0.7.1 (2026-10 기준) 을 기준으로 작성했습니다. 버전이 올라가면 화면과 출력이 조금 달라질 수 있습니다.
-
-## 핵심 개념 5가지
-
-### 1. Wiki (위키)
-저장소 루트의 `openwiki/` 폴더에 생기는 마크다운 문서 묶음입니다.
-`openwiki/quickstart.md`가 입구 역할을 하고, 여기서 아키텍처·개념·워크플로 등 주제별 페이지로 링크가 뻗어 나갑니다.
-
-### 2. Integration (코딩 에이전트 통합)
-OpenWiki를 Claude Code 같은 코딩 에이전트 안에서 쓰게 해 주는 연결입니다.
-설치하면 에이전트에 **스킬 1개**와 **MCP 서버 1개**가 추가됩니다.
-이 방식에서는 에이전트가 이미 로그인한 모델을 그대로 쓰기 때문에 **별도 API 키가 필요 없습니다.** 이 가이드는 이 방식을 사용합니다.
-
-### 3. Page job (페이지 작업)
-위키 생성은 "페이지 계획 → 한 페이지씩 작성 → 마무리" 순서로 진행됩니다.
-조사와 글쓰기는 에이전트가 맡고, 작업 대기열·검증·색인·마무리는 OpenWiki가 맡습니다.
-페이지가 하나 끝날 때마다 진행 상황이 저장되므로 중간에 끊겨도 이어서 할 수 있습니다.
-
-### 4. Grounded Claim (근거 있는 주장)
-위키에 적힌 사실 하나하나를 **Claim**이라 부르고, 각 Claim은 `repo://src/todo.js#L2-L9`처럼 근거가 된 소스 위치를 기록합니다.
-이 정보는 `openwiki/.claims/` 폴더에 JSON으로 저장됩니다.
-나중에 그 소스가 바뀌면 OpenWiki가 "이 사실은 다시 확인해야 한다"고 알아챕니다.
-
-### 5. Update (업데이트)
-코드를 고친 뒤 위키를 갱신하는 작업입니다. 전체를 다시 쓰지 않고 **바뀐 코드와 관련된 페이지만** 고칩니다.
-바뀐 것이 없으면 모델을 쓰지 않고 "갱신할 것 없음"으로 끝납니다.
-
-## 추가로 알아두면 좋은 개념
-
-| 개념 | 설명 |
-|---|---|
-| **Search / Read** | 에이전트가 위키에서 답을 찾을 때 쓰는 MCP 도구(`openwiki_search`, `openwiki_read`). 로컬에서만 동작하고 모델을 호출하지 않습니다. |
-| **Visualizer** | `openwiki visualize`. 위키를 노드 그래프와 마크다운 뷰어로 브라우저에 띄워 줍니다. |
-| **AGENTS.md** | OpenWiki가 저장소 루트에 관리하는 파일. 에이전트에게 "위키를 이렇게 참고하라"고 알려 줍니다. `<!-- OPENWIKI:START -->`와 `<!-- OPENWIKI:END -->` 사이만 OpenWiki가 고칩니다. |
-| **INSTRUCTIONS.md** | `openwiki/INSTRUCTIONS.md`. 위키의 범위와 우선순위를 사용자가 직접 적는 파일. OpenWiki가 읽기만 하고 덮어쓰지 않습니다. |
-| **.openwikiignore** | 위키 작성 때 읽지 말아야 할 경로를 적는 파일. 문법은 `.gitignore`와 비슷합니다. |
-| **Standalone CLI** | 에이전트 없이 `openwiki --init`으로 직접 실행하는 방식. 모델 제공자와 API 키 설정이 필요합니다. 이 가이드에서는 다루지 않습니다. |
-
-## OpenWiki의 기본 사이클
+> OpenWiki의 개념과 핵심 용어는 [README.md](README.md#개념)에 정리되어 있습니다.
 
 > 이 가이드는 OpenWiki를 처음 써보는 사람을 위한 **가장 기본적인 흐름**만 다룹니다.
 > **설치 → Claude Code 연결 → 위키 생성 → 읽기·검색 → 코드 변경 후 갱신**
@@ -164,157 +119,33 @@ openwiki --help
 
 # 3 단계: 연습용 저장소 만들기
 
-위키로 만들 대상이 필요합니다. 할 일 목록을 관리하는 작은 CLI `todo-cli`를 만듭니다.
+위키로 만들 대상이 필요합니다. 이 모듈에는 할 일 목록을 관리하는 작은 CLI 예제 [`todo-cli/`](todo-cli/)가 들어 있습니다. 이 폴더를 복사해 연습용 저장소로 씁니다.
 (이미 가진 프로젝트로 해도 되지만, 처음에는 작은 저장소가 빠르고 결과를 확인하기 쉽습니다.)
 
-1. 폴더를 만들고 git 저장소로 초기화합니다.
+> 각 소스 파일의 내용과 동작 설명, 더 자세한 실행 예시는 [SAMPLE.md](SAMPLE.md)에 있습니다. 위키를 만들기 전에 한 번 읽어 두면 4단계 이후 위키 내용을 소스와 대조하기 쉽습니다.
+
+1. 예제 폴더를 작업 위치로 복사하고 git 저장소로 초기화합니다. 이 모듈 폴더(`M27-openwiki`)에서 실행합니다.
 
    ```bash
-   mkdir todo-cli
-   cd todo-cli
+   cp -r todo-cli ~/work/todo-cli
+   cd ~/work/todo-cli
    git init
-   mkdir src
-   mkdir test
    ```
 
-2. VS Code 같은 편집기로 아래 파일 5개를 만듭니다.
+   탐색기나 Finder로 폴더를 복사해도 됩니다. 복사 후 `ls -a`로 숨김 파일 `.gitignore`와 `.openwikiignore`도 함께 있는지 확인합니다.
 
-   **`package.json`**
-   ```json
-   {
-     "name": "todo-cli",
-     "version": "1.0.0",
-     "description": "OpenWiki 실습용 할 일 관리 CLI",
-     "type": "module",
-     "scripts": {
-       "test": "node --test"
-     }
-   }
-   ```
+2. 복사한 폴더의 구성은 아래와 같습니다.
 
-   **`src/store.js`**
-   ```js
-   import { existsSync, readFileSync, writeFileSync } from "node:fs";
+   | 파일 | 역할 |
+   |---|---|
+   | `package.json` | 프로젝트 정보, `npm test` 명령 |
+   | `src/cli.js` | 진입점. `add` / `done` / `list` 명령을 해석하고 결과를 출력 |
+   | `src/todo.js` | 핵심 로직. 할 일 추가·완료·출력 형식 (순수 함수) |
+   | `src/store.js` | 할 일 목록을 JSON 파일(`todos.json`)에 읽고 쓰기 |
+   | `test/todo.test.js` | `todo.js` 단위 테스트 5개 |
+   | `.gitignore`, `.openwikiignore` | 실행 중 생기는 `todos.json`을 git과 위키 양쪽에서 제외 |
 
-   // 할 일 목록을 JSON 파일 하나에 저장한다.
-   export function loadTodos(filePath) {
-     if (!existsSync(filePath)) {
-       return [];
-     }
-     return JSON.parse(readFileSync(filePath, "utf8"));
-   }
-
-   export function saveTodos(filePath, todos) {
-     writeFileSync(filePath, JSON.stringify(todos, null, 2));
-   }
-   ```
-
-   **`src/todo.js`**
-   ```js
-   // 할 일 목록을 다루는 순수 함수들. 원본 배열은 바꾸지 않고 새 배열을 돌려준다.
-   export function addTodo(todos, title) {
-     const trimmed = title.trim();
-     if (trimmed === "") {
-       throw new Error("제목은 비어 있을 수 없습니다.");
-     }
-     const nextId = todos.reduce((max, todo) => Math.max(max, todo.id), 0) + 1;
-     return [...todos, { id: nextId, title: trimmed, done: false }];
-   }
-
-   export function completeTodo(todos, id) {
-     if (!todos.some((todo) => todo.id === id)) {
-       throw new Error(`${id}번 할 일을 찾을 수 없습니다.`);
-     }
-     return todos.map((todo) => (todo.id === id ? { ...todo, done: true } : todo));
-   }
-
-   export function formatTodos(todos) {
-     if (todos.length === 0) {
-       return "할 일이 없습니다.";
-     }
-     return todos
-       .map((todo) => `${todo.done ? "[x]" : "[ ]"} ${todo.id}. ${todo.title}`)
-       .join("\n");
-   }
-   ```
-
-   **`src/cli.js`**
-   ```js
-   import { loadTodos, saveTodos } from "./store.js";
-   import { addTodo, completeTodo, formatTodos } from "./todo.js";
-
-   // TODO_FILE 환경 변수로 저장 위치를 바꿀 수 있다. 기본값은 todos.json.
-   const filePath = process.env.TODO_FILE ?? "todos.json";
-   const [command, ...args] = process.argv.slice(2);
-
-   try {
-     const todos = loadTodos(filePath);
-     if (command === "add") {
-       saveTodos(filePath, addTodo(todos, args.join(" ")));
-       console.log("추가했습니다.");
-     } else if (command === "done") {
-       saveTodos(filePath, completeTodo(todos, Number(args[0])));
-       console.log("완료 처리했습니다.");
-     } else if (command === "list") {
-       console.log(formatTodos(todos));
-     } else {
-       console.log("사용법: node src/cli.js <add 제목 | done 번호 | list>");
-     }
-   } catch (error) {
-     console.error(`오류: ${error.message}`);
-     process.exitCode = 1;
-   }
-   ```
-
-   **`test/todo.test.js`**
-   ```js
-   import assert from "node:assert/strict";
-   import { test } from "node:test";
-   import { addTodo, completeTodo, formatTodos } from "../src/todo.js";
-
-   test("addTodo는 1부터 번호를 매긴다", () => {
-     const todos = addTodo(addTodo([], "우유 사기"), "책 읽기");
-     assert.deepEqual(
-       todos.map((todo) => todo.id),
-       [1, 2],
-     );
-   });
-
-   test("addTodo는 빈 제목을 거부한다", () => {
-     assert.throws(() => addTodo([], "   "));
-   });
-
-   test("completeTodo는 해당 항목만 완료로 바꾼다", () => {
-     const todos = completeTodo(addTodo(addTodo([], "a"), "b"), 2);
-     assert.deepEqual(
-       todos.map((todo) => todo.done),
-       [false, true],
-     );
-   });
-
-   test("completeTodo는 없는 번호를 거부한다", () => {
-     assert.throws(() => completeTodo([], 99));
-   });
-
-   test("formatTodos는 완료 여부를 체크박스로 보여준다", () => {
-     const todos = completeTodo(addTodo([], "우유 사기"), 1);
-     assert.equal(formatTodos(todos), "[x] 1. 우유 사기");
-   });
-   ```
-
-3. 실행 중 생기는 데이터 파일은 git과 위키 양쪽에서 제외합니다. 아래 두 파일을 저장소 루트에 만듭니다. 내용은 둘 다 한 줄입니다.
-
-   **`.gitignore`**
-   ```gitignore
-   todos.json
-   ```
-
-   **`.openwikiignore`**
-   ```gitignore
-   todos.json
-   ```
-
-4. 테스트와 프로그램이 동작하는지 확인합니다.
+3. 테스트와 프로그램이 동작하는지 확인합니다.
 
    ```bash
    npm test
@@ -330,7 +161,7 @@ openwiki --help
 
    마지막 명령이 `[ ] 1. 우유 사기`를 출력하면 정상입니다.
 
-5. 첫 커밋을 만듭니다.
+4. 첫 커밋을 만듭니다.
 
    ```bash
    git add .
@@ -340,10 +171,12 @@ openwiki --help
 ## 규칙
 > OpenWiki는 **git 저장소**에서만 동작합니다. `git init`을 빠뜨리지 마세요.
 
+> 예제 폴더는 반드시 **모듈 밖으로 복사해서** 씁니다. 모듈 폴더는 교재 저장소 안에 있으므로, 그 자리에서 `git init`을 하면 저장소 안에 저장소가 생기고 위키와 `AGENTS.md`가 교재 저장소에 섞여 들어갑니다.
+
 > `.openwikiignore`에 적은 경로는 위키를 만들 때 읽지 않습니다. 비밀 키, 로그, 생성된 파일처럼 문서에 들어가면 안 되는 경로를 여기에 적습니다.
 
 ## 산출물
-- git 저장소 `todo-cli/` (소스 3개, 테스트 1개, 커밋 1개)
+- git 저장소 `~/work/todo-cli/` (소스 3개, 테스트 1개, 커밋 1개)
 
 ## 체크리스트
 - [ ] `npm test` 결과가 `pass 5`, `fail 0`인지 확인한다.
