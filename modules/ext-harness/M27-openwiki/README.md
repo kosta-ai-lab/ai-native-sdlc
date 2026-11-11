@@ -58,7 +58,7 @@ OpenWiki를 Claude Code 같은 코딩 에이전트 안에서 쓰게 해 주는 �
 - [x] 가이드 — GUIDE.md 단계 목적·입력·산출물·체크리스트
 - [ ] 규칙 — CLAUDE.md 조각 (OpenWiki가 `AGENTS.md`에 관리 블록을 자동 생성)
 - [x] 자동화 — OpenWiki 스킬·MCP 서버 (`openwiki integrations install claude`)
-- [x] 샘플 — SAMPLE.md 동작 스텝·프롬프트
+- [x] 샘플 — `todo-cli/` 예제 저장소 + SAMPLE.md 예제 소스 이해·실행 안내
 
 ## 품질 기준
 
