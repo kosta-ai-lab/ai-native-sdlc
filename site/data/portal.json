@@ -1,0 +1,202 @@
+{
+  "schema": 1,
+  "note": "로드맵 영역·주제·확장 주제와 공개 항목(프로젝트·강의·예제)의 연결 데이터. 소개 문구는 src/index.html에 있다. 항목의 areas만 지정하면 로드맵 패널과 서비스·자료 목록에 함께 나타난다. 상태는 자료의 제공 상태이며 사람의 진도가 아니다.",
+  "links": {
+    "repository": "https://github.com/kosta-ai-lab/ai-native-sdlc",
+    "organization": "https://github.com/kosta-ai-lab",
+    "issues": "https://github.com/kosta-ai-lab/ai-native-sdlc/issues"
+  },
+  "statusLabels": {
+    "topic": { "available": "공개 자료 있음", "preparing": "준비 중" },
+    "topicNote": "주제의 상태는 연결된 공개 자료가 있는지를 뜻한다. 모듈의 완성도는 sourceStatus(원문 상태)와 modulePending(목적 작성 예정)으로 따로 표시한다.",
+    "resource": { "available": "공개됨", "preparing": "준비 중", "operating": "운영 중" }
+  },
+  "areas": [
+    {
+      "id": "problem",
+      "title": "문제·요구사항",
+      "summary": "무엇을 왜 만들지 정합니다. 사용자가 하려는 일을 살펴보고, 결과를 확인할 수 있는 요구사항으로 정리합니다.",
+      "legacyStages": ["01", "02", "03"]
+    },
+    {
+      "id": "spec",
+      "title": "명세·설계",
+      "summary": "만들 기능과 구조를 구체화하고, AI가 구현할 때 참고할 기준을 정합니다.",
+      "legacyStages": ["04", "07"]
+    },
+    {
+      "id": "build",
+      "title": "AI와 구현",
+      "summary": "작업 규칙·스킬·에이전트 구성을 활용해 AI와 함께 개발 과정을 나누어 진행합니다.",
+      "legacyStages": ["06"]
+    },
+    {
+      "id": "verify",
+      "title": "테스트·검증",
+      "summary": "기대 동작을 인수조건과 테스트로 먼저 정하고, AI가 만든 결과를 확인합니다.",
+      "legacyStages": ["05"]
+    },
+    {
+      "id": "deploy",
+      "title": "배포·운영",
+      "summary": "CI/CD·아키텍처·보안 관점에서 개발 이후의 과정을 살펴봅니다.",
+      "legacyStages": ["08", "09", "10"]
+    }
+  ],
+  "topics": [
+    { "id": "business", "area": "problem", "title": "비즈니스 리인벤션", "availability": "preparing", "module": "m01", "sourceStatus": "초안", "modulePending": true, "owner": "협의", "related": [] },
+    { "id": "semantic", "area": "problem", "title": "시맨틱 모델 (온톨로지)", "availability": "preparing", "module": "m02", "sourceStatus": "초안", "modulePending": true, "owner": "김정아 교수", "related": [] },
+    { "id": "requirements", "area": "problem", "title": "유즈케이스·요구사항", "availability": "available", "module": "m03", "sourceStatus": "초안", "modulePending": true, "owner": "윤성열", "related": ["todo-req"] },
+    { "id": "sdd", "area": "spec", "title": "명세 기반 개발(SDD) 도구", "availability": "available", "module": "m04", "sourceStatus": "하위 모듈 5개 모두 초안", "modulePending": false, "owner": "이선아 교수", "statusSources": ["m04-kiro", "m04-openspec", "m04-speckit", "m04-gsd", "m04-bmad"], "related": ["m04-kiro", "m04-openspec", "m04-speckit", "m04-gsd", "m04-bmad", "m04-slides", "todo-spec"] },
+    { "id": "object", "area": "spec", "title": "객체설계 (SOLID·API)", "availability": "available", "module": "m07", "sourceStatus": "초안", "modulePending": true, "owner": "협의", "related": ["c-design-adr"] },
+    { "id": "rules", "area": "build", "title": "AI 작업 규칙과 자동화", "availability": "available", "module": "m06", "sourceStatus": "시드 모듈", "modulePending": false, "owner": "윤성열", "related": ["m06-rules", "m06-skill"] },
+    { "id": "bdd", "area": "verify", "title": "BDD 인수조건", "availability": "available", "module": "m05", "sourceStatus": "초안", "modulePending": true, "owner": "박준성 회장", "related": ["todo-acc"] },
+    { "id": "tdd", "area": "verify", "title": "테스트 먼저 구현하기 (TDD)", "availability": "available", "module": "m06", "sourceStatus": "시드 모듈", "modulePending": false, "owner": "윤성열", "related": ["m06-sample", "todo-test", "todo-impl"] },
+    { "id": "ci", "area": "deploy", "title": "CI 테스트 게이트", "availability": "preparing", "module": "m08", "sourceStatus": "초안", "modulePending": true, "owner": "윤성열·최성웅", "related": [] },
+    { "id": "cd", "area": "deploy", "title": "CD·아키텍처 검증", "availability": "preparing", "module": "m09", "sourceStatus": "초안", "modulePending": true, "owner": "최성웅", "related": [] },
+    { "id": "security", "area": "deploy", "title": "보안·규제·윤리", "availability": "preparing", "module": "m10", "sourceStatus": "초안", "modulePending": true, "owner": "협의", "related": [] }
+  ],
+  "extensions": [
+    {
+      "id": "harness",
+      "title": "에이전트 하니스",
+      "summary": "작업 규칙·스킬·서브에이전트를 묶어 AI 도구가 일관되게 일하도록 환경을 구성합니다. 반복 실행 루프, 코드 그래프, 저장소 위키 같은 도구를 다룹니다.",
+      "relatedAreas": ["build"],
+      "availability": "available",
+      "module": "harness",
+      "sourceStatus": "하위 모듈 12개 모두 초안",
+      "modulePending": false,
+      "owner": "이선아 교수",
+      "statusSources": ["h-m01", "h-m03", "h-m05", "h-m07", "h-m09", "h-m11", "h-m13", "h-m15", "h-m21", "h-m23", "h-m25", "h-m27"],
+      "related": ["h-m01", "h-m03", "h-m05", "h-m07", "h-m09", "h-m11", "h-m13", "h-m15", "h-m21", "h-m23", "h-m25", "h-m27", "harness-slides"]
+    },
+    {
+      "id": "embedded",
+      "title": "임베디드",
+      "summary": "임베디드 개발 환경으로 AI-Native 개발 방식을 넓히는 확장 주제입니다.",
+      "relatedAreas": ["build"],
+      "availability": "preparing",
+      "module": "emb",
+      "sourceStatus": "초안",
+      "modulePending": true,
+      "owner": "최성웅 교수",
+      "related": []
+    }
+  ],
+  "resources": [
+    {
+      "id": "project",
+      "kind": "project",
+      "title": "AI-Native SDLC",
+      "type": "공개 교육 프로젝트",
+      "status": "available",
+      "summary": "요구사항부터 배포까지, AI와 함께 소프트웨어를 만드는 과정을 다루는 공개 교육 프로젝트입니다.",
+      "areas": ["problem", "spec", "build", "verify", "deploy"],
+      "actions": [
+        { "label": "프로젝트 살펴보기", "href": "#roadmap" },
+        { "label": "GitHub에서 보기", "url": "https://github.com/kosta-ai-lab/ai-native-sdlc" }
+      ]
+    },
+    {
+      "id": "courses",
+      "kind": "collection",
+      "title": "강의자료와 실습",
+      "type": "공개 강의",
+      "status": "available",
+      "summary": "바이브 코딩, 명세 기반 개발, Spec Kit 설계, Claude Code Cloud 앱 개발 등 공개된 과정의 교재와 실습을 찾아보세요.",
+      "collects": "course",
+      "actions": [{ "label": "강의자료 보기", "href": "#courses" }]
+    },
+    {
+      "id": "example",
+      "kind": "example",
+      "title": "요구사항부터 테스트까지 연결하는 예제",
+      "type": "코드 예제",
+      "status": "available",
+      "summary": "작은 할 일 생성 기능으로 요구사항·명세·인수조건·테스트·구현이 어떻게 연결되는지 살펴보세요.",
+      "areas": ["problem", "spec", "verify", "build"],
+      "actions": [{ "label": "예제 살펴보기", "href": "#example" }],
+      "intro": "todo-readme",
+      "steps": [
+        { "label": "요구사항", "source": "todo-req", "area": "problem", "look": "유즈케이스 UC-01과 요구사항 R-01~R-03" },
+        { "label": "명세", "source": "todo-spec", "area": "spec", "look": "Todo 데이터 모델과 createTodo 규칙, 추적표" },
+        { "label": "인수조건", "source": "todo-acc", "area": "verify", "look": "정상 시나리오와 빈 제목 시나리오" },
+        { "label": "테스트", "source": "todo-test", "area": "verify", "look": "시나리오를 옮긴 테스트 두 건" },
+        { "label": "구현", "source": "todo-impl", "area": "build", "look": "테스트를 통과하는 최소 코드" }
+      ]
+    }
+  ],
+  "courses": [
+    {
+      "id": "vibe",
+      "kind": "course",
+      "title": "Claude Code로 시작하는 바이브 코딩",
+      "fullTitle": "바이브 코딩 첫걸음 — Claude Code로 기획에서 배포까지",
+      "series": "AI Native 개발 실무 3부작 · 1편",
+      "status": "available",
+      "instructor": "윤성열",
+      "instructorSource": "c-vibe",
+      "duration": "1일 7블록",
+      "audience": "AI 코딩 도구를 처음 쓰는 분. 기획자·PM·사업담당자, 그리고 도구가 낯선 개발자",
+      "areas": ["build", "deploy"],
+      "links": [
+        { "label": "강의 안내", "source": "c-vibe" },
+        { "label": "교재 PDF", "source": "c-vibe-pdf" },
+        { "label": "실습", "source": "c-vibe-labs" }
+      ]
+    },
+    {
+      "id": "sdd",
+      "kind": "course",
+      "title": "명세 기반 개발 실습",
+      "fullTitle": "스펙 주도 개발 실전 — OpenSpec과 Spec Kit",
+      "series": "AI Native 개발 실무 3부작 · 2편",
+      "status": "available",
+      "instructor": "윤성열",
+      "instructorSource": "c-sdd",
+      "duration": "1일 8블록",
+      "audience": "개발 경력 2년 이상, AI 코딩 도구 입문~중급",
+      "areas": ["spec"],
+      "links": [
+        { "label": "강의 안내", "source": "c-sdd" },
+        { "label": "교재 PDF", "source": "c-sdd-pdf" },
+        { "label": "실습", "source": "c-sdd-labs" }
+      ]
+    },
+    {
+      "id": "design",
+      "kind": "course",
+      "title": "Spec Kit을 활용한 소프트웨어 설계",
+      "fullTitle": "Spec Kit으로 실전 소프트웨어 설계",
+      "series": "AI Native 개발 실무 3부작 · 3편",
+      "status": "available",
+      "instructor": "윤성열",
+      "instructorSource": "c-design",
+      "duration": "1일 8블록",
+      "audience": "설계 산출물을 실제로 만들어 본 적이 적은 현업 개발자",
+      "areas": ["problem", "spec"],
+      "links": [
+        { "label": "강의 안내", "source": "c-design" },
+        { "label": "교재 PDF", "source": "c-design-pdf" },
+        { "label": "실습", "source": "c-design-labs" }
+      ]
+    },
+    {
+      "id": "agentic",
+      "kind": "course",
+      "title": "Claude Code Cloud 앱 개발",
+      "fullTitle": "Claude Code Cloud App Development-Golf Scorecard",
+      "series": "Agentic Coding using Claude Code",
+      "status": "available",
+      "instructor": "박준성",
+      "instructorSource": "courses-index",
+      "duration": "4시간",
+      "audience": "비개발자",
+      "areas": ["build", "deploy"],
+      "links": [
+        { "label": "강의 안내", "source": "c-agentic" },
+        { "label": "교재 PDF", "source": "c-agentic-pdf" }
+      ]
+    }
+  ]
+}
