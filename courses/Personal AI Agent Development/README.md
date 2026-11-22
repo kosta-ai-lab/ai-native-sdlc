@@ -4,7 +4,7 @@
 Claude App과 Claude Code를 이용해 Personal AI 에이전트를 개발하는 실습 과정
 
 ## 항목 내용
-- 제목: Claude Code Cloud App Development with Claude App and Code
+- 제목: Personal AI Agent Development with Claude App and Code
 - 대상: 비개발자
 - 선수 지식: 없음
 - 학습 목표: 비개발자가 Claude App과 Code를 이용해 Personal AI 에이전트를 개발할 수 있다
