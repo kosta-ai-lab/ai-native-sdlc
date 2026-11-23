@@ -64,8 +64,8 @@ test('단계 상태: 공개 자료가 없으면 soon, 공개 자료를 모두 �
 test('마친 자료 수: 로드맵의 공개 자료만 세고, 두 로드맵에 걸친 강의는 양쪽에 반영된다', () => {
   const done = new Set(['vibe', 's01']);
   assert.deepEqual(R.progress(lines.get('start'), items, done), { total: 3, done: 1 });
-  assert.deepEqual(R.progress(lines.get('dev'), items, done), { total: 14, done: 1 });
-  assert.deepEqual(R.counts(lines.get('dev'), items), { stages: 10, open: 14, soon: 7 });
+  assert.deepEqual(R.progress(lines.get('dev'), items, done), { total: 15, done: 1 });
+  assert.deepEqual(R.counts(lines.get('dev'), items), { stages: 10, open: 15, soon: 7 });
   assert.deepEqual(R.counts(lines.get('harness'), items), { stages: 8, open: 17, soon: 1 });
 });
 test('고르기: 단계를 누르면 공개 자료가 먼저, 없으면 준비 중 자료가 열린다', () => {

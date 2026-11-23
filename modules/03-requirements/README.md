@@ -1,6 +1,6 @@
 # 모듈 03 — 유즈케이스·요구사항
 
-> 상태: 단원 1개 초안 (담당: 윤성열)
+> 상태: 단원 2개 초안 (담당: 윤성열)
 > 한 줄: **원요청을 질문과 사람의 결정을 거쳐, 구현 전에 확인할 수 있는 요구사항과 유즈케이스로 바꾼다.**
 
 ## 목적
@@ -20,6 +20,7 @@
 | 단원 | 내용 | 만드는 것 |
 |---|---|---|
 | [M01 — AI와 함께 요구사항 도출·분석·검증하기](M01-ai-requirements/) | 개인용 할 일 관리 웹 앱의 원요청에서 질문을 찾고, 답을 정해 기록하고, 요구사항·유즈케이스·인수조건으로 정리해 검토합니다 | `questions.md`, `requirements.md` |
+| [M02 — 양식으로 요구사항을 쓰고 변경 영향 찾기](M02-template-and-change/) | 기능 하나(할 일 생성)의 원요청을 빈 양식에 채우고, 사람의 답으로 범위를 좁힌 뒤, 변경 요청이 영향을 주는 곳을 찾습니다 | 양식을 채운 `requirements.md`, 변경 영향 목록 |
 
 ## 입력
 
@@ -40,10 +41,10 @@
 
 ## 산출물 4종 (체크리스트)
 
-- [x] 가이드 — [M01의 GUIDE.md](M01-ai-requirements/GUIDE.md)
-- [ ] 규칙 — 아직 없습니다. 단원 M01은 규칙 파일 없이 단계별 요청으로 진행합니다.
+- [x] 가이드 — [M01의 GUIDE.md](M01-ai-requirements/GUIDE.md), [M02의 GUIDE.md](M02-template-and-change/GUIDE.md)
+- [ ] 규칙 — 아직 없습니다. 두 단원 모두 규칙 파일 없이 단계별 요청으로 진행합니다.
 - [ ] 자동화 — 아직 없습니다. 반복되는 작업이 확인되지 않아 스킬과 훅을 만들지 않았습니다.
-- [x] 샘플 — [M01의 SAMPLE.md](M01-ai-requirements/SAMPLE.md), [준비된 요구사항](M01-ai-requirements/requirements.md), 작은 사례인 [할 일 생성 요구사항](../../samples/web-task-system/docs/03-requirements.md)
+- [x] 샘플 — [M01의 SAMPLE.md](M01-ai-requirements/SAMPLE.md), [준비된 요구사항](M01-ai-requirements/requirements.md), [M02의 빈 양식](M02-template-and-change/TEMPLATE.md)과 [완성 예제](M02-template-and-change/SAMPLE.md), 작은 사례인 [할 일 생성 요구사항](../../samples/web-task-system/docs/03-requirements.md)
 
 ## 품질 기준
 
@@ -55,4 +56,4 @@
 
 ## 참고 자료
 
-[M01 GUIDE의 참고 자료](M01-ai-requirements/GUIDE.md#참고-자료)에 모았습니다.
+[M01 GUIDE의 참고 자료](M01-ai-requirements/GUIDE.md#참고-자료)와 [M02 GUIDE의 참고 자료](M02-template-and-change/GUIDE.md#참고-자료)에 모았습니다.
