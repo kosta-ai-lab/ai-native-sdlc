@@ -1,0 +1,58 @@
+# 실습 예제 검사: 모듈 08 단원 M01의 예제(todo-app)가 테스트와 타입 검사를 통과하는지 확인한다.
+#
+# - 단원의 완성본(modules/08-ci/M01-test-gate/harness/.github/workflows/test.yml)과 단계가 같다.
+#   다른 점은 예제 폴더에서 실행하는 것(working-directory)과 그 폴더가 바뀔 때만 도는 것(paths)이다.
+# - 이 워크플로의 실행 결과가 단원 M01의 검증 기록이다.
+
+name: Practice examples
+
+on:
+  pull_request:
+    paths:
+      - "modules/08-ci/M01-test-gate/todo-app/**"
+      - ".github/workflows/practice-examples.yml"
+  push:
+    branches: [main]
+    paths:
+      - "modules/08-ci/M01-test-gate/todo-app/**"
+      - ".github/workflows/practice-examples.yml"
+
+permissions:
+  contents: read
+
+concurrency:
+  group: practice-examples-${{ github.ref }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
+
+jobs:
+  test:
+    name: Test and typecheck (module 08 example)
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    defaults:
+      run:
+        working-directory: modules/08-ci/M01-test-gate/todo-app
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6
+        with:
+          persist-credentials: false
+
+      - name: Install pnpm
+        uses: pnpm/action-setup@v6
+        with:
+          version: 12
+
+      - name: Install Node.js
+        uses: actions/setup-node@v7
+        with:
+          node-version: 24
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Run tests
+        run: pnpm test
+
+      - name: Type check
+        run: pnpm typecheck
