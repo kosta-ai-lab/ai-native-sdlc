@@ -78,8 +78,8 @@
           "title": "요구사항",
           "summary": "유즈케이스를 도출하고, 추적할 수 있는 요구사항으로 정리합니다.",
           "items": [
-            "todo",
-            "s03"
+            "r01",
+            "todo"
           ]
         },
         {
@@ -1287,11 +1287,46 @@
       "path": "modules/02-semantic-model"
     },
     {
-      "id": "s03",
-      "kind": "soon",
-      "title": "유즈케이스·요구사항",
+      "id": "r01",
+      "kind": "guide",
+      "title": "AI와 함께 요구사항 도출·분석·검증하기",
       "by": "윤성열",
-      "path": "modules/03-requirements"
+      "source": "modules/03-requirements/M01-ai-requirements/README.md",
+      "meta": "따라 하기 가이드, 결과 예제",
+      "summary": "원요청에서 질문을 찾고, 답을 정해 기록한 뒤 요구사항, 유즈케이스, 인수조건으로 정리하고 검토합니다.",
+      "how": [
+        "README에서 목적과 준비물을 확인합니다.",
+        "GUIDE.md의 0단계에서 실습 폴더를 만들고 INPUT.md를 request.md로 복사합니다.",
+        "1단계부터 순서대로 따라 합니다.",
+        "자기 결과를 SAMPLE.md, 준비된 요구사항과 비교합니다."
+      ],
+      "links": [
+        {
+          "label": "가이드 읽기",
+          "path": "modules/03-requirements/M01-ai-requirements/GUIDE.md",
+          "kind": "file"
+        },
+        {
+          "label": "목적과 준비물",
+          "path": "modules/03-requirements/M01-ai-requirements/README.md",
+          "kind": "file"
+        },
+        {
+          "label": "결과 예제 읽기",
+          "path": "modules/03-requirements/M01-ai-requirements/SAMPLE.md",
+          "kind": "file"
+        },
+        {
+          "label": "준비된 요구사항",
+          "path": "modules/03-requirements/M01-ai-requirements/requirements.md",
+          "kind": "file"
+        },
+        {
+          "label": "실습 원요청",
+          "path": "modules/03-requirements/M01-ai-requirements/INPUT.md",
+          "kind": "file"
+        }
+      ]
     },
     {
       "id": "s05",
@@ -1358,6 +1393,12 @@
             "vibe",
             "sddc",
             "design"
+          ]
+        },
+        {
+          "label": "요구사항 가이드",
+          "items": [
+            "r01"
           ]
         },
         {
