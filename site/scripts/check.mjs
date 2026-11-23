@@ -1,65 +1,26 @@
 #!/usr/bin/env node
-// kosta-ai-lab 포털 정적 검사 (Apache-2.0).
+// kosta-ai-lab 학습 로드맵 정적 검사 (Apache-2.0).
 // 사용: node scripts/check.mjs [--dist [폴더]]
-//  - 원본 링크 manifest를 git ls-files와 대조하고, 상태·담당 문자열을 원문에서 확인한다.
-//  - 포털 데이터의 참조 무결성, 제공 상태의 근거, 승인 문구 보존, 과장·추적 표현 금지, 외부 자산 금지를 검사한다.
-//  - Pages 워크플로의 권한·배포 조건을 확인한다.
-//  - 화면 원본(src): 승인 문구·메타데이터·meta CSP·상대 경로·검토용 흔적/개인 경로 금지를 확인한다.
-//  - --dist: 빌드 산출물이 허용 목록과 같고, 원본과 바이트가 같으며(재현성), /ai-native-sdlc/ 와 / 양쪽에서 해석되는지 확인한다.
+//  - 로드맵 데이터(data/roadmap.json)의 구조와 참조를 확인하고, 연결한 경로를 git ls-files와 대조한다.
+//  - 상태의 근거를 원문에서 확인한다. 준비 중으로 표시한 모듈은 README에 "(작성 예정)"이 있어야 하고, 공개 자료는 없어야 한다.
+//  - 화면 원본(src)의 메타데이터, meta CSP, 상대 경로, 안전하지 않은 DOM API, 외부 자원, 글꼴 파일을 확인한다.
+//  - Pages 워크플로의 권한과 배포 조건을 확인한다.
+//  - --dist: 빌드 산출물이 허용 목록과 같고, 원본과 바이트가 같으며, /ai-native-sdlc/ 와 / 양쪽에서 해석되는지 확인한다.
 import fs from 'node:fs';
 import path from 'node:path';
 import {
-  REPO_ROOT, SITE_DIR, DATA_DIR, DEFAULT_OUT, BASE_PATH, MARKER, REPO_URL, ORG_URL, SRC_FILES,
-  readJSON, repoUrl, gitTrackedFiles, assetRefs, anchorRefs, listFiles, distAllowlist, isMain
+  REPO_ROOT, SITE_DIR, DEFAULT_OUT, BASE_PATH, MARKER, REPO_URL, ORG_URL, SRC_FILES,
+  readJSON, gitTrackedFiles, assetRefs, anchorRefs, listFiles, distAllowlist, fontFiles, isMain
 } from './lib.mjs';
+import '../src/core.js';
 
-const FORBIDDEN_CLAIMS = [
-  /진행률/, /진도율/, /완료율/, /수료율/, /완료\s*체크/, /학습\s*완료/, /수강생\s*\d/,
-  /\d[\d,]*\s*명\s*(이|의|이상)?\s*(수강|학습|수료|참여)/, /만족도/, /합격률/,
-  /완성된\s*모듈/, /모듈\s*완성/, /검증\s*완료/, /회원\s*가입/, /AI\s*튜터/i
-];
-// 홈 화면(index.html)에 노출하지 않는 내부 제작·검수 용어
-const INTERNAL_TERMS = [/시안/, /감사/, /검수/, /초안/, /내부\s*메모/, /TODO/, /미확정/, /preview/i];
-// 승인된 첫 방문 UX 수정(2026-11-11)의 제목·핵심 문장과, 지켜야 할 제한·이용조건 문구. 화면에 그대로 있어야 한다.
-const APPROVED_COPY = [
-  'kosta-ai-lab',
-  'AI와 함께 개발하고, <em>경험과 자료</em>를 나눕니다',
-  'kosta-ai-lab은 AI로 소프트웨어를 만드는 경험과 강의자료, 코드 예제를 공유합니다.',
-  'AI에게 무엇을 만들지 설명하고, 설계를 검토하고, 결과를 확인하는 방법을 다룹니다.',
-  '개발 경험자를 중심으로, 기획자와 입문자도',
-  '>강의자료 보기<', '>개발 주제별로 찾기<',
-  '경험과 자료를 공개하는 이유',
-  'KOSTA AI 에이전트 코딩 전문가 워크숍에서 출발한 AI-Native SDLC 프로젝트는 강사와 개발자가 자료·사례·실습을 함께 보완합니다.',
-  '경험을 나눕니다.', '결과를 확인합니다.', '함께 보완합니다.',
-  '개발 과정별로 주제와 자료를 찾아보세요',
-  '순서대로 읽지 않아도 됩니다.',
-  '이 흐름은 개요이며 고정된 학습 순서가 아닙니다.',
-  '<strong>연결 자료</strong>', '<strong>모듈 원문 상태</strong>', '(완성·실행 보장 아님)', '(강의·예제 상태 아님)',
-  '지금 열어 볼 수 있는 공개 자료',
-  '브라우저 뒤로 가기로 돌아옵니다.',
-  '실제 웹앱 데모가 아니라, GitHub에서 문서와 코드를 읽는 예제입니다.',
-  '작은 수정부터 새로운 사례까지',
-  '기여 방법 보기', '오류·개선 제안 (GitHub)', 'GitHub 조직 방문', '(GitHub 로그인 필요)',
-  '<dd>CC BY-NC 4.0</dd>', '<dd>Apache License 2.0</dd>', '원래 라이선스와 별도 고지를 따릅니다',
-  '>소개<', '[ 01 ] 소개', '[ 02 ] 로드맵', '[ 03 ] 공개 자료', '[ 04 ] 참여하기',
-  '>GitHub<', '>기여 안내<', '>라이선스<', '>보안 안내<'
-];
-// 화면 스크립트에 남아야 하는 제한·상태 안내 문구(파일별)
-const REQUIRED_SCRIPT_COPY = {
-  'story.js': ['직접 실행하려면 Node.js와 pnpm이 필요하고, 패키지 설치에는 인터넷 연결이 필요합니다.', "'연결 자료'", "'모듈 원문 상태'", '목적 작성 예정', "'배우는 것'"],
-  'layers.js': ['(완성·실행 보장 아님)', '(강의·예제 상태 아님)', '원문은 GitHub에서 열립니다. 브라우저 뒤로 가기로 돌아옵니다.', '실제 웹앱 데모가 아니라']
-};
-// 검토용 시안 표시·비교 링크(제작 단계 흔적)와 개인·내부 주소
-const REVIEW_MARKERS = [/통합\s*시안/, /시안\s*비교/, /미확정/, /제작\s*제안/, /designs-v2/, /designs-integrated/, /\bEgo\b/];
-const PRIVATE_MARKERS = [/\/Users\//, /\/home\/[a-z]/, /\.hermes/, /ts\.net/, /tail[0-9a-f]{5,}/, /127\.0\.0\.1/, /localhost/, /:18483/];
-const APPROVED_TITLE = 'kosta-ai-lab — AI와 함께 개발하고, 경험과 자료를 나눕니다';
-const APPROVED_DESCRIPTION = 'kosta-ai-lab은 AI로 소프트웨어를 만드는 경험과 강의자료, 코드 예제를 공유합니다. 강의 목록과 개발 주제별 지도에서 필요한 자료를 바로 열 수 있습니다.';
-// meta CSP 정책(GitHub Pages는 HTTP 헤더를 정할 수 없다). 스크립트는 같은 출처 파일만, 스타일은 CSSOM·속성 갱신을 위해 unsafe-inline 유지,
-// 무대 SVG는 문서 안 요소, 데이터는 같은 출처 JSON fetch.
+const R = globalThis.KostaRoadmap;
+
+// meta CSP 정책(GitHub Pages는 HTTP 헤더를 정할 수 없다). 스크립트·스타일·글꼴·데이터 모두 같은 출처 파일만 쓴다.
 export const REQUIRED_CSP = {
   'default-src': ["'self'"],
   'script-src': ["'self'"],
-  'style-src': ["'self'", "'unsafe-inline'"],
+  'style-src': ["'self'"],
   'img-src': ["'self'", 'data:'],
   'font-src': ["'self'"],
   'connect-src': ["'self'"],
@@ -69,13 +30,24 @@ export const REQUIRED_CSP = {
 };
 // meta로 전달하면 브라우저가 무시하고 콘솔에 경고하는 지시어
 const META_IGNORED_CSP = ['frame-ancestors', 'report-uri', 'report-to', 'sandbox'];
-const SCRIPT_ORDER = /<script src="motion-core\.js" defer><\/script>\s*<script src="layers\.js" defer><\/script>\s*<script src="story\.js" defer><\/script>/;
-// story.js·layers.js가 찾는 고정 요소
-const REQUIRED_IDS = ['head', 'main', 'toc', 'toc-toggle', 'story', 'top', 'top-title', 'intro', 'roadmap', 'materials', 'courses', 'example', 'join',
-  'stage', 'stage-svg', 'cam', 'stage-msg', 'hud-label', 'hud-fill', 'area-index', 'area-steps', 'material-list', 'course-list', 'example-steps', 'example-note', 'layers',
-  'hero-picks', 'pick-list', 'status-legend'];
 // 배포 주소: GitHub Pages 프로젝트 하위 경로와, 사용자 도메인을 붙였을 때의 루트
 export const SERVE_BASES = [BASE_PATH, '/'];
+// GitHub Docs "Using custom workflows with GitHub Pages" 예시 major (2026-11-11 확인)
+const ACTION_MAJORS = { 'actions/checkout': 'v6', 'actions/configure-pages': 'v5', 'actions/upload-pages-artifact': 'v4', 'actions/deploy-pages': 'v4' };
+
+export const COLUMNS = 11;
+const SHAPES = ['circle', 'square', 'diamond'];
+const KINDS = ['course', 'guide', 'sample', 'rule', 'soon'];
+const REQUIRED_IDS = ['top', 'net', 'route', 'tabs', 'prog', 'route-head', 'rail', 'sign', 'people', 'people-grid', 'guide', 'about', 'scrim'];
+const SCRIPT_ORDER = /<script src="core\.js" defer><\/script>\s*<script src="app\.js" defer><\/script>/;
+// 공개 화면에 내보내지 않는 제작 단계 용어, 개인·내부 주소, 근거 없이 약속하는 표현
+const INTERNAL_TERMS = [/시안/, /검수/, /초안/, /내부\s*메모/, /TODO/, /미확정/, /preview/i];
+const PRIVATE_MARKERS = [/\/Users\//, /\/home\/[a-z]/, /\.hermes/, /ts\.net/, /tail[0-9a-f]{5,}/, /127\.0\.0\.1/, /localhost/, /\bstudio:\d/];
+const PROMISES = /무료|비용\s*없이|보장|누구나|반드시|완벽|100\s*%/;
+// 화면 스크립트에서 쓰지 않는 API: 문자열을 HTML로 넣는 API와, 방문자를 추적하거나 밖으로 보내는 API
+const UNSAFE_DOM = [/\binnerHTML\b/, /\bouterHTML\b/, /insertAdjacentHTML/, /document\.write/, /\beval\(/, /new Function/, /setTimeout\(\s*['"]/, /setAttribute\(\s*['"]on/i, /setAttribute\(\s*['"]style['"]/];
+const TRACKING = [/sessionStorage/, /indexedDB/, /document\.cookie/, /navigator\.sendBeacon/, /XMLHttpRequest/, /WebSocket/, /gtag\(|google-analytics|googletagmanager/];
+const PENDING = '(작성 예정)';
 
 export function parseCsp(text) {
   const out = {};
@@ -85,263 +57,185 @@ export function parseCsp(text) {
   }
   return out;
 }
-/** 상대 경로인지: 스킴·프로토콜 상대·루트 절대·상위 폴더·data: 금지 */
+/** 상대 경로인지: 스킴·프로토콜 상대·루트 절대·상위 폴더 금지 */
 export function isRelativeRef(v) {
   return !!v && !/^[a-z][a-z0-9+.-]*:/i.test(v) && !v.startsWith('/') && !v.startsWith('\\') && !v.split(/[?#]/)[0].split('/').includes('..');
 }
-
-// GitHub Docs "Using custom workflows with GitHub Pages" 예시 major (2026-11-11 확인)
-const ACTION_MAJORS = { 'actions/checkout': 'v6', 'actions/configure-pages': 'v5', 'actions/upload-pages-artifact': 'v4', 'actions/deploy-pages': 'v4' };
-const AREA_TITLES = ['문제·요구사항', '명세·설계', 'AI와 구현', '테스트·검증', '배포·운영'];
-const PERCENT_ALLOWED = ['100% 통과'];
-const TRACKING = [/localStorage/, /sessionStorage/, /indexedDB/, /document\.cookie/, /navigator\.sendBeacon/, /gtag\(|google-analytics|googletagmanager/];
-
 function allowedExternal(url) {
   return url === ORG_URL || url === REPO_URL || url.startsWith(REPO_URL + '/');
 }
+const isText = (v) => typeof v === 'string' && v.trim() !== '';
+const isList = (v) => Array.isArray(v) && v.length > 0;
 
-const GOAL_MAX = 60;
-const GOAL_PROMISE = /무료|비용\s*없이|보장|누구나|반드시|완벽|100\s*%/;
+/** 데이터에서 화면에 나오는 글만 모은다(경로·id 제외). */
+export function visibleStrings(data) {
+  const out = [];
+  const push = (...xs) => { for (const x of xs.flat()) if (typeof x === 'string') out.push(x); };
+  push(Object.values(data.kinds || {}));
+  for (const l of data.lines || []) {
+    push(l.name, l.who, l.lead, l.next && l.next.text);
+    for (const s of l.stages || []) push(s.title, s.short, s.summary, s.note);
+  }
+  for (const i of data.items || []) push(i.title, i.original, i.by, i.meta, i.summary, i.audience, i.prerequisite, i.learn, i.how, (i.links || []).map((k) => k.label));
+  for (const p of data.people || []) { push(p.name); for (const g of p.groups || []) push(g.label); }
+  return out;
+}
 
-export function collectProblems({ dist = null, repoRoot = REPO_ROOT, siteDir = SITE_DIR, dataDir = DATA_DIR, srcDir = path.join(siteDir, 'src') } = {}) {
+/**
+ * 문제 목록을 모은다. overrides로 데이터·화면 원본을 바꿔 넣을 수 있다(시험에서 변조 검출 확인용).
+ * overrides: { data, html, css: {이름: 내용}, js: {이름: 내용} }
+ */
+export function collectProblems({ dist = null, repoRoot = REPO_ROOT, siteDir = SITE_DIR, overrides = {} } = {}) {
   const problems = [];
   const notes = [];
   const bad = (msg) => problems.push(msg);
+  const srcDir = path.join(siteDir, 'src');
+  const dataDir = path.join(siteDir, 'data');
 
   const tracked = gitTrackedFiles(repoRoot);
   const trackedSet = new Set(tracked);
+  const isTrackedDir = (p) => tracked.some((f) => f.startsWith(p + '/'));
   const readRepo = (p) => fs.readFileSync(path.join(repoRoot, p), 'utf8');
-  const sourcesDoc = readJSON(path.join(dataDir, 'sources.json'));
-  const portal = readJSON(path.join(dataDir, 'portal.json'));
-  const sources = sourcesDoc.sources;
-  const byId = new Map();
+  const readSrc = (n) => fs.readFileSync(path.join(srcDir, n), 'utf8');
 
-  // 1) manifest ↔ git ls-files
-  for (const s of sources) {
-    if (byId.has(s.id)) bad(`sources: 중복 id ${s.id}`);
-    byId.set(s.id, s);
-    for (const key of ['id', 'path', 'kind', 'url', 'type', 'title', 'status', 'evidence']) {
-      if (typeof s[key] !== 'string' || !s[key]) bad(`sources[${s.id}]: ${key} 누락`);
+  const data = overrides.data || readJSON(path.join(dataDir, 'roadmap.json'));
+  const html = overrides.html != null ? overrides.html : readSrc('index.html');
+  const css = { 'app.css': readSrc('app.css'), 'fonts.css': readSrc('fonts.css'), ...(overrides.css || {}) };
+  const js = { 'core.js': readSrc('core.js'), 'app.js': readSrc('app.js'), ...(overrides.js || {}) };
+
+  // 1) 데이터 구조
+  if (data.schema !== 1) bad('roadmap.json: schema는 1');
+  if (data.repository !== REPO_URL.replace('https://github.com/', '')) bad('roadmap.json: repository는 ' + REPO_URL.replace('https://github.com/', ''));
+  if (data.ref !== 'main') bad('roadmap.json: ref는 main');
+  for (const k of KINDS) if (!isText(data.kinds && data.kinds[k])) bad(`roadmap.json: kinds.${k} 이름 없음`);
+  if (!isList(data.lines) || !isList(data.items) || !isList(data.people)) {
+    bad('roadmap.json: lines, items, people이 비어 있음');
+    return { problems, notes };
+  }
+  const items = new Map();
+  for (const it of data.items) {
+    if (!isText(it.id) || !/^[a-z][a-z0-9]*$/.test(it.id)) { bad(`자료 id 형식: ${it.id}`); continue; }
+    if (items.has(it.id)) bad(`자료 id 중복: ${it.id}`);
+    items.set(it.id, it);
+    if (!KINDS.includes(it.kind)) { bad(`자료 ${it.id}: 알 수 없는 kind ${it.kind}`); continue; }
+    if (!isText(it.title) || !isText(it.by)) bad(`자료 ${it.id}: title, by 필요`);
+    if (it.kind === 'soon') {
+      if (!isText(it.path)) bad(`자료 ${it.id}: 준비 중 자료는 path(모듈 폴더) 필요`);
+      continue;
     }
-    if (s.kind === 'file') {
-      if (!trackedSet.has(s.path)) bad(`sources[${s.id}]: git 추적 파일 아님 — ${s.path}`);
-    } else if (s.kind === 'dir') {
-      if (!tracked.some((f) => f.startsWith(s.path + '/'))) bad(`sources[${s.id}]: git 추적 폴더 아님 — ${s.path}`);
-    } else bad(`sources[${s.id}]: kind는 file|dir`);
-    const expected = repoUrl(s.path, s.kind, sourcesDoc.ref || 'main');
-    if (s.url !== expected) bad(`sources[${s.id}]: url 불일치 — ${s.url} ≠ ${expected}`);
-    if (s.path.startsWith('courses/_sample-course') && s.type !== 'template') bad(`sources[${s.id}]: _sample-course는 견본(template)으로만 표시`);
-    if (Array.isArray(s.verify) && s.kind === 'file' && trackedSet.has(s.path)) {
-      const text = readRepo(s.path);
-      for (const needle of s.verify) if (!text.includes(needle)) bad(`sources[${s.id}]: 원문에 '${needle}' 없음 (${s.path})`);
+    for (const f of ['source', 'meta', 'summary']) if (!isText(it[f])) bad(`자료 ${it.id}: ${f} 필요`);
+    if (!isList(it.how) || !it.how.every(isText)) bad(`자료 ${it.id}: how(이용 순서) 필요`);
+    if (it.learn && !(isList(it.learn) && it.learn.every(isText))) bad(`자료 ${it.id}: learn은 글 목록`);
+    if (!isList(it.links)) bad(`자료 ${it.id}: links 필요`);
+    for (const k of it.links || []) {
+      if (!isText(k.label) || !isText(k.path)) bad(`자료 ${it.id}: 링크에 label, path 필요`);
+      if (!['file', 'dir'].includes(k.kind)) bad(`자료 ${it.id}: 링크 kind는 file 또는 dir — ${k.path}`);
     }
   }
-  if (sourcesDoc.urlBase !== REPO_URL) bad('sources: urlBase 불일치');
-  const ref = (where, id) => { if (!byId.has(id)) bad(`${where}: 없는 source id '${id}'`); return byId.get(id); };
 
-  // 2) 영역
-  const areaIds = new Set();
-  if (portal.areas.map((a) => a.title).join('|') !== AREA_TITLES.join('|')) bad(`영역: 승인된 큰 영역 5개(${AREA_TITLES.join(' / ')})와 다름`);
-  const legacy = new Map();
-  for (const a of portal.areas) {
-    if (areaIds.has(a.id)) bad(`영역: 중복 id ${a.id}`);
-    areaIds.add(a.id);
-    if (!a.summary) bad(`영역 ${a.id}: summary 누락`);
-    if ('hint' in a && (typeof a.hint !== 'string' || !a.hint || a.hint.length > 30)) bad(`영역 ${a.id}: hint는 30자 이내 짧은 행동 설명`);
-    for (const st of a.legacyStages || []) {
-      if (legacy.has(st)) bad(`영역: 이전 단계 ${st}가 두 영역에 연결됨`);
-      legacy.set(st, a.id);
-    }
-    for (const k of ['prerequisites', 'requires', 'order', 'next']) if (k in a) bad(`영역 ${a.id}: 선후관계 필드 '${k}'는 근거 없이 두지 않음`);
-  }
-  const allStages = Array.from({ length: 10 }, (_, i) => String(i + 1).padStart(2, '0'));
-  for (const st of allStages) if (!legacy.has(st)) bad(`영역: 이전 #stage/${st} 링크가 연결될 영역 없음`);
-
-  // 3) 주제·확장 주제: 제공 상태와 원문 상태 근거
-  const checkTopicLike = (kind, t) => {
-    const where = `${kind} ${t.id}`;
-    for (const key of ['id', 'title', 'availability', 'module', 'sourceStatus', 'owner']) if (!t[key]) bad(`${where}: ${key} 누락`);
-    if (!['available', 'preparing'].includes(t.availability)) bad(`${where}: availability는 available|preparing`);
-    const mod = ref(`${where} module`, t.module);
-    (t.related || []).forEach((id) => ref(`${where} related`, id));
-    const statusIds = t.statusSources || [t.module];
-    for (const id of statusIds) {
-      const s = ref(`${where} statusSources`, id);
-      if (!s) continue;
-      if (!t.sourceStatus.includes(s.status)) bad(`${where}: 원문 상태 '${t.sourceStatus}'가 '${s.status}'(${s.path})를 반영하지 않음`);
-      const owner = (s.verify || []).find((v) => v.startsWith('담당: '));
-      if (owner && !t.owner.includes(owner.slice(4))) bad(`${where}: 담당 '${t.owner}'가 원문 '${owner}'(${s.path})와 다름`);
-    }
-    if (/완료|완성/.test(t.sourceStatus)) bad(`${where}: 상태에 완료/완성 표현 금지`);
-    // 제공 상태 근거
-    //  - modulePending: 모듈 원문 문서의 목적이 '(작성 예정)'인지. 원문과 일치해야 한다(모듈의 완성도 표시).
-    //  - availability: 연결된 공개 자료가 있는지. 'available'은 git에 있는 관련 자료(related)가 있거나
-    //    목적이 작성된 모듈 문서가 있을 때만. 목적이 비어 있는 README만으로는 '공개 자료 있음'을 주장하지 않는다.
-    const docs = statusIds.map((id) => byId.get(id)).filter((s) => s && s.kind === 'file' && trackedSet.has(s.path));
-    if (mod && mod.kind === 'file' && !docs.includes(mod) && trackedSet.has(mod.path)) docs.push(mod);
-    const pendingFlags = docs.map((s) => readRepo(s.path).includes('(작성 예정)'));
-    const pending = pendingFlags.length > 0 && pendingFlags.every(Boolean);
-    if (pendingFlags.some(Boolean) && !pending) bad(`${where}: 근거 문서 일부만 '(작성 예정)'이라 상태를 하나로 판단할 수 없음`);
-    if (typeof t.modulePending !== 'boolean') bad(`${where}: modulePending(true|false) 필요`);
-    else if (docs.length && t.modulePending !== pending) bad(`${where}: modulePending=${t.modulePending}이 원문(${pending ? "'(작성 예정)'" : '목적 작성됨'})과 다름`);
-    const relatedReal = (t.related || []).filter((id) => {
-      const s = byId.get(id);
-      return s && (s.kind === 'file' ? trackedSet.has(s.path) : tracked.some((f) => f.startsWith(s.path + '/')));
+  // 2) 로드맵 배치와 참조
+  const lineIds = new Set();
+  const placed = new Set();
+  for (const l of data.lines) {
+    if (!isText(l.id) || !/^[a-z]+$/.test(l.id)) { bad(`로드맵 id 형식: ${l.id}`); continue; }
+    if (lineIds.has(l.id)) bad(`로드맵 id 중복: ${l.id}`);
+    lineIds.add(l.id);
+    for (const f of ['name', 'who', 'lead']) if (!isText(l[f])) bad(`로드맵 ${l.id}: ${f} 필요`);
+    if (!SHAPES.includes(l.shape)) bad(`로드맵 ${l.id}: shape는 ${SHAPES.join('/')}`);
+    if (!isList(l.stages)) { bad(`로드맵 ${l.id}: 단계 없음`); continue; }
+    if (!Number.isInteger(l.col) || l.col < 1 || l.col + l.stages.length - 1 > COLUMNS) bad(`로드맵 ${l.id}: 노선도 ${COLUMNS}칸을 넘음(col ${l.col}, 단계 ${l.stages.length})`);
+    l.stages.forEach((s, i) => {
+      if (!isText(s.title) || !isText(s.summary)) bad(`로드맵 ${l.id} ${i + 1}단계: title, summary 필요`);
+      if (!isList(s.items)) { bad(`로드맵 ${l.id} ${i + 1}단계: 자료가 하나도 없음(준비 중이면 준비 중 자료를 둔다)`); return; }
+      for (const id of s.items) {
+        if (!items.has(id)) bad(`로드맵 ${l.id} ${i + 1}단계: 없는 자료 ${id}`);
+        placed.add(id);
+      }
     });
-    const hasMaterial = relatedReal.length > 0 || (docs.length > 0 && !pending);
-    if (t.availability === 'available' && !hasMaterial) bad(`${where}: '공개 자료 있음'인데 연결된 실제 자료가 없고 모듈 목적도 '(작성 예정)'임`);
-    if (t.availability === 'preparing' && hasMaterial) bad(`${where}: 연결된 공개 자료가 있는데 '준비 중'으로 표시됨`);
-  };
-  const topicIds = new Set();
-  for (const t of portal.topics) {
-    if (topicIds.has(t.id)) bad(`주제: 중복 id ${t.id}`);
-    topicIds.add(t.id);
-    if (!areaIds.has(t.area)) bad(`주제 ${t.id}: 없는 영역 ${t.area}`);
-    checkTopicLike('주제', t);
   }
-  for (const a of portal.areas) if (!portal.topics.some((t) => t.area === a.id)) bad(`영역 ${a.id}: 주제가 없음`);
-  const extIds = new Set();
-  for (const x of portal.extensions) {
-    if (extIds.has(x.id) || areaIds.has(x.id)) bad(`확장 주제: 중복 id ${x.id}`);
-    extIds.add(x.id);
-    if (!x.summary) bad(`확장 주제 ${x.id}: summary 누락`);
-    if (!x.relatedAreas || !x.relatedAreas.length) bad(`확장 주제 ${x.id}: relatedAreas 필요`);
-    (x.relatedAreas || []).forEach((id) => { if (!areaIds.has(id)) bad(`확장 주제 ${x.id}: 없는 영역 ${id}`); });
-    checkTopicLike('확장 주제', x);
+  if (new Set(data.lines.map((l) => l.shape)).size !== data.lines.length) bad('로드맵마다 도형이 달라야 함');
+  for (const l of data.lines) {
+    if (l.next && (!lineIds.has(l.next.line) || l.next.line === l.id || !isText(l.next.text))) bad(`로드맵 ${l.id}: next는 다른 로드맵과 안내 글`);
   }
-  for (const need of ['harness', 'embedded']) if (!extIds.has(need)) bad('확장 주제: 에이전트 하니스와 임베디드가 있어야 함');
+  for (const id of items.keys()) if (!placed.has(id)) bad(`어느 단계에도 놓이지 않은 자료: ${id}`);
+  // 노선도의 환승 표시는 첫 로드맵 2단계와 둘째 로드맵 1단계가 같은 칸, 같은 자료일 때만 맞다(app.js·app.css의 .net__x)
+  if (data.lines.length >= 2 && isList(data.lines[0].stages) && isList(data.lines[1].stages)) {
+    const [a, b] = data.lines;
+    const shared = a.stages[1] && b.stages[0] && (a.stages[1].items || []).some((id) => (b.stages[0].items || []).includes(id));
+    if (a.col + 1 !== b.col || !shared) bad('노선도 환승 표시: 첫 로드맵 2단계와 둘째 로드맵 1단계가 같은 칸에서 같은 자료를 가리켜야 함');
+  }
 
-  // 4) 공개 항목(resources·courses)
-  const statusKeys = Object.keys(portal.statusLabels.resource);
-  const checkActionUrl = (where, a) => {
-    if (a.href && !/^#[A-Za-z][\w-]*(\/[\w-]+)?$/.test(a.href)) bad(`${where}: 사이트 안 이동은 '#id' 형식만`);
-    if (a.url && !allowedExternal(a.url)) bad(`${where}: 확인되지 않은 외부 주소 ${a.url}`);
-    if (a.source) ref(where, a.source);
-    if (!a.href && !a.url && !a.source) bad(`${where}: href|url|source 중 하나 필요`);
-  };
-  const html0 = fs.readFileSync(path.join(srcDir, 'index.html'), 'utf8');
-  const itemIds = new Set();
-  for (const r of portal.resources) {
-    const where = `자료 ${r.id}`;
-    if (itemIds.has(r.id)) bad(`${where}: 중복 id`);
-    itemIds.add(r.id);
-    for (const key of ['title', 'type', 'status', 'summary', 'kind']) if (!r[key]) bad(`${where}: ${key} 누락`);
-    if (!statusKeys.includes(r.status)) bad(`${where}: 알 수 없는 상태 ${r.status}`);
-    if (r.status === 'operating' && !(r.verified && r.verified.date && r.verified.url)) bad(`${where}: 운영 확인 기록 없이 '운영 중' 표시 금지`);
-    if (r.kind === 'service' && r.status === 'operating' && !allowedExternal(r.verified?.url || '')) notes.push(`${where}: 운영 서비스 주소를 검사 허용 목록에 추가해야 함`);
-    (r.areas || []).forEach((id) => { if (!areaIds.has(id)) bad(`${where}: 없는 영역 ${id}`); });
-    (r.actions || []).forEach((a, i) => { checkActionUrl(`${where} 행동 ${i + 1}`, a); if (a.href && !html0.includes(`id="${a.href.slice(1)}"`)) bad(`${where}: 이동할 구역 ${a.href} 없음`); });
-    if (r.intro) ref(`${where} intro`, r.intro);
-    (r.steps || []).forEach((st, i) => { ref(`${where} 단계 ${i + 1}`, st.source); if (!areaIds.has(st.area)) bad(`${where} 단계 ${i + 1}: 없는 영역`); });
-  }
-  const ex = portal.resources.find((r) => r.kind === 'example');
-  const exOrder = ['todo-req', 'todo-spec', 'todo-acc', 'todo-test', 'todo-impl'];
-  // 기준 5단계가 이 순서로 들어 있어야 한다(단계 추가는 허용).
-  const exSeq = ex ? ex.steps.map((s) => s.source).filter((id) => exOrder.includes(id)) : [];
-  if (!ex || exSeq.join() !== exOrder.join()) bad('예제: 요구사항→명세→인수조건→테스트→구현 원본 순서여야 함');
-  if (portal.resources.some((r) => r.kind === 'service')) notes.push('서비스 항목이 있음 — 운영 확인 기록을 검토하세요');
-
-  if (!portal.courses.length) bad('강의: 공개 강의 항목이 하나 이상 필요함');
-  const readme = readRepo('README.md');
-  const coursesIndex = readRepo('courses/README.md');
-  for (const c of portal.courses) {
-    const where = `강의 ${c.id}`;
-    if (itemIds.has(c.id)) bad(`${where}: 중복 id`);
-    itemIds.add(c.id);
-    if (!statusKeys.includes(c.status) || c.status === 'operating') bad(`${where}: 강의 상태는 공개됨/준비 중`);
-    (c.areas || []).forEach((id) => { if (!areaIds.has(id)) bad(`${where}: 없는 영역 ${id}`); });
-    if (!readme.includes(`[${c.title}]`)) bad(`${where}: 제목 '${c.title}'이 README.md 강의 목록에 없음`);
-    const linked = c.links.map((l) => ref(where, l.source)).filter(Boolean);
-    if (linked.some((s) => s.path.includes('_sample-course'))) bad(`${where}: _sample-course를 강의로 연결하면 안 됨`);
-    const pdf = linked.find((s) => s.type === 'slides-pdf');
-    if (!pdf || !pdf.path.endsWith('.pdf')) bad(`${where}: 교재 PDF 링크 필요`);
-    const courseReadme = linked.find((s) => s.type === 'course');
-    if (!courseReadme) bad(`${where}: 강의 README 링크 필요`);
-    else {
-      const text = readRepo(courseReadme.path);
-      if (!text.includes(c.fullTitle)) bad(`${where}: 원제목 '${c.fullTitle}'이 ${courseReadme.path}에 없음`);
-      const folder = courseReadme.path.split('/')[1];
-      if (!coursesIndex.includes(`](${folder}/)`) && !coursesIndex.includes(`](${encodeURI(folder)}/)`)) {
-        notes.push(`${where}: courses/README.md 표의 링크 경로가 실제 폴더 '${folder}'와 다름 — 사이트는 실제 폴더로 연결(원본은 수정하지 않음)`);
+  // 3) 강사별 자료: 공개 자료는 만든 사람 아래에 한 번씩 나온다
+  const listed = new Map();
+  for (const p of data.people) {
+    if (!isText(p.name) || !isList(p.groups)) { bad(`강사 항목: name, groups 필요 — ${p.name}`); continue; }
+    for (const g of p.groups) {
+      if (!isText(g.label) || !isList(g.items)) { bad(`강사 ${p.name}: 묶음에 label, items 필요`); continue; }
+      for (const id of g.items) {
+        const it = items.get(id);
+        if (!it) { bad(`강사 ${p.name}: 없는 자료 ${id}`); continue; }
+        if (!R.isOpen(it)) bad(`강사 ${p.name}: 준비 중 자료 ${id}는 넣지 않음`);
+        if (it.by !== p.name) bad(`강사 ${p.name}: 자료 ${id}의 만든 사람은 ${it.by}`);
+        if (listed.has(id)) bad(`강사별 자료에 두 번 나옴: ${id}`);
+        listed.set(id, p.name);
       }
     }
-    // 학습목표: 카드에는 짧은 요약(goal), 근거는 강의 안내 원문 학습목표 줄의 인용(goalEvidence)으로 분리한다.
-    //  - goalEvidence는 원문 학습목표 줄에 그대로 있어야 한다(원문 인용).
-    //  - goal은 한 문장 요약: 짧게, 원문에 없는 보장·비용 주장 금지(사람이 원문과 대조해 검토).
-    if ('goal' in c || 'goalEvidence' in c) {
-      const line = courseReadme ? (readRepo(courseReadme.path).split('\n').find((l) => /학습\s?목표/.test(l) && !/^#/.test(l.trim())) || '') : '';
-      if (typeof c.goal !== 'string' || !c.goal) bad(`${where}: goal(카드 한 문장 요약) 필요`);
-      else {
-        if (c.goal.length > GOAL_MAX) bad(`${where}: goal은 ${GOAL_MAX}자 이내 한 문장 요약 — 현재 ${c.goal.length}자`);
-        if (GOAL_PROMISE.test(c.goal)) bad(`${where}: goal에 원문 근거 없는 보장·비용 표현 금지 — ${c.goal}`);
-      }
-      if (typeof c.goalEvidence !== 'string' || !c.goalEvidence) bad(`${where}: goalEvidence(원문 학습목표 인용) 필요`);
-      else if (!line) bad(`${where}: 강의 안내에 '학습목표' 줄이 없어 근거를 확인할 수 없음`);
-      else if (!line.includes(c.goalEvidence)) bad(`${where}: goalEvidence가 원문 학습목표 줄과 다름 — ${line.trim()}`);
+  }
+  for (const it of items.values()) if (R.isOpen(it) && !listed.has(it.id)) bad(`강사별 자료에 빠진 공개 자료: ${it.id}`);
+
+  // 4) 원본 대조: 경로는 git이 추적하는 파일·폴더, 상태와 만든 사람은 원문에 근거가 있어야 한다
+  const coursesIndex = trackedSet.has('courses/README.md') ? readRepo('courses/README.md') : '';
+  const h1 = (text) => ((/^# (.+)$/m.exec(text) || [])[1] || '').trim();
+  for (const it of items.values()) {
+    if (it.kind === 'soon') {
+      const readme = it.path + '/README.md';
+      if (!isText(it.path)) continue;
+      if (!trackedSet.has(readme)) { bad(`자료 ${it.id}: 모듈 README 없음 — ${readme}`); continue; }
+      const text = readRepo(readme);
+      if (!text.includes(PENDING)) bad(`자료 ${it.id}: ${readme}에 본문이 올라왔다. 준비 중에서 공개 자료로 바꾼다`);
+      const owner = (/담당:\s*([^\n)]+)/.exec(text) || [])[1] || '';
+      const names = it.by === '협의 중' ? ['협의'] : String(it.by).split(/\s*[,·]\s*/);
+      for (const n of names) if (!owner.includes(n)) bad(`자료 ${it.id}: 담당 '${it.by}'가 원문('${owner.trim()}')과 다름`);
+      continue;
     }
-    if ('pick' in c && (typeof c.pick !== 'string' || !c.pick || !c.goal)) bad(`${where}: pick(첫 화면 추천 이름)은 goal과 함께만`);
-    const inst = ref(`${where} instructorSource`, c.instructorSource);
-    if (inst && !readRepo(inst.path).includes(c.instructor)) bad(`${where}: 강사 '${c.instructor}'가 ${inst.path}에 없음`);
-  }
-  for (const a of portal.areas) {
-    const n = portal.resources.filter((r) => (r.areas || []).includes(a.id)).length + portal.courses.filter((c) => c.areas.includes(a.id)).length;
-    if (!n) notes.push(`영역 ${a.id}: 연결된 공개 항목 없음`);
-  }
-  for (const [k, v] of Object.entries(portal.links || {})) if (!allowedExternal(v)) bad(`links.${k}: 허용되지 않은 주소 ${v}`);
-
-  // 5) 승인 문구·홈 화면 용어·과장·추적 표현
-  const html = fs.readFileSync(path.join(srcDir, 'index.html'), 'utf8');
-  for (const s of APPROVED_COPY) if (!html.includes(s)) bad(`index.html: 승인 문구 누락 — ${s}`);
-  for (const [n, list] of Object.entries(REQUIRED_SCRIPT_COPY)) {
-    const text = fs.readFileSync(path.join(srcDir, n), 'utf8');
-    for (const s of list) if (!text.includes(s)) bad(`${n}: 필수 안내 문구 누락 — ${s}`);
-  }
-  const visibleHtml = html.replace(/<!--[\s\S]*?-->/g, '').replace(/<script[\s\S]*?<\/script>/g, '');
-  for (const re of INTERNAL_TERMS) if (re.test(visibleHtml)) bad(`index.html: 홈 화면에 내부 용어 ${re}`);
-  const codeFiles = SRC_FILES.filter((n) => /\.(js|css|html|svg)$/.test(n));
-  const code = Object.fromEntries(codeFiles.map((n) => [n, fs.readFileSync(path.join(srcDir, n), 'utf8')]));
-  const jsNames = codeFiles.filter((n) => n.endsWith('.js'));
-  const js = jsNames.map((n) => code[n]).join('\n');
-  const css = codeFiles.filter((n) => n.endsWith('.css')).map((n) => code[n]).join('\n');
-  const texts = { 'data/portal.json': fs.readFileSync(path.join(dataDir, 'portal.json'), 'utf8'), 'src/index.html': html };
-  for (const n of jsNames) texts['src/' + n] = code[n];
-  for (const [name, text] of Object.entries(texts)) {
-    for (const re of FORBIDDEN_CLAIMS) if (re.test(text)) bad(`${name}: 금지 표현 ${re}`);
-    let scrub = text;
-    for (const ok of PERCENT_ALLOWED) scrub = scrub.split(ok).join('');
-    // JS는 화면에 보이는 한글 문자열만 본다(clip-path·크기 계산의 100% 등은 표현이 아님).
-    if (name.endsWith('.js')) scrub = (scrub.replace(/\/\*[\s\S]*?\*\//g, '').match(/'[^'\n]*'/g) || []).filter((m) => /[가-힣]/.test(m)).join('\n');
-    if (/\d+\s*%/.test(scrub)) bad(`${name}: 근거 없는 백분율 표현`);
-    if (name.endsWith('.js')) for (const re of TRACKING) if (re.test(text)) bad(`${name}: 저장·추적 API 사용 금지 ${re}`);
-  }
-  // 검토용 시안 흔적·개인 로컬 경로·내부 주소가 배포 원본에 남지 않게 한다(데이터 포함).
-  const shipped = { ...Object.fromEntries(codeFiles.map((n) => ['src/' + n, code[n]])) };
-  for (const n of fs.readdirSync(dataDir).filter((x) => x.endsWith('.json'))) shipped['data/' + n] = fs.readFileSync(path.join(dataDir, n), 'utf8');
-  for (const [name, text] of Object.entries(shipped)) {
-    for (const re of REVIEW_MARKERS) if (re.test(text)) bad(`${name}: 검토용 흔적 ${re}`);
-    for (const re of PRIVATE_MARKERS) if (re.test(text)) bad(`${name}: 개인·내부 경로 ${re}`);
+    if (!KINDS.includes(it.kind) || !isText(it.source)) continue;
+    if (!trackedSet.has(it.source)) { bad(`자료 ${it.id}: 안내 문서 없음 — ${it.source}`); continue; }
+    const text = readRepo(it.source);
+    if (text.includes(PENDING)) bad(`자료 ${it.id}: ${it.source}가 아직 "${PENDING}"이다. 공개 자료로 표시하지 않는다`);
+    if (it.byEvidence !== 'git-history' && !text.includes(it.by) && !coursesIndex.includes(it.by)) bad(`자료 ${it.id}: 만든 사람 '${it.by}'의 근거가 ${it.source}나 courses/README.md에 없음`);
+    if (it.byEvidence && it.byEvidence !== 'git-history') bad(`자료 ${it.id}: byEvidence는 git-history만`);
+    if (it.kind === 'course' && h1(text) !== (it.original || it.title)) bad(`강의 ${it.id}: 제목(또는 원제)이 ${it.source}의 제목 '${h1(text)}'과 다름`);
+    for (const k of it.links || []) {
+      if (!isText(k.path)) continue;
+      if (k.kind === 'file' && !trackedSet.has(k.path)) bad(`자료 ${it.id}: git이 추적하지 않는 파일 — ${k.path}`);
+      if (k.kind === 'dir' && !isTrackedDir(k.path)) bad(`자료 ${it.id}: git이 추적하지 않는 폴더 — ${k.path}`);
+    }
   }
 
-  // 6) 메타데이터·CSP·외부 자산·상대 경로
+  // 5) 화면에 나오는 글: 제작 단계 용어, 근거 없는 약속, 개인·내부 주소
+  const shown = visibleStrings(data);
+  const htmlText = html.replace(/<script[\s\S]*?<\/script>/gi, ' ').replace(/<[^>]+>/g, ' ');
+  for (const re of INTERNAL_TERMS) {
+    if (re.test(htmlText)) bad(`index.html: 제작 단계 용어 ${re}`);
+    for (const s of shown) if (re.test(s)) bad(`roadmap.json: 제작 단계 용어 ${re} — ${s}`);
+  }
+  for (const s of [...shown, htmlText]) if (PROMISES.test(s)) bad(`근거 없이 약속하는 표현 — ${s.trim().slice(0, 60)}`);
+  const allSrc = { 'index.html': html, 'roadmap.json': JSON.stringify(data), ...css, ...js };
+  for (const [name, text] of Object.entries(allSrc)) for (const re of PRIVATE_MARKERS) if (re.test(text)) bad(`${name}: 개인·내부 주소 ${re}`);
+
+  // 6) 메타데이터, meta CSP, 자산 경로
   const head = (/<head>([\s\S]*?)<\/head>/.exec(html) || [])[1] || '';
   if (!/^<!doctype html>\s*<html lang="ko"[ >]/i.test(html)) bad('index.html: <html lang="ko"> 필요');
   const title = (/<title>([^<]*)<\/title>/.exec(head) || [])[1];
-  const metaContent = (attr, name) => {
-    const re = new RegExp(`<meta\\s+${attr}="${name.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}"\\s+content="([^"]*)"`, 'i');
-    return (re.exec(head) || [])[1];
-  };
+  const metaContent = (attr, name) => (new RegExp(`<meta\\s+${attr}="${name.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}"\\s+content="([^"]*)"`, 'i').exec(head) || [])[1];
   const desc = metaContent('name', 'description');
-  if (title !== APPROVED_TITLE) bad(`index.html: title은 승인 문구 '${APPROVED_TITLE}'만 — ${title}`);
-  if (desc !== APPROVED_DESCRIPTION) bad('index.html: description은 승인 문구만');
-  if (metaContent('property', 'og:title') !== APPROVED_TITLE) bad('index.html: og:title = title 이어야 함');
-  if (metaContent('property', 'og:description') !== APPROVED_DESCRIPTION) bad('index.html: og:description = description 이어야 함');
+  if (!isText(title) || !isText(desc)) bad('index.html: title과 description 필요');
+  if (metaContent('property', 'og:title') !== title) bad('index.html: og:title은 title과 같아야 함');
+  if (metaContent('property', 'og:description') !== desc) bad('index.html: og:description은 description과 같아야 함');
   if (!/<link rel="icon" href="favicon\.svg" type="image\/svg\+xml">/.test(head)) bad('index.html: favicon.svg 링크 필요');
   // 도메인이 정해지지 않았으므로 절대 주소 메타(canonical·og:url·og:image)와 검색 차단(noindex)을 두지 않는다.
-  if (/rel="canonical"|property="og:url"|property="og:image"|name="twitter:image"/i.test(head)) bad('index.html: 도메인 미정 — canonical/og:url/og:image 고정 금지');
-  if (/noindex/i.test(head)) bad('index.html: 검토용 noindex가 남아 있음');
-  for (const m of head.matchAll(/<meta\b[^>]*\bcontent="([^"]*)"/gi)) if (/https?:\/\//i.test(m[1]) && !/^https:\/\/github\.com\/kosta-ai-lab/.test(m[1])) bad(`index.html: 메타에 외부 주소 ${m[1]}`);
-
-  // CSP: GitHub Pages는 응답 헤더를 정할 수 없으므로 meta로 선언한다. 다른 자원보다 먼저 와야 적용된다.
+  if (/rel="canonical"|property="og:url"|property="og:image"|name="twitter:image"/i.test(head)) bad('index.html: canonical/og:url/og:image는 두지 않음(도메인 미정)');
+  if (/noindex/i.test(head)) bad('index.html: noindex가 남아 있음');
   const cspTags = [...head.matchAll(/<meta\s+http-equiv="Content-Security-Policy"\s+content="([^"]*)">/gi)];
   if (cspTags.length !== 1) bad(`index.html: meta CSP는 정확히 1개 (현재 ${cspTags.length})`);
   else {
@@ -353,91 +247,114 @@ export function collectProblems({ dist = null, repoRoot = REPO_ROOT, siteDir = S
       const have = (csp[dir] || []).slice().sort().join(' ');
       if (have !== want.slice().sort().join(' ')) bad(`CSP: ${dir}는 '${want.join(' ')}' 이어야 함 (현재 '${(csp[dir] || []).join(' ')}')`);
     }
-    for (const dir of META_IGNORED_CSP) if (dir in csp) bad(`CSP: ${dir}는 meta에서 무시되고 콘솔 경고를 낸다 — 넣지 않음`);
-    for (const dir of Object.keys(csp)) if (!(dir in REQUIRED_CSP)) bad(`CSP: 검토되지 않은 지시어 ${dir}`);
+    for (const dir of META_IGNORED_CSP) if (dir in csp) bad(`CSP: ${dir}는 meta에서 무시된다`);
+    for (const dir of Object.keys(csp)) if (!(dir in REQUIRED_CSP)) bad(`CSP: 검토하지 않은 지시어 ${dir}`);
   }
-  if (/<script(?![^>]*\bsrc=)[^>]*>/i.test(html)) bad('index.html: inline script 금지(CSP script-src self)');
-  if (/\son[a-z]+\s*=/i.test(html.replace(/<!--[\s\S]*?-->/g, '')) || /javascript:/i.test(html)) bad('index.html: 이벤트 속성·javascript: 금지');
-  if (/<iframe|<object|<embed|<base\b|<form\b/i.test(html)) bad('index.html: iframe/object/embed/base/form 금지');
-  if (!SCRIPT_ORDER.test(head)) bad('index.html: 스크립트는 motion-core.js → layers.js → story.js 순서의 defer 상대 경로');
-  for (const re of [/\binnerHTML\b/, /\bouterHTML\b/, /insertAdjacentHTML/, /document\.write/, /\beval\(/, /new Function/, /setTimeout\(\s*['"]/, /setAttribute\(\s*['"]on/i, /setAttribute\(\s*['"]style['"]/]) {
-    if (re.test(js)) bad(`스크립트: CSP·안전 위반 가능 API ${re}`);
-  }
+  const bare = html.replace(/<!--[\s\S]*?-->/g, '');
+  if (/<script(?![^>]*\bsrc=)[^>]*>/i.test(bare)) bad('index.html: inline script 금지(CSP script-src self)');
+  if (/<style\b/i.test(bare) || /\sstyle\s*=/i.test(bare)) bad('index.html: inline style 금지(CSP style-src self)');
+  if (/\son[a-z]+\s*=/i.test(bare) || /javascript:/i.test(bare)) bad('index.html: 이벤트 속성·javascript: 금지');
+  if (/<iframe|<object|<embed|<base\b|<form\b/i.test(bare)) bad('index.html: iframe/object/embed/base/form 금지');
+  if (!SCRIPT_ORDER.test(head)) bad('index.html: 스크립트는 core.js → app.js 순서의 defer 상대 경로');
+  if (!/<noscript>/.test(html)) bad('index.html: JavaScript를 끈 방문자를 위한 안내(noscript) 필요');
   for (const id of REQUIRED_IDS) if (!html.includes(`id="${id}"`)) bad(`index.html: 스크립트가 쓰는 id="${id}" 없음`);
-
+  const srcPath = (v) => (v.startsWith('data/') ? path.join(siteDir, v) : path.join(srcDir, v));
   for (const r of assetRefs(html)) {
     if (!isRelativeRef(r.value)) bad(`index.html: 상대 경로가 아닌 자산 참조 — ${r.value}`);
-    else if (!fs.existsSync((r.value.startsWith('data/') ? path.join(siteDir, r.value) : path.join(srcDir, r.value)))) bad(`index.html: 없는 자산 ${r.value}`);
+    else if (!fs.existsSync(srcPath(r.value))) bad(`index.html: 없는 자산 ${r.value}`);
   }
   for (const href of anchorRefs(html)) {
     if (href.startsWith('#')) {
       if (href.length > 1 && !html.includes(`id="${href.slice(1)}"`)) bad(`index.html: 없는 구역 ${href}`);
-      continue;
-    }
-    if (href.startsWith('https://')) {
-      if (!allowedExternal(href)) bad(`index.html: 허용되지 않은 외부 링크 — ${href}`);
+    } else if (href.startsWith('https://')) {
+      if (!allowedExternal(href)) bad(`index.html: 허용하지 않은 외부 링크 — ${href}`);
       const m = /\/(?:blob|tree)\/main\/(.+)$/.exec(href);
       if (m) {
         const p = decodeURIComponent(m[1]);
-        if (!trackedSet.has(p) && !tracked.some((f) => f.startsWith(p + '/'))) bad(`index.html: git 추적 경로 아님 — ${p}`);
+        if (!trackedSet.has(p) && !isTrackedDir(p)) bad(`index.html: git이 추적하지 않는 경로 — ${p}`);
       }
-      continue;
-    }
-    if (!isRelativeRef(href)) bad(`index.html: 허용되지 않는 링크 — ${href}`);
-    else if (!fs.existsSync((href.startsWith('data/') ? path.join(siteDir, href) : path.join(srcDir, href)))) bad(`index.html: 없는 내부 링크 ${href}`);
+    } else if (!isRelativeRef(href)) bad(`index.html: 허용하지 않는 링크 — ${href}`);
+    else if (!fs.existsSync(srcPath(href))) bad(`index.html: 없는 내부 링크 ${href}`);
   }
-  if (/@import|url\(\s*['"]?(https?:)?\/\//i.test(css)) bad('CSS: 외부 import/url 금지');
-  if (/fonts\.googleapis|fonts\.gstatic|cdn\.|unpkg|jsdelivr/i.test(html + css + js)) bad('외부 폰트·CDN 참조 금지');
-  for (const n of jsNames) {
-    for (const u of code[n].match(/https?:\/\/[^'"\s)]+/g) || []) {
-      if (!allowedExternal(u) && u !== 'http://www.w3.org/2000/svg') bad(`${n}: 허용되지 않은 URL ${u}`);
-    }
-    if (/fetch\(\s*['"`]\//.test(code[n]) || /new URL\(\s*['"`]\//.test(code[n])) bad(`${n}: 절대 경로 fetch 금지`);
-  }
-  if (!/new URL\('data\/' \+ name, document\.baseURI\)/.test(code['story.js'])) bad("story.js: 데이터는 문서 기준 상대 경로 new URL('data/' + name, document.baseURI)로 읽어야 함");
-  for (const [name, text] of Object.entries(code)) {
-    if (/(?:href|src)\s*[=:]\s*['"]\.\.\//.test(text) || /designs-integrated|designs-v2/.test(text)) bad(`${name}: 상위 폴더·시안 경로 의존 금지`);
-  }
-  for (const p of [path.join(repoRoot, 'CNAME'), path.join(siteDir, 'CNAME'), path.join(srcDir, 'CNAME')]) if (fs.existsSync(p)) bad(`CNAME 생성 금지(도메인 미정): ${path.relative(repoRoot, p)}`);
+  const allCss = Object.values(css).join('\n');
+  const allJs = Object.values(js).join('\n');
+  if (/@import|url\(\s*['"]?(https?:)?\/\//i.test(allCss)) bad('CSS: 외부 import/url 금지');
+  if (/fonts\.googleapis|fonts\.gstatic|cdn\.|unpkg|jsdelivr/i.test(html + allCss + allJs)) bad('외부 글꼴·CDN 참조 금지');
+  for (const p of [path.join(repoRoot, 'CNAME'), path.join(siteDir, 'CNAME'), path.join(srcDir, 'CNAME')]) if (fs.existsSync(p)) bad(`CNAME은 두지 않음(도메인 미정): ${path.relative(repoRoot, p)}`);
 
-  // 7) 워크플로
+  // 7) 화면 스크립트: 안전한 DOM API만, 추적·외부 전송 없음, 데이터는 문서 기준 상대 경로, 저장은 마친 자료 표시 하나뿐
+  for (const [name, text] of Object.entries(js)) {
+    for (const re of UNSAFE_DOM) if (re.test(text)) bad(`${name}: 문자열을 HTML이나 코드로 실행하는 API ${re}`);
+    for (const re of TRACKING) if (re.test(text)) bad(`${name}: 추적·외부 전송 API ${re}`);
+    // 허용: 이 저장소 주소, 저장소 주소를 만드는 GitHub 머리, SVG 이름공간
+    for (const u of text.match(/https?:\/\/[^'"\s)]+/g) || []) if (!allowedExternal(u) && u !== 'https://github.com/' && u !== 'http://www.w3.org/2000/svg') bad(`${name}: 허용하지 않은 주소 ${u}`);
+    if (/fetch\(\s*['"`]\//.test(text) || /new URL\(\s*['"`]\//.test(text)) bad(`${name}: 절대 경로 fetch 금지`);
+    if (/(?:href|src)\s*[=:]\s*['"]\.\.\//.test(text)) bad(`${name}: 상위 폴더 경로 금지`);
+  }
+  if (!/fetch\(new URL\('data\/roadmap\.json', document\.baseURI\)\)/.test(js['app.js'])) bad("app.js: 데이터는 fetch(new URL('data/roadmap.json', document.baseURI))로 읽어야 함");
+  if ((js['app.js'].match(/\bfetch\(/g) || []).length !== 1) bad('app.js: fetch는 로드맵 데이터를 읽는 한 번만');
+  const storage = js['app.js'].match(/localStorage\.\w+\([^)]*\)?/g) || [];
+  if (storage.length !== 2 || !storage.every((s) => /^localStorage\.(getItem|setItem)\(DONE_KEY/.test(s))) bad('app.js: localStorage는 마친 자료 표시(DONE_KEY)를 읽고 쓰는 두 곳에서만');
+  if (/localStorage|document\.|window\./.test(js['core.js'])) bad('core.js: 화면·저장 API를 쓰지 않는 계산만');
+
+  // 8) 글꼴: 선언한 파일이 있고, 화면 글자가 글꼴에 들어 있다
+  const fontDir = path.join(srcDir, 'fonts');
+  const fontRefs = [...css['fonts.css'].matchAll(/url\(([^)]+)\)/g)].map((m) => m[1].replace(/['"]/g, ''));
+  for (const ref of fontRefs) {
+    if (!isRelativeRef(ref) || !ref.startsWith('fonts/')) bad(`fonts.css: 글꼴 경로는 fonts/ 아래 상대 경로 — ${ref}`);
+    else if (!fs.existsSync(path.join(srcDir, ref))) bad(`fonts.css: 없는 글꼴 파일 ${ref}`);
+  }
+  const shipped = fontFiles(siteDir);
+  for (const f of shipped.filter((n) => n.endsWith('.woff2'))) if (!fontRefs.includes('fonts/' + f)) bad(`fonts: 선언에 없는 글꼴 파일 ${f}`);
+  if (!shipped.includes('OFL.txt')) bad('fonts: 글꼴 라이선스 전문(OFL.txt) 필요');
+  if (/url\(/.test(css['app.css'])) bad('app.css: url() 참조는 fonts.css에만');
+  const charsetFile = (n) => path.join(siteDir, 'fonts', n);
+  if (!fs.existsSync(charsetFile('charset-core.txt')) || !fs.existsSync(charsetFile('charset-rest.txt'))) bad('fonts: site/fonts/charset-core.txt, charset-rest.txt 필요(scripts/fonts.py가 만든다)');
+  else {
+    const core = new Set(fs.readFileSync(charsetFile('charset-core.txt'), 'utf8'));
+    const rest = new Set(fs.readFileSync(charsetFile('charset-rest.txt'), 'utf8'));
+    const used = new Set([...(htmlText + shown.join('') + js['app.js'])].filter((c) => c.codePointAt(0) > 0x7e && !/\s/.test(c)));
+    const outside = [...used].filter((c) => !core.has(c) && !rest.has(c));
+    const late = [...used].filter((c) => !core.has(c) && rest.has(c));
+    if (outside.length) bad(`fonts: 글꼴에 없는 글자 ${outside.join('')} — scripts/fonts.py로 다시 만든다`);
+    if (late.length) notes.push(`글꼴: 기본 묶음에 없는 글자 ${late.length}개(${late.join('')})는 추가 묶음에서 받는다. scripts/fonts.py를 다시 돌리면 기본 묶음에 들어간다`);
+  }
+
+  // 9) 워크플로
   const wfPath = path.join(repoRoot, '.github/workflows/learning-site.yml');
   if (!fs.existsSync(wfPath)) bad('워크플로 없음: .github/workflows/learning-site.yml');
   else {
     const wf = fs.readFileSync(wfPath, 'utf8');
     const deployAt = wf.search(/^ {2}deploy:\s*$/m);
-    const head = deployAt >= 0 ? wf.slice(0, deployAt) : wf;
+    const top = deployAt >= 0 ? wf.slice(0, deployAt) : wf;
     const deploy = deployAt >= 0 ? wf.slice(deployAt) : '';
+    const noComment = (t) => t.replace(/^\s*#.*$/gm, '');
     if (!/^\s*pull_request:/m.test(wf)) bad('워크플로: pull_request 트리거 필요');
     if (!/^permissions:\s*\n\s+contents:\s*read\s*$/m.test(wf)) bad('워크플로: 최상위 permissions는 contents: read만');
-    if (/pages:\s*write|id-token:\s*write/.test(head)) bad('워크플로: pages/id-token write는 deploy job에만');
+    if (/pages:\s*write|id-token:\s*write/.test(top)) bad('워크플로: pages/id-token write는 deploy job에만');
     if (!deploy) bad('워크플로: deploy job 없음');
     else {
       if (!/pages:\s*write/.test(deploy) || !/id-token:\s*write/.test(deploy)) bad('워크플로: deploy job에 pages/id-token write 필요');
       const cond = /^ {4}if:\s*(.+)$/m.exec(deploy);
-      if (!cond || !/github\.event_name\s*!=\s*'pull_request'/.test(cond[1]) || !/github\.ref\s*==\s*'refs\/heads\/main'/.test(cond[1])) {
-        bad('워크플로: deploy job은 PR이 아니고 main일 때만 실행되어야 함');
-      }
+      if (!cond || !/github\.event_name\s*!=\s*'pull_request'/.test(cond[1]) || !/github\.ref\s*==\s*'refs\/heads\/main'/.test(cond[1])) bad('워크플로: deploy job은 PR이 아니고 main일 때만 실행되어야 함');
       if (!/environment:\s*\n\s+name:\s*github-pages/.test(deploy)) bad('워크플로: github-pages environment 필요');
+      if (!/needs:\s*build/.test(deploy)) bad('워크플로: deploy job은 needs: build');
+      if (!/url:\s*\$\{\{\s*steps\.deployment\.outputs\.page_url\s*\}\}/.test(deploy)) bad('워크플로: environment url은 steps.deployment.outputs.page_url');
     }
     if (!/path:\s*site\/dist\s*$/m.test(wf)) bad('워크플로: Pages artifact path는 site/dist');
     const uploadCond = /- name: Upload Pages artifact\s*\n\s+if:\s*(.+)/.exec(wf);
     if (!uploadCond || !/refs\/heads\/main/.test(uploadCond[1]) || !/pull_request/.test(uploadCond[1])) bad('워크플로: Pages artifact 업로드는 main 배포 조건에서만');
-    // PR에서는 검사만: configure/deploy는 deploy job에만, 검사 3단계는 build job에서 실행
-    const noComment = (t) => t.replace(/^\s*#.*$/gm, '');
-    if (/configure-pages|deploy-pages/.test(noComment(head))) bad('워크플로: configure-pages/deploy-pages는 deploy job에만');
-    if (!/needs:\s*build/.test(deploy)) bad('워크플로: deploy job은 needs: build');
-    if (!/url:\s*\$\{\{\s*steps\.deployment\.outputs\.page_url\s*\}\}/.test(deploy)) bad('워크플로: environment url은 steps.deployment.outputs.page_url');
-    for (const cmd of ['node scripts/build.mjs', 'node scripts/check.mjs --dist', 'node scripts/test.mjs']) if (!head.includes('run: ' + cmd)) bad(`워크플로: build job에서 ${cmd} 실행 필요`);
+    if (/configure-pages|deploy-pages/.test(noComment(top))) bad('워크플로: configure-pages/deploy-pages는 deploy job에만');
+    for (const cmd of ['node scripts/build.mjs', 'node scripts/check.mjs --dist', 'node scripts/test.mjs']) if (!top.includes('run: ' + cmd)) bad(`워크플로: build job에서 ${cmd} 실행 필요`);
     for (const [act, major] of Object.entries(ACTION_MAJORS)) {
       const used = [...wf.matchAll(new RegExp(`uses:\\s*${act.replace('/', '\\/')}@(\\S+)`, 'g'))].map((m) => m[1]);
       if (!used.length) bad(`워크플로: ${act} 사용 필요`);
-      for (const v of used) if (v !== major) bad(`워크플로: ${act}@${v} — GitHub Docs 예시 major ${major}와 다름(변경 시 확인 후 이 표를 갱신)`);
+      for (const v of used) if (v !== major) bad(`워크플로: ${act}@${v} — GitHub Docs 예시 major ${major}와 다름(바꿀 때는 확인 후 이 표를 고친다)`);
     }
     if (/CNAME|cname:/.test(noComment(wf))) bad('워크플로: 사용자 도메인 설정 금지(도메인 미정)');
   }
 
-  // 8) 산출물: 허용 목록·원본과 바이트 동일(재현성)·두 base 경로 해석
+  // 10) 산출물: 허용 목록, 원본과 바이트 동일(재현성), 두 base 경로 해석
   if (dist) {
     if (!fs.existsSync(dist)) bad(`dist 없음: ${dist} (먼저 build)`);
     else {
@@ -447,34 +364,35 @@ export function collectProblems({ dist = null, repoRoot = REPO_ROOT, siteDir = S
       const missing = allow.filter((f) => !files.includes(f));
       if (extra.length) bad(`dist: 허용 목록 밖 파일 ${extra.join(', ')}`);
       if (missing.length) bad(`dist: 누락 ${missing.join(', ')}`);
-      if (files.some((f) => /\.(pdf|pptx|docx|md|ts|feature|mjs|log|txt)$/i.test(f))) bad('dist: 원본 교재·문서·스크립트·로그 복사 금지');
+      if (files.some((f) => /\.(pdf|pptx|docx|md|ts|feature|mjs|py|log)$/i.test(f) || (/\.txt$/i.test(f) && f !== 'fonts/OFL.txt'))) bad('dist: 원본 교재·문서·스크립트·로그 복사 금지');
       if (files.includes('CNAME')) bad('dist: CNAME 금지(도메인 미정)');
       for (const f of files) {
         if (f === MARKER || f === '.nojekyll') continue;
         const srcFile = f.startsWith('data/') ? path.join(siteDir, f) : path.join(srcDir, f);
         if (!fs.existsSync(srcFile)) bad(`dist: 원본 없는 파일 ${f}`);
-        else if (!fs.readFileSync(srcFile).equals(fs.readFileSync(path.join(dist, f)))) bad(`dist: 소스와 다른 파일 ${f} (다시 build)`);
+        else if (!fs.readFileSync(srcFile).equals(fs.readFileSync(path.join(dist, f)))) bad(`dist: 원본과 다른 파일 ${f} (다시 build)`);
       }
       if (files.includes(MARKER)) {
         const marker = fs.readFileSync(path.join(dist, MARKER), 'utf8');
         if (/\/Users\/|\/home\/|[A-Z]:\\|\d{4}-\d\d-\d\dT/.test(marker)) bad('dist: 빌드 표식에 로컬 경로·시각 금지');
       }
       const distHtml = fs.existsSync(path.join(dist, 'index.html')) ? fs.readFileSync(path.join(dist, 'index.html'), 'utf8') : '';
-      const dataNames = files.filter((f) => f.startsWith('data/'));
+      const loaded = files.filter((f) => f.startsWith('data/') || /^fonts\/.+\.woff2$/.test(f));
       for (const base of SERVE_BASES) {
         const page = new URL(base, 'https://example.invalid');
-        const refs = [...assetRefs(distHtml).map((r) => r.value), ...anchorRefs(distHtml).filter((h) => !/^(#|https:)/.test(h)), ...dataNames];
+        const refs = [...assetRefs(distHtml).map((r) => r.value), ...anchorRefs(distHtml).filter((h) => !/^(#|https:)/.test(h)), ...loaded];
         for (const v of refs) {
           const resolved = new URL(v, page);
           if (resolved.origin !== page.origin || !resolved.pathname.startsWith(base)) bad(`dist(${base}): base 밖으로 해석되는 참조 ${v}`);
           else if (!files.includes(decodeURIComponent(resolved.pathname.slice(base.length)))) bad(`dist(${base}): 없는 자산 ${v}`);
         }
       }
-      notes.push(`dist: ${files.length}개 파일 (${files.join(', ')})`);
+      notes.push(`dist: ${files.length}개 파일`);
     }
   }
 
-  notes.unshift(`sources ${sources.length}개 · git 추적 파일 ${tracked.length}개와 대조 · 영역 ${portal.areas.length} · 주제 ${portal.topics.length} · 확장 ${portal.extensions.length} · 공개 항목 ${portal.resources.length} · 강의 ${portal.courses.length}`);
+  const open = [...items.values()].filter((i) => R.isOpen(i)).length;
+  notes.unshift(`로드맵 ${data.lines.length}개 · 단계 ${data.lines.reduce((n, l) => n + (l.stages || []).length, 0)}개 · 공개 자료 ${open}개 · 준비 중 ${items.size - open}개 · git 추적 파일 ${tracked.length}개와 대조`);
   return { problems, notes };
 }
 

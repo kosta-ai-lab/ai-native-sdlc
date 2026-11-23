@@ -22,5 +22,8 @@
 | [0001](0001-platform-claude-code.md) | 플랫폼을 Claude Code로 통일 | Accepted |
 | [0002](0002-open-core-private-start.md) | 오픈코어 + 비공개 인큐베이션으로 시작 | Accepted |
 | [0003](0003-spec-first-implementation-as-extension.md) | 명세 우선, 구현은 확장으로 | Accepted |
+| [0004](0004-public-release-preparation.md) | 전체 저장소 공개 준비와 초기 운영 기준 | 각 문서의 상태 설명 참고 |
+| [0005](0005-education-cc-by-nc.md) | 교육자료 공개 라이선스 CC BY-NC 4.0 | 각 문서의 상태 설명 참고 |
+| [0006](0006-learning-roadmap-site.md) | 사이트를 조직 소개 포털에서 학습 로드맵으로 전환 | Accepted |
 
 > 새 결정은 위 양식으로 `decisions/NNNN-제목.md`를 추가하고 이 표에 등재한다. 프로젝트 전반에 영향을 주는 결정은 보통 RFC를 거쳐 ADR로 남는다.

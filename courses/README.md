@@ -7,7 +7,8 @@
 
 | 강의 | 분량 | 강사 |
 |------|------|------|
-| [Agentic Coding using Claude Code](agentic-coding-using-claude-code/) | 4시간 × 10편 시리즈 | 박준성 |
+| [Agentic Coding using Claude Code](Agentic%20Coding%20using%20Claude%20Code/) | 4시간 × 10편 시리즈 | 박준성 |
+| [Personal AI Agent Development](Personal%20AI%20Agent%20Development/) | 10시간 | 박준성 |
 | **AI Native 개발 실무 3부작** | | 윤성열 |
 | ├ [1편 · 바이브 코딩 첫걸음](vibe-coding-with-claude-code/) | 1일 7블록 | |
 | ├ [2편 · 스펙 주도 개발 실전](spec-driven-development-practice/) | 1일 8블록 | |

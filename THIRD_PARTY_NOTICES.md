@@ -30,6 +30,15 @@
 
 원문 URL·바이트·SHA-256 manifest(비공개 감사 기록; 관리자 보관) · 형식 대조 기록(비공개 감사 기록; 관리자 보관). 공식 README·LICENSE-DOCS·본문의 확인 upstream 커밋은 `ae5c052513bff992aef8f9e4454126e5c6c524ed`이며 main 조회본과 고정 커밋 조회본의 바이트 일치를 확인했습니다. 전문 원문은 감사 evidence에만 보존하고 이 고지에 장문을 새로 인용하지 않았습니다. `../audit-fixes/`는 현 로컬 패키지의 증거 경로이지 공개 저장소에 감사 원문을 자동 포함하는 지시가 아닙니다.
 
+## 사이트 글꼴 — IBM Plex Sans KR, IBM Plex Mono (SIL Open Font License 1.1)
+
+- 작품: IBM Plex Sans KR(Regular·Medium·SemiBold·Bold), IBM Plex Mono(Regular). 저작권 표시는 원본 라이선스 파일의 `Copyright © 2017 IBM Corp. with Reserved Font Name "Plex"`를 따릅니다.
+- 원 라이선스: **SIL Open Font License 1.1**. 전문은 `site/src/fonts/OFL.txt`에 두고 사이트와 함께 배포합니다.
+- 받은 곳: google/fonts 저장소의 고정 커밋입니다. `ofl/ibmplexsanskr/`는 `88729e1588acb77b1453390d2769f5a21bb22db1`, `ofl/ibmplexmono/`는 `431022a4eeb0e1009ba0126f41353d8ca2375a2a`입니다. 파일별 SHA-256은 `site/scripts/fonts.py`에 있고, 도구가 내려받을 때 확인합니다.
+- 저장소에 있는 형태: `site/src/fonts/roadmap-sans-*.woff2`, `site/src/fonts/roadmap-mono-400.woff2`. 원본 글꼴에서 글리프 일부만 남기고 WOFF2로 바꾼 **수정본**입니다. 원본 TTF는 저장소에 두지 않습니다.
+- 이름 변경: OFL은 예약 글꼴 이름을 수정본의 이름으로 쓰지 못하게 합니다. 그래서 수정본의 글꼴 이름을 Roadmap Sans, Roadmap Mono로 바꿨습니다. 글꼴 파일 안의 저작권·라이선스 표기는 그대로 두었습니다.
+- 적용 경계: 글꼴은 프로젝트의 CC BY-NC 4.0이나 Apache 2.0이 아니라 OFL 1.1을 따릅니다. OFL은 글꼴만 따로 파는 것을 금지합니다. 이 글꼴을 쓴다고 해서 IBM이 이 프로젝트를 후원하거나 승인한 것은 아닙니다.
+
 ## 실습에서 별도로 내려받거나 복사하는 upstream
 
 아래는 원출처와 원 조건 보존 안내입니다. 설치/clone 안내가 있다는 사실만으로 KOSTA가 해당 소프트웨어 전체를 재배포한다고 단정하지 않습니다. 실제 복사 버전의 루트·하위 경로 고지를 확인합니다.

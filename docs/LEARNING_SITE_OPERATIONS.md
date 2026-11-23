@@ -1,94 +1,113 @@
-# kosta-ai-lab 공개 포털 — 운영 안내
+# kosta-ai-lab 학습 로드맵 사이트 — 운영 안내
 
-> 정본 기획: [LEARNING_SITE_PLAN.md](LEARNING_SITE_PLAN.md) · 화면 명세: [LEARNING_SITE_DESIGN.md](LEARNING_SITE_DESIGN.md)
-> 이 문서는 포털의 빌드·검사·갱신·배포 절차를 정리한다. Pages 활성화, main 병합, 첫 실서비스 배포는 검토 후 메인테이너가 따로 진행한다.
+> 기획: [LEARNING_SITE_PLAN.md](LEARNING_SITE_PLAN.md) · 화면 명세: [LEARNING_SITE_DESIGN.md](LEARNING_SITE_DESIGN.md)
+> 이 문서는 사이트의 빌드·검사·갱신·배포 절차를 정리한다.
 
 ## 1. 구성
 
 ```text
 site/
-  package.json        스크립트만 있고 의존성은 없다(Node 내장 모듈만 사용)
-  src/                index.html(승인 문구·메타·meta CSP) · story.css · layers.css · motion-core.js · layers.js · story.js · favicon.svg
-  data/portal.json    로드맵 영역·주제·확장 주제, 공개 항목(프로젝트·강의·예제) 연결
-  data/sources.json   원본 링크 manifest(path·url·status·type·evidence·verify)
-  scripts/            build · check · test · behavior(최소 DOM 동작 회귀) · serve · lib
-  dist/               빌드 산출물(.gitignore의 dist/ 규칙으로 추적하지 않음)
+  package.json         스크립트만 있고 의존성은 없다(Node 내장 모듈만 사용)
+  data/roadmap.json    로드맵·단계·자료·강사별 묶음. 사이트의 내용은 모두 여기에 있다
+  src/index.html       고정 문구, 메타데이터, meta CSP
+  src/app.css          화면 스타일
+  src/core.js          계산(단계 상태, 마친 자료 수, 저장소 주소). 화면과 시험이 함께 쓴다
+  src/app.js           화면 동작. 데이터를 읽어 DOM API로 화면을 만든다
+  src/favicon.svg      사이트 표식
+  src/fonts.css        글꼴 선언(생성 파일)
+  src/fonts/           글꼴 woff2와 OFL.txt(생성 파일)
+  fonts/               글꼴에 든 글자 목록(생성 파일, 배포하지 않음)
+  scripts/             build · check · test · serve · lib, 글꼴 도구 fonts.py
+  dist/                빌드 산출물(.gitignore의 dist/ 규칙으로 추적하지 않음)
 .github/workflows/learning-site.yml
 ```
 
-소개 문구는 `index.html`에 문서로 두고, 로드맵·자료 연결은 데이터로 관리한다. 사이트는 교재를 복사하지 않는다. 원본 링크는 모두 `https://github.com/kosta-ai-lab/ai-native-sdlc/blob|tree/main/<경로>` 형식이며 경로 조각마다 URL 인코딩을 적용한다. 그 밖에 허용하는 외부 주소는 조직 페이지 `https://github.com/kosta-ai-lab`와 저장소 Issues뿐이다.
+사이트는 교재를 복사하지 않는다. 자료 링크는 모두 `https://github.com/kosta-ai-lab/ai-native-sdlc/blob|tree/main/<경로>` 형식이며 경로 조각마다 URL 인코딩을 적용한다. 그 밖에 검사가 허용하는 외부 주소는 조직 페이지, 저장소 첫 화면, 저장소 아래 주소(Issues 등)뿐이다.
 
 ## 2. 로컬 명령
 
-`site/` 안에서 Node.js 18.17 이상으로 실행한다. 실제 검수 버전은 Node.js v22.23.1이며, 다른 지원 버전의 실행은 별도 확인이 필요하다. 설치할 패키지는 없다.
+`site/` 안에서 Node.js 18.17 이상으로 실행한다. 2026-11-23에 확인한 버전은 Node.js v24.22.0이다. 설치할 패키지는 없다.
 
 | 명령 | 하는 일 |
 |---|---|
-| `node scripts/build.mjs` | 화면 파일 7개와 `site/data/*.json`만 `site/dist`로 바이트 그대로 복사하고 `.nojekyll`과 빌드 표식 `.site-build`를 쓴다 |
+| `node scripts/build.mjs` | 화면 파일, 글꼴, `data/*.json`만 `site/dist`로 바이트 그대로 복사하고 `.nojekyll`과 빌드 표식 `.site-build`를 쓴다 |
 | `node scripts/build.mjs --out <저장소 밖 폴더>` | 빈 폴더이거나 이전 빌드 표식이 있는 폴더에만 빌드한다 |
-| `node scripts/check.mjs --dist` | 정적 검사와 산출물 검사(4절) |
-| `node scripts/test.mjs` | 데이터·검사 변조 검출·화면 동작 회귀(src·dist, 두 base)·갱신 대응·빌드 재현성·미리보기 서버 테스트 |
-| `node scripts/behavior.mjs [--dist]` | 최소 DOM·가짜 시계에서 실제 화면 스크립트를 실행하는 동작 회귀만 따로 실행 |
-| `node scripts/serve.mjs --port 0 [--base /ai-native-sdlc/ \| --base /]` | `site/dist`만 `http://127.0.0.1:<빈 포트>/ai-native-sdlc/`(기본) 또는 루트 `/`로 제공한다 |
+| `node scripts/check.mjs --dist` | 정적 검사와 산출물 검사(5절) |
+| `node scripts/test.mjs` | 계산, 검사의 변조 검출, 빌드 재현성, 미리보기 서버 시험 |
+| `node scripts/serve.mjs --port 0` | `site/dist`만 `http://127.0.0.1:<빈 포트>/ai-native-sdlc/`로 제공한다. `--base /`는 루트로, `--host <주소>`는 다른 기기에서 열 수 있게 제공한다 |
 | `npm run verify` | build → check --dist → test |
 
 **출력 경로 안전 규칙**
 - 저장소 안에서는 `site/dist`만 허용한다. 저장소 루트·상위 폴더·파일시스템 루트·홈·`site/` 자체·심볼릭 링크는 거부한다.
-- 표식 없는 비어 있지 않은 폴더는 거부한다.
-- 표식에 없는 파일이 하나라도 있으면 **아무것도 지우지 않고** 중단한다.
-- 정리할 때는 이전 표식에 적힌 파일 가운데 사이트 정적 파일 이름 형식(`*.html|css|js|json|svg`, `data/` 아래 포함)인 것만 지운다. `..`나 절대 경로가 적힌 표식 항목은 무시한다. 재귀 삭제는 하지 않는다.
+- 비어 있지 않은데 빌드 표식이 없는 폴더는 거부한다.
+- 표식에 없는 파일이 하나라도 있으면 아무것도 지우지 않고 멈춘다.
+- 정리할 때는 이전 표식에 적힌 파일 가운데 사이트 정적 파일 이름 형식인 것만 지운다. 재귀 삭제는 하지 않는다.
 
-**미리보기 서버:** 127.0.0.1에만 바인딩한다. 빌드 표식이 있는 폴더만 제공한다. 기본 base에서는 `/`를 302, `/ai-native-sdlc`를 301로 보낸다. `--base /`에서는 `/`에서 바로 index를 준다(자기 자신으로 리다이렉트하지 않음). 점 파일·상위 경로·알 수 없는 확장자는 404다. GitHub Pages와 같게 CSP 응답 헤더를 보내지 않으므로 index.html의 meta CSP가 그대로 적용된다.
+**미리보기 서버:** 기본값으로는 127.0.0.1에서만 연다. 빌드 표식이 있는 폴더만 제공한다. 점 파일·상위 경로·알 수 없는 확장자는 404다. GitHub Pages처럼 CSP 응답 헤더를 보내지 않으므로 index.html의 meta CSP가 그대로 적용된다.
 
 ## 3. 내용 갱신
 
+고칠 곳은 대부분 `data/roadmap.json` 하나다. 고친 뒤 `npm run verify`를 실행한다.
+
 | 하고 싶은 일 | 고칠 곳 |
 |---|---|
-| 소개·참여 문구 수정 | `src/index.html` (승인 문구를 바꾸면 `check.mjs`의 `APPROVED_COPY`도 함께 고친다. 상태·실행 조건 같은 필수 안내는 `REQUIRED_SCRIPT_COPY`) |
-| 강의 카드의 ‘배우는 것’ | `portal.json courses[].goal`(짧은 한 문장 요약)과 `goalEvidence`(강의 안내 ‘학습목표’ 줄 원문 그대로)를 함께 고친다. 요약에 무료·보장 같은 원문 밖 주장을 넣지 않는다 |
-| 첫 화면 추천 강의 | `courses[].pick`에 짧은 이름(예: ‘개발 경험이 있다면’)을 둔다. `goal`이 있어야 한다 |
-| 새 강의 추가 | `courses/README.md`와 루트 README에 오른 뒤, `sources.json`에 원본 항목을 추가하고 `portal.json courses[]`에 `areas`와 함께 한 항목을 추가한다. `goal`·`goalEvidence`는 강의 안내에 ‘학습목표’ 줄이 있을 때 넣는다(없으면 생략) |
-| 새 공개 자료·프로젝트 추가 | `portal.json resources[]`에 항목 하나(`areas`, `actions`)를 추가한다. 로드맵 영역 장면·영역 펼침·상세·무대의 연결이 자동으로 반영된다 |
-| 운영 서비스 추가 | 운영 여부를 실제로 확인한 뒤 `kind:"service"`로 추가한다. `status:"operating"`에는 `verified:{date,url}`가 필요하다. 새 도메인은 `scripts/check.mjs`의 `allowedExternal`과 `src/story.js`의 링크 허용 규칙 양쪽에 근거와 함께 추가하고, 링크의 보조 설명도 실제 목적지에 맞춘다. 빌드 검사뿐 아니라 브라우저에서 버튼 주소와 이동을 확인한다 |
-| 모듈 상태 변화 | 원본 README의 `상태·담당`이 바뀌면 `sources.json`의 `verify·status`와 `portal.json`의 `sourceStatus·owner`를 맞춘다. 목적이 "(작성 예정)"에서 실제 내용으로 바뀌면 `modulePending`을 `false`로 바꾼다 |
-| 주제에 자료 연결 | `sources.json`에 원본을 추가하고 주제의 `related`에 id를 넣는다. 연결 자료가 생기면 `availability`를 `available`로 바꾼다. 검사가 "연결 자료가 있는데 준비 중" 또는 그 반대를 막는다 |
-| 새 영역 | 승인된 다섯 영역 이름은 검사로 고정되어 있고, 영역 펼침 배치(`layers.js`)도 다섯 영역을 전제로 한다. 영역 체계를 바꾸려면 기획·디자인 승인 후 검사와 배치를 함께 고친다 |
+| 새 강의·가이드 추가 | `items`에 항목을 더한다(`id`, `kind`, `title`, `by`, `source`, `meta`, `summary`, `how`, `links`). 로드맵의 `stages[].items`에 id를 놓고, `people`에서 만든 사람의 묶음에 넣는다 |
+| 준비 중이던 모듈에 본문이 올라옴 | 해당 `kind: "soon"` 항목을 공개 자료 형식으로 바꾼다. README에서 "(작성 예정)"이 없어지면 검사가 알려 준다 |
+| 강의 제목 변경 | 강의의 `title`(또는 `original`)은 강의 README의 첫 제목과 같아야 한다. 화면에 다른 제목을 쓰려면 `title`에 쓰고 README 제목을 `original`에 둔다 |
+| 단계 추가·순서 변경 | 로드맵의 `stages`를 고친다. 노선도는 11칸이다. 마지막 단계가 11칸을 벗어나면(`col` + 단계 수 − 1이 11보다 크면) 검사가 막는다 |
+| 고정 문구 수정 | `src/index.html`(제목, 설명, 이용 방법, 소개, 하단) 또는 `src/app.js`(버튼과 안내 문구) |
+| 로드맵 추가 | 화면이 세 로드맵과 환승 표시 하나를 전제로 한다. 기획과 화면 명세를 고친 뒤 `app.css`·`app.js`·검사를 함께 바꾼다 |
 
-선후관계·고정 학습 순서는 데이터에 넣지 않는다(검사가 `prerequisites`, `order` 등의 필드를 막는다). 근거 자료로 정해지면 기획 승인을 거쳐 추가한다.
+지켜야 할 것:
 
-## 4. 정적 검사 범위 (`check.mjs`)
+- **상태는 원문을 따른다.** 준비 중 표시는 README에 "(작성 예정)"이 있는 모듈에만 쓴다. 담당은 README의 표기를 따른다('협의'는 '협의 중'으로 적는다).
+- **만든 사람에는 근거가 있어야 한다.** `by`가 자료의 안내 문서나 `courses/README.md`에 나와야 한다. 문서에 이름이 없고 커밋 기록으로만 확인한 자료는 `byEvidence: "git-history"`로 표시한다.
+- **약속하지 않는다.** 무료, 보장 같은 표현은 원문에 있어도 요약에 옮기지 않는다.
+- **한국어 문장은 배포 전에 모두 검사한다.** 화면에 나오는 글은 `index.html`, `app.js`의 문구, `roadmap.json`의 글 항목이다.
 
-- **sources:** 필수 필드, id 중복, `git ls-files` 존재, 경로로 계산한 URL과의 일치, `verify` 문자열이 원문에 있는지
-- **영역:** 승인된 다섯 이름, 이전 `#stage/01`~`10`이 모두 한 영역에 연결되는지, 선후관계 필드 금지
-- **주제·확장:**
-  - 영역 참조, 원문 상태·담당 반영
-  - `modulePending`이 원문의 "(작성 예정)" 여부와 일치하는지
-  - `availability`가 실제 연결 자료(git 추적 `related`) 또는 목적이 작성된 모듈 문서의 유무와 일치하는지. 빈 README만으로는 "공개 자료 있음"이 될 수 없다
-- **공개 항목:**
-  - 상태 값, 근거 없는 "운영 중" 금지, 외부 주소 허용 목록, 사이트 안 이동 대상 존재
-  - 예제가 요구사항→명세→인수조건→테스트→구현 순서인지
-- **강의:** 개수 상한 없이 각 항목의 README 강의 목록 제목과 강의 README 원제목 일치, 교재 PDF, 강사 근거, `_sample-course` 제외. `goalEvidence`가 강의 안내 ‘학습목표’ 줄에 그대로 있는지, `goal` 60자 이내·보장/비용 표현 금지, `pick`은 `goal`과 함께. 추가 강의가 검사를 통과하고 중복 id는 거부되는 회귀 시험을 포함한다.
-- **화면 문구:**
-  - 승인된 첫 방문 UX 문구(제목·주/보조 행동·두 상태 라벨·GitHub 이동 예고·문서/코드 읽기 예제 안내·로그인 필요·이용조건)·메뉴·하단 링크 보존
-  - 화면 스크립트의 필수 안내(Node.js·pnpm 실행 조건, ‘연결 자료’·‘모듈 원문 상태’ 라벨, 상태 오해 방지 한 줄)
-  - 홈 화면(index.html)의 내부 용어(시안·초안·검수·감사·미확정·TODO·preview) 금지
-  - 배포 원본 전체(src·data)의 검토용 흔적(통합 시안·시안 비교·designs-v2 등)과 개인·내부 경로 금지
-- **메타데이터·CSP:** 승인 title·description과 같은 og 값, favicon, canonical·og:url·og:image·noindex·CNAME 없음. meta CSP 1개가 link/script보다 먼저 있고 정책이 정확히 일치, meta에서 무시되는 지시어(frame-ancestors 등) 없음, inline script·이벤트 속성·위험 DOM API 없음, 스크립트 순서, 스크립트가 쓰는 id 존재
-  - 과장·추적 표현과 저장 API 금지
-- **자산:** 상대 경로(스킴·`/`·`..` 금지), 데이터 경로 `new URL('data/' + name, document.baseURI)`, 원격 폰트·CDN 금지
-- **워크플로:** 권한 범위, main 전용 배포 조건, configure/deploy는 deploy job에만, needs·page_url, build job의 build·check·test, action major(5절)
-- **`--dist`:** 허용 목록과의 정확한 일치, 소스와 바이트 동일(재현성), 원본 교재·스크립트·CNAME 미포함, 빌드 표식에 로컬 경로 없음, `/ai-native-sdlc/`와 `/` 양쪽 해석
+## 4. 글꼴 다시 만들기
 
-## 5. GitHub Actions 워크플로
+화면 글꼴은 IBM Plex Sans KR과 IBM Plex Mono의 부분집합이다(SIL OFL 1.1). Sans KR은 두 묶음으로 나눈다.
+
+- **기본 묶음(core):** 글꼴을 만든 시점에 화면에 쓰던 글자. 그 뒤로 새 글자를 쓰지 않았다면 방문자는 이 묶음만 받는다.
+- **추가 묶음(rest):** 한글 완성형 2,350자 가운데 나머지. 내용이 바뀌어 새 글자가 생기면 브라우저가 알아서 받는다.
+
+그래서 내용을 고칠 때마다 글꼴을 다시 만들 필요는 없다. 새 글자가 많이 쌓이면 다시 만들어 기본 묶음에 넣는다. 다만 두 묶음 어디에도 없는 글자(새 기호, 2,350자 밖의 한글)를 쓰면 검사가 실패하므로 그때는 다시 만든다. 저장소 루트에서 실행한다.
+
+```bash
+uv run --with fonttools --with brotli python site/scripts/fonts.py
+```
+
+도구는 고정한 커밋의 원본 글꼴을 받아 SHA-256을 확인한다. OFL의 예약 글꼴 이름(Plex) 조건에 따라 글꼴 이름을 Roadmap Sans, Roadmap Mono로 바꾼다. 출처와 조건은 [제3자 자료 고지](../THIRD_PARTY_NOTICES.md)에 있다. 빌드·검사·시험은 이 도구 없이 동작한다.
+
+## 5. 정적 검사 범위 (`check.mjs`)
+
+- **데이터 구조:** 필수 항목, id 형식과 중복, 종류, 링크의 `file`/`dir` 구분
+- **배치와 참조:** 단계마다 자료가 하나 이상 있는지, 단계의 자료가 실제 항목인지, 놓이지 않은 자료가 없는지, 노선도 11칸, 로드맵마다 다른 도형, 다음 로드맵, 환승 표시의 전제(첫 로드맵 2단계와 둘째 로드맵 1단계가 같은 칸·같은 자료)
+- **강사별 자료:** 공개 자료가 만든 사람 아래에 한 번씩 나오는지
+- **원본 대조:**
+  - 링크 경로가 `git ls-files`에 있는지
+  - 준비 중 모듈의 README에 "(작성 예정)"이 있고 담당이 같은지
+  - 공개 자료의 안내 문서에 "(작성 예정)"이 없는지
+  - 만든 사람의 근거가 있는지, 강의 제목이 README 제목과 같은지
+- **화면 글:** `index.html`과 `roadmap.json`에 제작 단계 용어(시안·초안 등)와 근거 없이 약속하는 표현이 없는지, 모든 원본에 개인·내부 주소가 없는지. `app.js`의 문구는 사람이 검사한다
+- **메타데이터·CSP:** title·description과 같은 og 값, favicon, canonical·og:url·og:image·noindex·CNAME 없음. meta CSP 1개가 link/script보다 먼저 있고 정책이 정확히 일치하는지
+- **화면 원본:** inline script·inline style·이벤트 속성·iframe·form 없음, 스크립트 순서, 스크립트가 쓰는 id, `noscript` 안내, 상대 경로, 외부 링크 허용 목록과 링크 경로의 git 추적 여부, 외부 글꼴·CDN 없음
+- **화면 스크립트:** 문자열을 HTML로 넣는 API 없음, 추적·외부 전송 API 없음, 데이터는 문서 기준 상대 경로로 한 번만 읽기, `localStorage`는 마친 자료 표시 한 항목만
+- **글꼴:** 선언한 파일이 있는지, 선언에 없는 woff2가 없는지, `OFL.txt`가 있는지, 화면 글자가 글꼴 두 묶음 안에 있는지
+- **워크플로:** 권한 범위, main 전용 배포 조건, configure/deploy는 deploy job에만, `github-pages` environment와 `needs: build`, build job의 build·check·test, action major(6절)
+- **`--dist`:** 허용 목록과의 정확한 일치, 원본과 바이트 동일(재현성), 원본 교재·스크립트·CNAME 미포함, 빌드 표식에 로컬 경로 없음, `/ai-native-sdlc/`와 `/` 양쪽 해석
+
+## 6. GitHub Actions 워크플로
 
 파일: `.github/workflows/learning-site.yml`
 
 | 이벤트 | build job | Pages artifact | deploy job |
 |---|---|---|---|
 | `pull_request` (site/ 또는 워크플로 변경) | build · check --dist · test | 만들지 않음 | 실행하지 않음 |
-| `push` to `main` (같은 경로) | 실행 | `site/dist` 업로드 | 실행 |
-| `workflow_dispatch` on `main` | 실행 | 업로드 | 실행 |
-| `workflow_dispatch` on 다른 브랜치 | 실행 | 만들지 않음 | 실행하지 않음 |
+| `main`에 `push` (같은 경로) | 실행 | `site/dist` 업로드 | 실행 |
+| `main`에서 `workflow_dispatch` | 실행 | 업로드 | 실행 |
+| 다른 브랜치에서 `workflow_dispatch` | 실행 | 만들지 않음 | 실행하지 않음 |
 
 - 권한: 최상위 `contents: read`. `pages: write`·`id-token: write`는 deploy job에만 있다.
 - 배포 조건: `github.event_name != 'pull_request' && github.ref == 'refs/heads/main' && github.repository == 'kosta-ai-lab/ai-native-sdlc'`.
@@ -97,31 +116,25 @@ site/
 
 ### Action 버전 근거 (2026-11-11 확인)
 
-[GitHub Docs — Using custom workflows with GitHub Pages](https://docs.github.com/en/pages/getting-started-with-github-pages/using-custom-workflows-with-github-pages) 예시를 따른다: `actions/checkout@v6` · `actions/configure-pages@v5` · `actions/upload-pages-artifact@v4` · `actions/deploy-pages@v4`, deploy job의 `needs: build`, `github-pages` environment와 `page_url`, job 권한 `pages: write`·`id-token: write`. starter의 `path: '.'` 대신 `site/dist`로 한정했다. 버전을 올릴 때는 공식 문서·릴리스 노트를 확인하고 `site/scripts/check.mjs`의 `ACTION_MAJORS`도 함께 바꾼다. Actions 방식 배포에는 Jekyll이 돌지 않으므로 `.nojekyll`이 artifact에서 빠져도 동작한다.
+[GitHub Docs — Using custom workflows with GitHub Pages](https://docs.github.com/en/pages/getting-started-with-github-pages/using-custom-workflows-with-github-pages) 예시를 따른다: `actions/checkout@v6` · `actions/configure-pages@v5` · `actions/upload-pages-artifact@v4` · `actions/deploy-pages@v4`. 버전을 올릴 때는 공식 문서·릴리스 노트를 확인하고 `site/scripts/check.mjs`의 `ACTION_MAJORS`도 함께 바꾼다.
 
-## 6. 첫 배포 절차 (검토 승인 후, 메인테이너가 수행)
+## 7. 배포 절차
 
 1. PR에서 `Learning site / Build and check (site only)` 통과를 확인한다.
-2. Settings → Pages → Source를 **GitHub Actions**로 바꾼다. 2026-11-10 조회에서 Pages는 404였다.
-3. Settings → Environments → `github-pages` 배포 브랜치가 `main`만 허용하는지 확인한다.
-4. main에 병합한다. 경로 조건에 걸리지 않으면 `Learning site`를 main에서 수동 실행한다.
-5. 배포 주소(예상 `https://kosta-ai-lab.github.io/ai-native-sdlc/`, 실제 주소는 배포 후 확인)에서 확인한다: 스크롤 스토리, 영역 펼침→상세→닫기 복귀, Escape·뒤로·Tab, `#area-spec`·`#stage/04`·`#path/todo` 새로고침, 강의·예제 원본 링크, 동작 줄이기, 모바일 폭, 콘솔의 CSP 위반 없음.
-6. 문제가 있으면 직전 성공 실행을 재실행하거나 되돌리는 PR을 올린다.
+2. main에 병합한다. `site/`가 바뀌었으면 배포가 자동으로 실행된다. 바뀐 파일이 경로 조건(`site/**`, 워크플로 파일)에 해당하지 않으면 `Learning site`를 main에서 수동 실행한다.
+3. 공개 주소 https://kosta-ai-lab.github.io/ai-native-sdlc/ 에서 확인한다: 노선도, 로드맵 바꾸기, 자료 고르기와 원본 링크, 마친 자료 표시, `#dev/sddc` 주소로 새로 고침, 좁은 화면, 콘솔의 CSP 위반 없음.
+4. 문제가 있으면 직전 성공 실행을 재실행하거나 되돌리는 PR을 올린다.
 
-## 7. 편집·운영 메모 (공개 화면에 싣지 않음)
+## 8. 편집 메모 (공개 화면에 싣지 않음)
 
-- 조직 표기는 GitHub 식별자 `kosta-ai-lab`을 쓴다. 소개 문구의 활동 근거는 저장소 README이며, 기관의 공식 소개문으로 확정된 것은 아니다. 권한·보증을 확대해 쓰지 않는다.
-- **운영 서비스:** 별도로 연결할 운영 서비스의 이름과 URL은 확인되지 않았다. 그래서 공개 목록에는 프로젝트·강의·코드 예제만 두었고, 운영 중으로 표시한 항목은 없다. 할 일 예제는 웹 앱 실행 서비스가 아니다(README 설명 유지).
-- **원본의 기존 링크 문제(원본은 수정하지 않음):**
-  - `courses/README.md` 표가 Agentic 강의를 존재하지 않는 `agentic-coding-using-claude-code/`로 연결한다. 실제 폴더는 `Agentic Coding using Claude Code/`이다.
-  - `modules/04-sdd/M03-spec-kit/README.md`가 언급하는 `GUIDE-windows.md`·`GUIDE-codex.md`는 없다. 실제 파일은 `GUIDE-claude-*`, `GUIDE-codex-*`이다.
-- **영역 배치:** 영역에 주제를 둔 배치는 README의 "무엇을 배울 수 있나요?" 분류를 따른 사이트 편집이며, 선후관계를 뜻하지 않는다. 모듈 06은 성격에 따라 두 주제로 나눴다: 작업 규칙·자동화는 'AI와 구현', 테스트 먼저 구현하기는 '테스트·검증'. 임베디드는 원문 목적이 작성 전이라, 이름("환경 구축")을 근거로 'AI와 구현'에 임시로 연결했다.
-- **강의 표기:** 강의 제목은 루트 README 강의 목록의 표기를 쓰고, 강의 README의 원제목을 함께 보인다. Agentic 강의의 강사(박준성)는 강의 목록 표기이고, 분량은 강의 README의 "4시간"이다(목록 표기는 "4시간 × 10편 시리즈").
-
-## 8. 이번 작업에서 하지 않은 것
-
-- 원격 commit·push·PR 수정, Pages 설정, 배포, 워크플로 원격 실행
-- 실제 브라우저 렌더링과 한국어 교정(관제 검수자가 수행). 첫 방문 UX 수정의 문구 전체 목록은 검토용으로 따로 넘겼다
-- 첫 방문 UX 수정의 사용자 시험(개발 경험자·비개발자 실제 과제 관찰)
-- origin/main의 새 커밋(강의 PDF·새 모듈 등) 병합과 그 자료의 sources/portal 반영. 새 자료는 담당·상태 확인 후 사람이 추가한다
-- 원본 README·LICENSE·CONTRIBUTING·modules·courses·samples 수정
+- 조직 표기는 GitHub 식별자 `kosta-ai-lab`을 쓴다. 소개 문구의 근거는 저장소 README이며, 기관의 공식 소개문으로 확정된 것은 아니다.
+- **사이트가 편집한 순서:** '처음 시작하기'의 강의 순서와 '에이전트 하니스'의 단계 묶음은 원문에 근거가 없는 사이트의 편집이다. 담당 강사가 순서를 정하면 그에 맞춘다. 'AI-Native 개발 전주기'는 방법론의 순서를 따르되, 객체설계(07)를 설계 강의와 함께 '설계' 단계에 두어 인수조건(05)과 구현(06)보다 앞에 놓았다.
+- **담당 표기:** 사람 이름은 각 README의 표기를 따른다. 그래서 같은 사람이 '박준성'과 '박준성 회장', '최성웅'과 '최성웅 교수'로 다르게 나온다. README의 '협의'만 '협의 중'으로 적는다.
+- **이용 순서:** `SAMPLE.md`의 성격이 가이드마다 다르다(완성한 앱 확인, 이어지는 과제, 예제 앱 안내, 명령 요약 등). 그래서 이용 순서와 링크 이름을 자료마다 원문을 보고 썼다. 가이드를 더할 때도 `SAMPLE.md`를 열어 보고 쓴다.
+- **자료 제목:** 강의 제목은 강의 README의 제목을 쓴다. README 제목이 영어인 강의 둘은 한국어 제목을 쓰고 원제를 함께 보여 준다. 가이드 제목은 README의 목적을 줄인 편집이다.
+- **만든 사람:** Personal AI Agent Development 강의와 할 일 생성 예제는 안내 문서에 이름이 없어 커밋 기록의 작성자로 확인했다. 강의는 `courses/README.md`의 강의 표에 강사를 올렸고, 예제는 `byEvidence: "git-history"`로 표시했다.
+- **원본에 남아 있는 문제(원본은 수정하지 않음):**
+  - `modules/04-sdd/M03-spec-kit`의 README, SAMPLE, GUIDE가 가리키는 `GUIDE.md`·`GUIDE-windows.md`·`GUIDE-codex.md`는 없다. 실제 파일은 `GUIDE-claude-mac.md`, `GUIDE-claude-windows.md`, `GUIDE-codex-mac.md`, `GUIDE-codex-windows.md`이고 사이트는 실제 파일로 연결한다.
+  - 하니스 M11, M13, M15의 `SAMPLE.md`는 머리글만 있는 빈 양식이다. 사이트는 이 세 파일을 연결하지 않는다.
+  - 하니스 M07 README는 `SAMPLE.md`가 있다고 표시하지만 파일이 없다. M01 README에는 작성 중 메모("논의 사항")가 남아 있다.
+- **공개 전 표기:** GETTING_STARTED, BACKLOG, GOVERNANCE, CONTRIBUTING, PR 양식의 머리말에는 저장소가 비공개였던 때의 안내가 남아 있다. 이번 변경에서는 고치지 않았다.
