@@ -48,7 +48,7 @@ Claude Code는 세션을 시작할 때 작업 폴더의 `CLAUDE.md`를 읽어 �
 | 과제 | 같은 요청을 규칙 없이 한 번, 규칙을 넣고 한 번 실행해 차이를 기록한다 |
 
 > 검증 환경(2026-11-24): macOS, Node.js v24.22.0, pnpm 12.21.0, Vitest 3.2.6, TypeScript 5.9.3, Claude Code 2.1.330(모델 Sonnet 5.5).
-> 위 표의 실행은 Claude Code 비대화형 실행(`claude -p`)으로 했고, 사용자 전역 설정은 빼고 프로젝트 설정만 읽게 했다(`--setting-sources project,local`). 도구 호출 순서는 실행 기록(`--output-format stream-json`)에서 확인했다. 예상 출력은 핵심 줄만 옮겼다.
+> 위 표의 실행은 Claude Code 비대화형 실행(`claude -p`)으로 했고, 설정 파일은 프로젝트 것만 읽게 했다(`--setting-sources project,local`). 이 옵션으로는 사용자 전역 지침 파일(`~/.claude/CLAUDE.md`)이 빠지지 않아서, 규칙이 없는 조건과 있는 조건 모두 실행 장비의 전역 지침 파일을 함께 읽었다. 그 파일에는 장비 환경 안내만 있고 TDD나 테스트에 관한 규칙은 없다. 도구 호출 순서는 실행 기록(`--output-format stream-json`)에서 확인했다. 예상 출력은 핵심 줄만 옮겼다.
 
 **출처와 재사용 범위:** 이 단원의 출발점 코드, 규칙 조각, 프롬프트, 관찰 기록은 이 저장소에서 새로 만들었다. 개념 설명은 문서 끝의 참고 자료를 요약한 것이다.
 
