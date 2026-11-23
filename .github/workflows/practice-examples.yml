@@ -1,7 +1,8 @@
 # 실습 예제 검사: 모듈 08 단원 M01의 예제(todo-app)가 테스트와 타입 검사를 통과하는지 확인한다.
 #
-# - 단원의 완성본(modules/08-ci/M01-test-gate/harness/.github/workflows/test.yml)과 단계가 같다.
-#   다른 점은 예제 폴더에서 실행하는 것(working-directory)과 그 폴더가 바뀔 때만 도는 것(paths)이다.
+# - 단원의 완성본(modules/08-ci/M01-test-gate/harness/.github/workflows/test.yml)과 설치·테스트·타입 검사 단계가 같다.
+#   다른 점: 예제 폴더에서 실행한다(working-directory). 예제 폴더나 이 파일이 바뀔 때만 돈다(paths).
+#   같은 PR의 앞선 실행을 취소한다(concurrency). Checkout에 persist-credentials: false를 준다. 이름이 다르다.
 # - 이 워크플로의 실행 결과가 단원 M01의 검증 기록이다.
 
 name: Practice examples
