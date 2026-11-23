@@ -8,7 +8,7 @@ AI가 코드를 작성해 주더라도 무엇을 만들지 정하고, 설계를 
 
 KOSTA AI 에이전트 코딩 전문가 워크숍에서 출발했으며, 강사와 개발자가 자료·사례·실습을 함께 보완합니다. Claude Code 중심의 예제를 포함하고, 특정 도구의 사용법뿐 아니라 다른 환경에도 적용할 수 있는 개발 원칙을 탐구합니다.
 
-[시작 가이드](docs/GETTING_STARTED.md) · [강의자료](courses/README.md) · [방법론](METHODOLOGY.md) · [기여하기](CONTRIBUTING.md)
+[학습 로드맵](https://kosta-ai-lab.github.io/ai-native-sdlc/) · [시작 가이드](docs/GETTING_STARTED.md) · [강의자료](courses/README.md) · [방법론](METHODOLOGY.md) · [기여하기](CONTRIBUTING.md)
 
 ## 무엇을 배울 수 있나요?
 
@@ -20,6 +20,7 @@ KOSTA AI 에이전트 코딩 전문가 워크숍에서 출발했으며, 강사�
 
 ## 어디서 시작하면 좋을까요?
 
+- **배울 순서를 한눈에 보려면:** [학습 로드맵](https://kosta-ai-lab.github.io/ai-native-sdlc/)에서 경험에 맞는 로드맵을 고르세요.
 - **전체 흐름부터 이해하려면:** [방법론](METHODOLOGY.md)과 [시작 가이드](docs/GETTING_STARTED.md)를 읽어 보세요.
 - **작은 코드로 확인하려면:** [할 일 생성 예제](samples/web-task-system/README.md)에서 요구사항 → 명세 → 인수조건 → 테스트의 연결을 따라가세요.
 - **강의를 따라 실습하려면:** 아래 과정에서 관심 있는 주제를 선택하세요.
@@ -31,6 +32,7 @@ KOSTA AI 에이전트 코딩 전문가 워크숍에서 출발했으며, 강사�
 - [명세 기반 개발 실습](courses/spec-driven-development-practice/README.md) — OpenSpec·Spec Kit 예제
 - [Spec Kit을 활용한 소프트웨어 설계](courses/software-design-with-spec-kit/README.md)
 - [Claude Code Cloud 앱 개발](courses/Agentic%20Coding%20using%20Claude%20Code/README.md) — 골프 스코어카드 앱 만들기
+- [Personal AI Agent Development](courses/Personal%20AI%20Agent%20Development/README.md) — Claude 앱과 Claude Code로 개인 AI 에이전트 만들기
 
 과정별 설명과 교재·실습 파일은 각 폴더에서 확인할 수 있습니다. 도구 계정·설치 환경·이용 비용은 과정마다 다르므로 해당 안내를 먼저 읽어 주세요.
 
@@ -68,6 +70,7 @@ references/methods/   관련 방법론과 참고자료
 rfcs/                 큰 변경에 대한 제안
 decisions/            설계·운영 결정 기록
 docs/                 시작 안내와 상세 정책
+site/                 학습 로드맵 사이트 (GitHub Pages)
 ```
 
 개발 단계별 자료는 [모듈 폴더](modules/)에서, 앞으로 보완할 주제는 [백로그](BACKLOG.md)에서 확인하세요.

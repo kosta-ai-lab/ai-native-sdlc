@@ -1,6 +1,7 @@
 #!/usr/bin/env node
-// 로컬 미리보기 서버 (Apache-2.0). 빌드 산출물만 127.0.0.1에서 /ai-native-sdlc/ 하위 경로(기본) 또는 루트(/)로 제공한다.
-// 사용: node scripts/serve.mjs [--port 0] [--dir site/dist] [--base /ai-native-sdlc/ | --base /]
+// 로컬 미리보기 서버 (Apache-2.0). 빌드 산출물만 /ai-native-sdlc/ 하위 경로(기본) 또는 루트(/)로 제공한다.
+// 사용: node scripts/serve.mjs [--port 0] [--dir site/dist] [--base /ai-native-sdlc/ | --base /] [--host 127.0.0.1]
+//   기본은 이 컴퓨터(127.0.0.1)에서만 열린다. 다른 기기에서 보려면 --host에 이 컴퓨터의 주소를 준다.
 //   port 0 = 비어 있는 포트 자동 선택. --base 기본값은 Pages 프로젝트 하위 경로(/ai-native-sdlc/), / 는 루트(사용자 도메인 가정).
 //   GitHub Pages는 HTTP 응답 헤더를 정할 수 없으므로 이 서버도 CSP 헤더를 보내지 않는다(index.html의 meta CSP로 확인).
 import fs from 'node:fs';
@@ -13,7 +14,9 @@ const TYPES = {
   '.css': 'text/css; charset=utf-8',
   '.js': 'text/javascript; charset=utf-8',
   '.json': 'application/json; charset=utf-8',
-  '.svg': 'image/svg+xml'
+  '.svg': 'image/svg+xml',
+  '.woff2': 'font/woff2',
+  '.txt': 'text/plain; charset=utf-8'
 };
 
 /** --base 값을 '/' 또는 '/이름/…/' 형식으로 정규화한다. */
@@ -75,6 +78,8 @@ if (isMain(import.meta.url)) {
   const get = (name, fallback) => { const i = args.indexOf(name); return i >= 0 ? args[i + 1] : fallback; };
   const port = Number(get('--port', '0'));
   const dir = path.resolve(get('--dir', DEFAULT_OUT));
+  const host = get('--host', '127.0.0.1');
+  if (!/^[A-Za-z0-9.:-]+$/.test(host)) { console.error('serve: --host 값이 올바르지 않습니다'); process.exit(2); }
   let base;
   try { base = normalizeBase(get('--base', BASE_PATH)); } catch (err) { console.error(`serve: ${err.message}`); process.exit(2); }
   if (!Number.isInteger(port) || port < 0 || port > 65535) {
@@ -83,9 +88,9 @@ if (isMain(import.meta.url)) {
   }
   let server;
   try { server = createSiteServer({ root: dir, base }); } catch (err) { console.error(`serve: ${err.message}`); process.exit(1); }
-  server.listen(port, '127.0.0.1', () => {
+  server.listen(port, host, () => {
     const { port: actual } = server.address();
     console.log(`serve: ${dir}`);
-    console.log(`serve: http://127.0.0.1:${actual}${base}  (Ctrl+C로 종료)`);
+    console.log(`serve: http://${host.includes(':') ? `[${host}]` : host}:${actual}${base}  (Ctrl+C로 종료)`);
   });
 }

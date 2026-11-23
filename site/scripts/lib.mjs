@@ -1,4 +1,4 @@
-// kosta-ai-lab 포털 사이트 스크립트 공통 모듈 (Apache-2.0). Node 내장 모듈만 사용한다.
+// kosta-ai-lab 학습 로드맵 사이트 스크립트 공통 모듈 (Apache-2.0). Node 내장 모듈만 사용한다.
 // 원본: site/src(화면) + site/data(데이터) → 산출물: site/dist(Pages 배포 대상, 하위 경로·루트 모두 상대 경로로 동작).
 import fs from 'node:fs';
 import os from 'node:os';
@@ -17,8 +17,14 @@ export const REPO_URL = 'https://github.com/kosta-ai-lab/ai-native-sdlc';
 export const ORG_URL = 'https://github.com/kosta-ai-lab';
 export const MARKER = '.site-build';
 
-// 배포 화면 파일. 스크립트 실행 순서는 index.html이 정한다(motion-core → layers → story).
-export const SRC_FILES = ['index.html', 'story.css', 'layers.css', 'motion-core.js', 'layers.js', 'story.js', 'favicon.svg'];
+// 배포 화면 파일. 스크립트 실행 순서는 index.html이 정한다(core → app).
+export const SRC_FILES = ['index.html', 'app.css', 'fonts.css', 'core.js', 'app.js', 'favicon.svg'];
+// 글꼴은 site/src/fonts의 woff2와 라이선스 전문(OFL.txt)만 복사한다. 만드는 법은 scripts/fonts.py에 있다.
+const FONT_NAME = /^[a-z0-9][a-z0-9-]*\.woff2$|^OFL\.txt$/;
+export function fontFiles(siteDir = SITE_DIR) {
+  const dir = path.join(siteDir, 'src', 'fonts');
+  return fs.existsSync(dir) ? fs.readdirSync(dir).filter((n) => FONT_NAME.test(n)).sort() : [];
+}
 // 데이터는 site/data의 *.json 전체를 그대로 복사한다(파일 추가를 고정 목록으로 막지 않는다).
 const DATA_NAME = /^[a-z0-9][a-z0-9_-]*\.json$/;
 export function dataFiles(siteDir = SITE_DIR) {
@@ -28,6 +34,7 @@ export function dataFiles(siteDir = SITE_DIR) {
 export function copyPlan(siteDir = SITE_DIR) {
   return [
     ...SRC_FILES.map((n) => ({ from: 'src/' + n, to: n })),
+    ...fontFiles(siteDir).map((n) => ({ from: 'src/fonts/' + n, to: 'fonts/' + n })),
     ...dataFiles(siteDir).map((n) => ({ from: 'data/' + n, to: 'data/' + n }))
   ];
 }
@@ -100,7 +107,7 @@ export function resolveOutDir(arg, { siteDir = SITE_DIR, repoRoot = REPO_ROOT, c
 }
 
 // 이전 빌드가 만들었다고 인정할 수 있는 파일 이름 형식(사이트 정적 파일과 빌드 표식만).
-const BUILT_NAME = /^(?:data\/)?[A-Za-z0-9_-][A-Za-z0-9_.-]*\.(?:html|css|js|json|svg)$|^\.(?:nojekyll|site-build)$/;
+const BUILT_NAME = /^(?:(?:data|fonts)\/)?[A-Za-z0-9_-][A-Za-z0-9_.-]*\.(?:html|css|js|json|svg|woff2|txt)$|^\.(?:nojekyll|site-build)$/;
 
 /** 이전 빌드 표식에 적힌 파일 가운데 안전한 이름 형식인 것만 돌려준다. */
 export function previousBuildFiles(outDir) {
@@ -118,8 +125,10 @@ export function cleanPreviousBuild(outDir) {
     const target = path.join(outDir, rel);
     if (fs.existsSync(target) && fs.lstatSync(target).isFile()) { fs.unlinkSync(target); removed.push(rel); }
   }
-  const dataDir = path.join(outDir, 'data');
-  if (fs.existsSync(dataDir) && fs.readdirSync(dataDir).length === 0) fs.rmdirSync(dataDir);
+  for (const sub of ['data', 'fonts']) {
+    const dir = path.join(outDir, sub);
+    if (fs.existsSync(dir) && fs.readdirSync(dir).length === 0) fs.rmdirSync(dir);
+  }
   return removed;
 }
 
@@ -146,7 +155,7 @@ export function build(outArg, opts = {}) {
   }
   fs.writeFileSync(path.join(outDir, '.nojekyll'), '');
   const files = allow.slice();
-  fs.writeFileSync(path.join(outDir, MARKER), JSON.stringify({ tool: 'kosta-ai-lab portal build', files }, null, 2) + '\n');
+  fs.writeFileSync(path.join(outDir, MARKER), JSON.stringify({ tool: 'kosta-ai-lab roadmap build', files }, null, 2) + '\n');
   return { outDir, files };
 }
 

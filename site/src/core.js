@@ -1,0 +1,67 @@
+// kosta-ai-lab 학습 로드맵: 화면(app.js)과 시험(scripts/test.mjs)이 함께 쓰는 계산 (Apache-2.0)
+// DOM을 쓰지 않는다. 브라우저에서는 일반 스크립트로, Node에서는 import로 불러 globalThis.KostaRoadmap을 쓴다.
+(function (root) {
+  'use strict';
+
+  /** 본문이 올라온 자료인지. 준비 중(kind: soon)이면 false. */
+  function isOpen(item) { return !!item && item.kind !== 'soon'; }
+
+  function index(data) {
+    return {
+      items: new Map(data.items.map(function (i) { return [i.id, i]; })),
+      lines: new Map(data.lines.map(function (l) { return [l.id, l]; }))
+    };
+  }
+
+  /** 로드맵에 놓인 자료 id를 단계 순서대로, 겹치지 않게. */
+  function idsOf(line) {
+    var out = [];
+    line.stages.forEach(function (s) { s.items.forEach(function (id) { if (out.indexOf(id) < 0) out.push(id); }); });
+    return out;
+  }
+  function openIds(line, items) { return idsOf(line).filter(function (id) { return isOpen(items.get(id)); }); }
+
+  /** 단계 상태: 자료가 없으면 soon, 공개 자료를 모두 마쳤으면 done, 그 밖에는 open. */
+  function stageState(stage, items, done) {
+    var open = stage.items.filter(function (id) { return isOpen(items.get(id)); });
+    if (!open.length) return 'soon';
+    return open.every(function (id) { return done.has(id); }) ? 'done' : 'open';
+  }
+  function stageIndex(line, id) { return line.stages.findIndex(function (s) { return s.items.indexOf(id) >= 0; }); }
+  /** 단계를 눌렀을 때 먼저 보여 줄 자료: 공개 자료가 있으면 그 첫 번째. */
+  function stageEntry(stage, items) {
+    return stage.items.find(function (id) { return isOpen(items.get(id)); }) || stage.items[0];
+  }
+  function firstItem(line, items) { return openIds(line, items)[0] || idsOf(line)[0]; }
+  function lineOfItem(data, id) { return data.lines.find(function (l) { return idsOf(l).indexOf(id) >= 0; }); }
+  function shortTitle(stage) { return stage.short || stage.title; }
+
+  function progress(line, items, done) {
+    var open = openIds(line, items);
+    return { total: open.length, done: open.filter(function (id) { return done.has(id); }).length };
+  }
+  function counts(line, items) {
+    var all = idsOf(line), open = openIds(line, items);
+    return { stages: line.stages.length, open: open.length, soon: all.length - open.length };
+  }
+
+  /** 저장소 경로를 GitHub 주소로. 폴더는 tree, 파일은 blob. 경로 조각마다 인코딩한다. */
+  function repoUrl(data, link) {
+    var enc = link.path.split('/').map(encodeURIComponent).join('/');
+    return 'https://github.com/' + data.repository + '/' + (link.kind === 'dir' ? 'tree' : 'blob') + '/' + data.ref + '/' + enc;
+  }
+
+  /** 주소의 #로드맵/자료 부분을 읽는다. 없는 로드맵이면 빈 객체, 그 로드맵에 없는 자료면 로드맵만. */
+  function parseHash(hash, data) {
+    var parts = String(hash || '').replace(/^#/, '').split('/');
+    var line = data.lines.find(function (l) { return l.id === parts[0]; });
+    if (!line) return {};
+    return { line: line.id, item: idsOf(line).indexOf(parts[1]) >= 0 ? parts[1] : undefined };
+  }
+
+  root.KostaRoadmap = {
+    isOpen: isOpen, index: index, idsOf: idsOf, openIds: openIds, stageState: stageState, stageIndex: stageIndex,
+    stageEntry: stageEntry, firstItem: firstItem, lineOfItem: lineOfItem, shortTitle: shortTitle,
+    progress: progress, counts: counts, repoUrl: repoUrl, parseHash: parseHash
+  };
+})(typeof globalThis !== 'undefined' ? globalThis : self);

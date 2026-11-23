@@ -1,0 +1,1304 @@
+{
+  "schema": 1,
+  "note": "학습 로드맵의 내용. 화면 코드는 site/src에 있다. 고치는 법은 docs/LEARNING_SITE_OPERATIONS.md를 본다.",
+  "repository": "kosta-ai-lab/ai-native-sdlc",
+  "ref": "main",
+  "kinds": {
+    "course": "강의",
+    "guide": "가이드",
+    "sample": "예제",
+    "rule": "규칙과 스킬",
+    "soon": "준비 중"
+  },
+  "lines": [
+    {
+      "id": "start",
+      "name": "처음 시작하기",
+      "who": "코딩 경험이 없는 분",
+      "lead": "코딩 경험이 없는 분을 위한 로드맵입니다.",
+      "shape": "circle",
+      "col": 1,
+      "stages": [
+        {
+          "title": "AI로 첫 앱 만들어 보기",
+          "short": "첫 앱 만들기",
+          "summary": "간단한 앱 하나를 만들어 휴대폰에서 써 봅니다.",
+          "items": [
+            "golf"
+          ]
+        },
+        {
+          "title": "기획에서 배포까지 완주하기",
+          "short": "기획에서 배포까지",
+          "summary": "아이디어 하나를 골라 기획부터 DB 연동, 배포까지 하루에 완주합니다.",
+          "items": [
+            "vibe"
+          ]
+        },
+        {
+          "title": "개인 AI 에이전트 만들기",
+          "short": "개인 AI 에이전트",
+          "summary": "개인 AI 에이전트를 만들고 자동화를 붙입니다.",
+          "items": [
+            "agent"
+          ]
+        }
+      ],
+      "next": {
+        "line": "dev",
+        "text": "개발을 더 깊이 해 보고 싶다면"
+      }
+    },
+    {
+      "id": "dev",
+      "name": "AI-Native 개발 전주기",
+      "who": "개발 경험이 있는 분",
+      "lead": "개발 경험이 있는 분을 위한 로드맵입니다.",
+      "shape": "square",
+      "col": 2,
+      "stages": [
+        {
+          "title": "도구 손에 익히기",
+          "short": "도구 익히기",
+          "summary": "AI 코딩 도구로 앱 하나를 끝까지 만들어 봅니다.",
+          "note": "AI 코딩 도구를 써 봤다면 건너뛰어도 됩니다.",
+          "items": [
+            "vibe"
+          ]
+        },
+        {
+          "title": "문제 정의",
+          "summary": "에이전트를 포함해 비즈니스를 다시 설계하고, 데이터의 의미 모델을 세웁니다.",
+          "items": [
+            "s01",
+            "s02"
+          ]
+        },
+        {
+          "title": "요구사항",
+          "summary": "유즈케이스를 도출하고, 추적할 수 있는 요구사항으로 정리합니다.",
+          "items": [
+            "todo",
+            "s03"
+          ]
+        },
+        {
+          "title": "명세(SDD)",
+          "summary": "요구사항을 실행 가능한 스펙으로 만들고, 그 스펙을 단일 기준으로 삼습니다.",
+          "note": "강의로 원리를 잡고, 도구 가이드는 하나만 골라도 됩니다.",
+          "items": [
+            "sddc",
+            "kiro",
+            "openspec",
+            "speckit",
+            "gsd",
+            "bmad"
+          ]
+        },
+        {
+          "title": "설계",
+          "summary": "요구사항에서 출발해 다이어그램과 ADR 같은 설계 산출물을 만들고, 거기에 담긴 설계 결정을 읽어 냅니다.",
+          "items": [
+            "design",
+            "s07"
+          ]
+        },
+        {
+          "title": "인수조건(BDD)",
+          "summary": "요구사항을 Given, When, Then 형식의 인수 테스트 기준으로 바꿉니다.",
+          "items": [
+            "s05"
+          ]
+        },
+        {
+          "title": "구현과 TDD",
+          "summary": "테스트를 먼저 작성해 기대 동작을 고정한 뒤 AI에게 구현을 맡깁니다.",
+          "items": [
+            "tdd"
+          ]
+        },
+        {
+          "title": "CI",
+          "summary": "테스트 통과를 머지와 빌드의 관문으로 둡니다.",
+          "items": [
+            "s08"
+          ]
+        },
+        {
+          "title": "CD·아키텍처 검증",
+          "summary": "배포 전에 아키텍처 적합성 함수로 구조를 검증합니다.",
+          "items": [
+            "s09"
+          ]
+        },
+        {
+          "title": "보안·규제·윤리",
+          "summary": "코딩 밖의 비기능 요건을 점검합니다.",
+          "items": [
+            "s10"
+          ]
+        }
+      ],
+      "next": {
+        "line": "harness",
+        "text": "AI가 일하는 환경을 직접 설계하고 싶다면"
+      }
+    },
+    {
+      "id": "harness",
+      "name": "에이전트 하니스",
+      "who": "Claude Code를 써 본 분",
+      "lead": "Claude Code를 써 본 분을 위한 로드맵입니다.",
+      "shape": "diamond",
+      "col": 4,
+      "stages": [
+        {
+          "title": "하니스 기초",
+          "summary": ".claude 폴더에 스킬과 서브에이전트를 두어 AI가 일하는 환경을 만듭니다.",
+          "items": [
+            "h01",
+            "h03",
+            "h05"
+          ]
+        },
+        {
+          "title": "하니스 프레임워크",
+          "short": "프레임워크",
+          "summary": "여러 에이전트가 협업하도록 짜인 프레임워크를 써 봅니다.",
+          "items": [
+            "h07"
+          ]
+        },
+        {
+          "title": "반복 실행 루프",
+          "summary": "사람이 매번 지시하는 대신, 일이 끝날 때까지 에이전트가 반복 실행되는 루프를 만듭니다.",
+          "items": [
+            "h09",
+            "h11"
+          ]
+        },
+        {
+          "title": "에이전트 개발 환경",
+          "short": "개발 환경",
+          "summary": "여러 에이전트를 함께 다루는 개발 환경과, 작업을 그래프로 나눠 맡기는 방식을 익힙니다.",
+          "items": [
+            "h13",
+            "h15"
+          ]
+        },
+        {
+          "title": "코드 그래프와 저장소 기억",
+          "short": "코드 그래프와 기억",
+          "summary": "코드 구조를 그래프와 위키로 만들어 AI가 영향 범위를 알고 고치게 합니다.",
+          "items": [
+            "h21",
+            "h23",
+            "h25",
+            "h27"
+          ]
+        },
+        {
+          "title": "스킬 묶음으로 개발 흐름 만들기",
+          "short": "스킬 묶음",
+          "summary": "공개된 스킬 묶음으로 기획부터 리뷰까지의 흐름을 구성합니다.",
+          "items": [
+            "h31",
+            "h33",
+            "h35",
+            "h37"
+          ]
+        },
+        {
+          "title": "코드 리뷰 하니스",
+          "short": "코드 리뷰",
+          "summary": "AI 코드 리뷰가 근거 없는 취향 리뷰가 되지 않도록 리뷰 기준을 세웁니다.",
+          "items": [
+            "h39"
+          ]
+        },
+        {
+          "title": "분야 확장",
+          "summary": "배운 방식을 임베디드 같은 다른 개발 분야에 적용합니다.",
+          "items": [
+            "semb"
+          ]
+        }
+      ]
+    }
+  ],
+  "items": [
+    {
+      "id": "golf",
+      "kind": "course",
+      "title": "Claude Code Cloud 앱 개발: 골프 스코어카드",
+      "original": "Claude Code Cloud App Development-Golf Scorecard",
+      "by": "박준성",
+      "source": "courses/Agentic Coding using Claude Code/README.md",
+      "meta": "4시간, 교재 PDF",
+      "summary": "Claude Code Cloud로 간단한 앱을 만들고, 휴대폰에서 바로 쓸 수 있게 배포합니다.",
+      "audience": "비개발자",
+      "prerequisite": "없음",
+      "learn": [
+        "Claude Code 클라우드 개발 환경 설치",
+        "MVP 정하기와 화면 구성",
+        "구현, 테스트, 배포",
+        "기능 확장: 라운드 기록 저장, Excel에서 조회·분석"
+      ],
+      "how": [
+        "강의 안내에서 결과물을 먼저 확인합니다.",
+        "교재 PDF를 순서대로 따라 합니다.",
+        "완성한 앱을 휴대폰 홈 화면에 추가해 써 봅니다."
+      ],
+      "links": [
+        {
+          "label": "교재 PDF",
+          "path": "courses/Agentic Coding using Claude Code/Claude Code Cloud App Development-Golf Scorecard.pdf",
+          "kind": "file"
+        },
+        {
+          "label": "강의 안내",
+          "path": "courses/Agentic Coding using Claude Code/README.md",
+          "kind": "file"
+        }
+      ]
+    },
+    {
+      "id": "vibe",
+      "kind": "course",
+      "title": "바이브 코딩 첫걸음 — Claude Code로 기획에서 배포까지",
+      "by": "윤성열",
+      "source": "courses/vibe-coding-with-claude-code/README.md",
+      "meta": "1일 7블록, 슬라이드 102장, 실습 대본",
+      "summary": "자연어만으로 웹앱을 만들어 본인 이름으로 접속되는 URL로 배포합니다.",
+      "audience": "AI 코딩 도구를 처음 쓰는 분. 기획자, PM, 사업 담당자, 도구가 낯선 개발자",
+      "prerequisite": "없음",
+      "learn": [
+        "Claude Code 설치와 기본 사용",
+        "요구사항과 UX 정리로 결과물 품질 올리기",
+        "CLAUDE.md와 Plan 모드",
+        "Supabase와 Vercel로 DB 연동과 배포"
+      ],
+      "how": [
+        "강의 안내에서 준비할 계정(Claude, GitHub, Vercel, Supabase)을 확인합니다.",
+        "슬라이드를 읽으며 흐름을 잡습니다.",
+        "실습 대본의 프롬프트를 순서대로 입력해 앱을 완성합니다."
+      ],
+      "links": [
+        {
+          "label": "슬라이드 PDF",
+          "path": "courses/vibe-coding-with-claude-code/slides/vibe-coding-with-claude-code.pdf",
+          "kind": "file"
+        },
+        {
+          "label": "실습 대본",
+          "path": "courses/vibe-coding-with-claude-code/labs/README.md",
+          "kind": "file"
+        },
+        {
+          "label": "강의 안내",
+          "path": "courses/vibe-coding-with-claude-code/README.md",
+          "kind": "file"
+        }
+      ]
+    },
+    {
+      "id": "agent",
+      "kind": "course",
+      "title": "개인 AI 에이전트 개발",
+      "original": "Personal AI Agent Development",
+      "by": "박준성",
+      "source": "courses/Personal AI Agent Development/README.md",
+      "meta": "10시간, 교재 PDF",
+      "summary": "Claude 앱과 Claude Code로 개인 AI 에이전트를 만들고 자동화를 붙입니다.",
+      "audience": "비개발자",
+      "prerequisite": "없음",
+      "learn": [
+        "Claude 앱과 Claude Code로 하는 에이전트 엔지니어링",
+        "개인 AI 에이전트의 구조",
+        "개인 AI 에이전트 설정",
+        "에이전트 자동화 만들기"
+      ],
+      "how": [
+        "강의 안내에서 학습 내용을 확인합니다.",
+        "교재 PDF를 순서대로 따라 합니다."
+      ],
+      "links": [
+        {
+          "label": "교재 PDF",
+          "path": "courses/Personal AI Agent Development/personal agent development-1-jp-1126.pdf",
+          "kind": "file"
+        },
+        {
+          "label": "강의 안내",
+          "path": "courses/Personal AI Agent Development/README.md",
+          "kind": "file"
+        }
+      ]
+    },
+    {
+      "id": "sddc",
+      "kind": "course",
+      "title": "스펙 주도 개발 실전 — OpenSpec과 Spec Kit",
+      "by": "윤성열",
+      "source": "courses/spec-driven-development-practice/README.md",
+      "meta": "1일 8블록, 슬라이드 149장, 실습 저장소 2개",
+      "summary": "의도를 스펙에 먼저 고정하고, 같은 상품·주문 API를 두 도구로 만들어 비교합니다.",
+      "audience": "개발 경력 2년 이상, AI 코딩 도구 입문~중급",
+      "prerequisite": "TypeScript와 REST API 기초, 1편(바이브 코딩 첫걸음) 수준의 Claude Code 사용 경험",
+      "learn": [
+        "AI-DLC와 SDD 원리",
+        "OpenSpec으로 스펙에서 코드까지 가는 과정과 변경 관리",
+        "Spec Kit 워크플로",
+        "두 도구 비교와 조직 도입 계획"
+      ],
+      "how": [
+        "슬라이드에서 방법론을 먼저 읽습니다.",
+        "실습 폴더에서 init 명령을 실행해 도구 파일을 받습니다.",
+        "docs/steps의 단계별 안내를 따라 API를 다시 만들어 봅니다.",
+        "pnpm test로 결과를 확인합니다."
+      ],
+      "links": [
+        {
+          "label": "슬라이드 PDF",
+          "path": "courses/spec-driven-development-practice/slides/spec-driven-development-practice.pdf",
+          "kind": "file"
+        },
+        {
+          "label": "실습 안내",
+          "path": "courses/spec-driven-development-practice/labs/README.md",
+          "kind": "file"
+        },
+        {
+          "label": "강의 안내",
+          "path": "courses/spec-driven-development-practice/README.md",
+          "kind": "file"
+        }
+      ]
+    },
+    {
+      "id": "design",
+      "kind": "course",
+      "title": "Spec Kit으로 실전 소프트웨어 설계",
+      "by": "윤성열",
+      "source": "courses/software-design-with-spec-kit/README.md",
+      "meta": "1일 8블록, 슬라이드 90장, 완성 저장소",
+      "summary": "멀티셀러 마켓플레이스를 사례로 유스케이스부터 ADR, 추적성까지 설계 산출물을 직접 만듭니다.",
+      "audience": "설계 산출물을 만들어 본 경험이 적은 현업 개발자",
+      "prerequisite": "2편(스펙 주도 개발 실전) 수준의 Spec Kit 워크플로 경험, TypeScript 기초",
+      "learn": [
+        "유스케이스, 도메인 모델, ERD",
+        "시퀀스, 상태머신, 컴포넌트 다이어그램",
+        "ADR로 설계 결정 읽기",
+        "요구사항, 설계, 작업의 추적성"
+      ],
+      "how": [
+        "슬라이드에서 다이어그램을 읽고 해석하는 흐름을 봅니다.",
+        "완성 저장소의 design 폴더에서 다이어그램과 ADR을 엽니다.",
+        "specify init을 실행한 뒤 같은 단계를 직접 따라 합니다."
+      ],
+      "links": [
+        {
+          "label": "슬라이드 PDF",
+          "path": "courses/software-design-with-spec-kit/slides/software-design-with-spec-kit.pdf",
+          "kind": "file"
+        },
+        {
+          "label": "완성 저장소",
+          "path": "courses/software-design-with-spec-kit/labs/speckit-ecommerce-fullscale",
+          "kind": "dir"
+        },
+        {
+          "label": "강의 안내",
+          "path": "courses/software-design-with-spec-kit/README.md",
+          "kind": "file"
+        }
+      ]
+    },
+    {
+      "id": "kiro",
+      "kind": "guide",
+      "title": "Kiro: IDE 안에서 하는 SDD",
+      "by": "이선아 교수",
+      "source": "modules/04-sdd/M01-kiro/README.md",
+      "meta": "따라 하기 가이드",
+      "summary": "설치할 CLI 없이 IDE 화면의 버튼과 채팅으로 명세에서 코드로 가는 흐름을 처음 경험합니다.",
+      "how": [
+        "README에서 목적과 준비물을 확인합니다.",
+        "GUIDE.md를 위에서부터 그대로 따라 합니다.",
+        "SAMPLE.md를 따라 완성한 앱을 실행하고 명세대로 동작하는지 확인합니다."
+      ],
+      "links": [
+        {
+          "label": "가이드 읽기",
+          "path": "modules/04-sdd/M01-kiro/GUIDE.md",
+          "kind": "file"
+        },
+        {
+          "label": "목적과 준비물",
+          "path": "modules/04-sdd/M01-kiro/README.md",
+          "kind": "file"
+        },
+        {
+          "label": "완성한 앱 실행과 확인",
+          "path": "modules/04-sdd/M01-kiro/SAMPLE.md",
+          "kind": "file"
+        }
+      ]
+    },
+    {
+      "id": "openspec",
+      "kind": "guide",
+      "title": "OpenSpec: 변경 단위로 관리하는 SDD",
+      "by": "이선아 교수",
+      "source": "modules/04-sdd/M02-open-spec-01/README.md",
+      "meta": "따라 하기 가이드",
+      "summary": "작업을 변경(change) 단위로 다루고, 끝나면 살아 있는 명세에 합칩니다.",
+      "how": [
+        "README에서 목적과 준비물을 확인합니다.",
+        "GUIDE.md를 위에서부터 그대로 따라 합니다.",
+        "SAMPLE.md를 따라 완성한 앱을 실행하고 명세대로 동작하는지 확인합니다."
+      ],
+      "links": [
+        {
+          "label": "가이드 읽기",
+          "path": "modules/04-sdd/M02-open-spec-01/GUIDE.md",
+          "kind": "file"
+        },
+        {
+          "label": "목적과 준비물",
+          "path": "modules/04-sdd/M02-open-spec-01/README.md",
+          "kind": "file"
+        },
+        {
+          "label": "완성한 앱 실행과 확인",
+          "path": "modules/04-sdd/M02-open-spec-01/SAMPLE.md",
+          "kind": "file"
+        }
+      ]
+    },
+    {
+      "id": "speckit",
+      "kind": "guide",
+      "title": "Spec Kit: 단계별 SDD",
+      "by": "이선아 교수",
+      "source": "modules/04-sdd/M03-spec-kit/README.md",
+      "meta": "가이드 4종(Claude·Codex, Mac·Windows)",
+      "summary": "constitution, specify, plan, tasks, implement 단계를 처음부터 끝까지 따라 합니다.",
+      "how": [
+        "README에서 목적과 준비물을 확인합니다.",
+        "쓰는 도구와 운영체제에 맞는 가이드를 골라 위에서부터 따라 합니다.",
+        "SAMPLE.md를 따라 완성한 앱을 실행하고 명세대로 동작하는지 확인합니다."
+      ],
+      "links": [
+        {
+          "label": "Claude Code, Mac",
+          "path": "modules/04-sdd/M03-spec-kit/GUIDE-claude-mac.md",
+          "kind": "file"
+        },
+        {
+          "label": "Claude Code, Windows",
+          "path": "modules/04-sdd/M03-spec-kit/GUIDE-claude-windows.md",
+          "kind": "file"
+        },
+        {
+          "label": "Codex, Mac",
+          "path": "modules/04-sdd/M03-spec-kit/GUIDE-codex-mac.md",
+          "kind": "file"
+        },
+        {
+          "label": "Codex, Windows",
+          "path": "modules/04-sdd/M03-spec-kit/GUIDE-codex-windows.md",
+          "kind": "file"
+        },
+        {
+          "label": "목적과 준비물",
+          "path": "modules/04-sdd/M03-spec-kit/README.md",
+          "kind": "file"
+        },
+        {
+          "label": "완성한 앱 실행과 확인",
+          "path": "modules/04-sdd/M03-spec-kit/SAMPLE.md",
+          "kind": "file"
+        }
+      ]
+    },
+    {
+      "id": "gsd",
+      "kind": "guide",
+      "title": "GSD: 컨텍스트를 관리하는 SDD",
+      "by": "이선아 교수",
+      "source": "modules/04-sdd/M04-gsd/README.md",
+      "meta": "따라 하기 가이드",
+      "summary": "논의, 기획, 실행, 검증, 출시 단계를 돌며, 무거운 작업은 새 컨텍스트의 서브에이전트에 맡겨 긴 대화의 품질 저하를 막습니다.",
+      "how": [
+        "README에서 목적과 준비물을 확인합니다.",
+        "GUIDE.md를 위에서부터 그대로 따라 합니다.",
+        "SAMPLE.md를 따라 완성한 앱을 실행하고 명세대로 동작하는지 확인합니다."
+      ],
+      "links": [
+        {
+          "label": "가이드 읽기",
+          "path": "modules/04-sdd/M04-gsd/GUIDE.md",
+          "kind": "file"
+        },
+        {
+          "label": "목적과 준비물",
+          "path": "modules/04-sdd/M04-gsd/README.md",
+          "kind": "file"
+        },
+        {
+          "label": "완성한 앱 실행과 확인",
+          "path": "modules/04-sdd/M04-gsd/SAMPLE.md",
+          "kind": "file"
+        }
+      ]
+    },
+    {
+      "id": "bmad",
+      "kind": "guide",
+      "title": "BMAD: 역할 에이전트가 협업하는 SDD",
+      "by": "이선아 교수",
+      "source": "modules/04-sdd/M05-bmad/README.md",
+      "meta": "따라 하기 가이드",
+      "summary": "분석가, PM, 아키텍트, 개발자 같은 역할 에이전트와 스킬로 애자일 루프를 돌립니다.",
+      "how": [
+        "README에서 목적과 준비물을 확인합니다.",
+        "GUIDE.md를 위에서부터 그대로 따라 합니다.",
+        "SAMPLE.md를 따라 완성한 앱을 실행하고 명세대로 동작하는지 확인합니다."
+      ],
+      "links": [
+        {
+          "label": "가이드 읽기",
+          "path": "modules/04-sdd/M05-bmad/GUIDE.md",
+          "kind": "file"
+        },
+        {
+          "label": "목적과 준비물",
+          "path": "modules/04-sdd/M05-bmad/README.md",
+          "kind": "file"
+        },
+        {
+          "label": "완성한 앱 실행과 확인",
+          "path": "modules/04-sdd/M05-bmad/SAMPLE.md",
+          "kind": "file"
+        }
+      ]
+    },
+    {
+      "id": "tdd",
+      "kind": "rule",
+      "title": "코딩 + TDD: 테스트 먼저, 구현은 그다음",
+      "by": "윤성열",
+      "source": "modules/06-coding-tdd/README.md",
+      "meta": "가이드, 규칙, 스킬 명세, 샘플",
+      "summary": "테스트 먼저 흐름을 설명한 가이드, AI가 지킬 규칙, 스킬 명세, 샘플이 한 묶음입니다.",
+      "how": [
+        "가이드에서 Red, Green, Refactor 흐름을 읽습니다.",
+        "CLAUDE.md 규칙 조각을 내 프로젝트의 CLAUDE.md에 넣습니다.",
+        "샘플을 읽으며 인수조건이 테스트와 구현으로 바뀌는 과정을 따라갑니다."
+      ],
+      "links": [
+        {
+          "label": "가이드",
+          "path": "modules/06-coding-tdd/README.md",
+          "kind": "file"
+        },
+        {
+          "label": "AI 작업 규칙(CLAUDE.md)",
+          "path": "modules/06-coding-tdd/CLAUDE.md",
+          "kind": "file"
+        },
+        {
+          "label": "test-first 스킬 명세",
+          "path": "modules/06-coding-tdd/skills/test-first.md",
+          "kind": "file"
+        },
+        {
+          "label": "샘플",
+          "path": "modules/06-coding-tdd/sample",
+          "kind": "dir"
+        }
+      ]
+    },
+    {
+      "id": "todo",
+      "kind": "sample",
+      "title": "할 일 생성 예제: 요구사항에서 테스트까지",
+      "by": "윤성열",
+      "byEvidence": "git-history",
+      "source": "samples/web-task-system/README.md",
+      "meta": "문서 3개, 테스트 2건, 실행 가능",
+      "summary": "작은 기능 하나로 요구사항, 명세, 인수조건, 테스트, 구현이 어떻게 이어지는지 봅니다.",
+      "how": [
+        "samples/web-task-system 폴더로 이동합니다.",
+        "pnpm install --frozen-lockfile --ignore-scripts를 실행한 뒤 pnpm test를 실행합니다.",
+        "요구사항, 명세, 인수조건, 테스트, 구현 순서로 파일을 읽습니다."
+      ],
+      "links": [
+        {
+          "label": "예제 안내",
+          "path": "samples/web-task-system/README.md",
+          "kind": "file"
+        },
+        {
+          "label": "요구사항",
+          "path": "samples/web-task-system/docs/03-requirements.md",
+          "kind": "file"
+        },
+        {
+          "label": "명세",
+          "path": "samples/web-task-system/docs/04-spec.md",
+          "kind": "file"
+        },
+        {
+          "label": "인수조건",
+          "path": "samples/web-task-system/docs/05-acceptance.feature",
+          "kind": "file"
+        }
+      ]
+    },
+    {
+      "id": "h01",
+      "kind": "guide",
+      "title": "하니스 기초: 스킬과 서브에이전트 직접 만들기",
+      "by": "이선아 교수",
+      "source": "modules/ext-harness/M01-harness-basics/README.md",
+      "meta": "따라 하기 가이드",
+      "summary": ".claude 폴더에 스킬과 서브에이전트를 만들어 Claude Code의 작업 환경을 구성합니다.",
+      "how": [
+        "README에서 목적을 확인합니다.",
+        "GUIDE.md를 위에서부터 그대로 따라 합니다.",
+        "SAMPLE.md의 단계와 프롬프트를 따라 실행해 봅니다."
+      ],
+      "links": [
+        {
+          "label": "가이드 읽기",
+          "path": "modules/ext-harness/M01-harness-basics/GUIDE.md",
+          "kind": "file"
+        },
+        {
+          "label": "목적",
+          "path": "modules/ext-harness/M01-harness-basics/README.md",
+          "kind": "file"
+        },
+        {
+          "label": "예제 실행과 프롬프트",
+          "path": "modules/ext-harness/M01-harness-basics/SAMPLE.md",
+          "kind": "file"
+        }
+      ]
+    },
+    {
+      "id": "h03",
+      "kind": "guide",
+      "title": "공개된 하니스 가져다 쓰기",
+      "by": "이선아 교수",
+      "source": "modules/ext-harness/M03-harness-100-reuse/README.md",
+      "meta": "따라 하기 가이드",
+      "summary": "이미 만들어진 에이전트와 스킬을 복사해 내 프로젝트에 적용합니다.",
+      "how": [
+        "README에서 목적을 확인합니다.",
+        "GUIDE.md를 위에서부터 그대로 따라 합니다.",
+        "SAMPLE.md의 단계와 프롬프트를 따라 실행해 봅니다."
+      ],
+      "links": [
+        {
+          "label": "가이드 읽기",
+          "path": "modules/ext-harness/M03-harness-100-reuse/GUIDE.md",
+          "kind": "file"
+        },
+        {
+          "label": "목적",
+          "path": "modules/ext-harness/M03-harness-100-reuse/README.md",
+          "kind": "file"
+        },
+        {
+          "label": "예제 실행과 프롬프트",
+          "path": "modules/ext-harness/M03-harness-100-reuse/SAMPLE.md",
+          "kind": "file"
+        }
+      ]
+    },
+    {
+      "id": "h05",
+      "kind": "guide",
+      "title": "메타 하니스: 하니스를 만드는 하니스",
+      "by": "이선아 교수",
+      "source": "modules/ext-harness/M05-meta-harness/README.md",
+      "meta": "따라 하기 가이드",
+      "summary": "에이전트와 스킬을 자동으로 만들어 주는 메타 하니스를 써 봅니다.",
+      "how": [
+        "README에서 목적을 확인합니다.",
+        "GUIDE.md를 위에서부터 그대로 따라 합니다.",
+        "SAMPLE.md의 단계와 프롬프트를 따라 실행해 봅니다."
+      ],
+      "links": [
+        {
+          "label": "가이드 읽기",
+          "path": "modules/ext-harness/M05-meta-harness/GUIDE.md",
+          "kind": "file"
+        },
+        {
+          "label": "목적",
+          "path": "modules/ext-harness/M05-meta-harness/README.md",
+          "kind": "file"
+        },
+        {
+          "label": "예제 실행과 프롬프트",
+          "path": "modules/ext-harness/M05-meta-harness/SAMPLE.md",
+          "kind": "file"
+        }
+      ]
+    },
+    {
+      "id": "h07",
+      "kind": "guide",
+      "title": "MoAI-ADK: 에이전트가 협업해 코딩하는 하니스",
+      "by": "이선아 교수",
+      "source": "modules/ext-harness/M07-moai-adk/README.md",
+      "meta": "따라 하기 가이드",
+      "summary": "에이전트끼리 상호작용하며 코딩하는 하니스를 Claude Code 안에서 실행합니다.",
+      "how": [
+        "README에서 목적을 확인합니다.",
+        "GUIDE.md를 위에서부터 그대로 따라 합니다."
+      ],
+      "links": [
+        {
+          "label": "가이드 읽기",
+          "path": "modules/ext-harness/M07-moai-adk/GUIDE.md",
+          "kind": "file"
+        },
+        {
+          "label": "목적",
+          "path": "modules/ext-harness/M07-moai-adk/README.md",
+          "kind": "file"
+        }
+      ]
+    },
+    {
+      "id": "h09",
+      "kind": "guide",
+      "title": "루프 엔지니어링",
+      "by": "이선아 교수",
+      "source": "modules/ext-harness/M09-loop-engineering/README.md",
+      "meta": "따라 하기 가이드",
+      "summary": "매번 지시하는 대신, 에이전트를 반복 실행하는 시스템(루프)을 설계합니다.",
+      "how": [
+        "README에서 목적을 확인합니다.",
+        "GUIDE.md를 위에서부터 그대로 따라 합니다.",
+        "SAMPLE.md의 명령을 따라 첫 루프를 만들어 봅니다."
+      ],
+      "links": [
+        {
+          "label": "가이드 읽기",
+          "path": "modules/ext-harness/M09-loop-engineering/GUIDE.md",
+          "kind": "file"
+        },
+        {
+          "label": "목적",
+          "path": "modules/ext-harness/M09-loop-engineering/README.md",
+          "kind": "file"
+        },
+        {
+          "label": "첫 루프 만들어 보기",
+          "path": "modules/ext-harness/M09-loop-engineering/SAMPLE.md",
+          "kind": "file"
+        }
+      ]
+    },
+    {
+      "id": "h11",
+      "kind": "guide",
+      "title": "Ralph 루프",
+      "by": "이선아 교수",
+      "source": "modules/ext-harness/M11-ralph-loop/README.md",
+      "meta": "따라 하기 가이드",
+      "summary": "Ralph로 Claude Code를 반복 실행해 작은 기능 하나를 자동으로 완성합니다.",
+      "how": [
+        "README에서 목적을 확인합니다.",
+        "GUIDE.md를 위에서부터 그대로 따라 합니다."
+      ],
+      "links": [
+        {
+          "label": "가이드 읽기",
+          "path": "modules/ext-harness/M11-ralph-loop/GUIDE.md",
+          "kind": "file"
+        },
+        {
+          "label": "목적",
+          "path": "modules/ext-harness/M11-ralph-loop/README.md",
+          "kind": "file"
+        }
+      ]
+    },
+    {
+      "id": "h13",
+      "kind": "guide",
+      "title": "ORCA ADE: 에이전트 개발 환경",
+      "by": "이선아 교수",
+      "source": "modules/ext-harness/M13-orca-ade/README.md",
+      "meta": "따라 하기 가이드",
+      "summary": "여러 AI 코딩 에이전트를 동시에, 서로 방해받지 않게 실행하는 개발 환경을 익힙니다.",
+      "how": [
+        "README에서 목적을 확인합니다.",
+        "GUIDE.md를 위에서부터 그대로 따라 합니다."
+      ],
+      "links": [
+        {
+          "label": "가이드 읽기",
+          "path": "modules/ext-harness/M13-orca-ade/GUIDE.md",
+          "kind": "file"
+        },
+        {
+          "label": "목적",
+          "path": "modules/ext-harness/M13-orca-ade/README.md",
+          "kind": "file"
+        }
+      ]
+    },
+    {
+      "id": "h15",
+      "kind": "guide",
+      "title": "ORCA 그래프 엔지니어링",
+      "by": "이선아 교수",
+      "source": "modules/ext-harness/M15-orca-graph-engineering/README.md",
+      "meta": "따라 하기 가이드",
+      "summary": "작업을 의존관계 그래프로 나누고, ORCA ADE에서 여러 에이전트에게 나눠 맡깁니다.",
+      "how": [
+        "README에서 목적을 확인합니다.",
+        "GUIDE.md를 위에서부터 그대로 따라 합니다."
+      ],
+      "links": [
+        {
+          "label": "가이드 읽기",
+          "path": "modules/ext-harness/M15-orca-graph-engineering/GUIDE.md",
+          "kind": "file"
+        },
+        {
+          "label": "목적",
+          "path": "modules/ext-harness/M15-orca-graph-engineering/README.md",
+          "kind": "file"
+        }
+      ]
+    },
+    {
+      "id": "h21",
+      "kind": "guide",
+      "title": "Graphify: 저장소를 지식 그래프로",
+      "by": "이선아 교수",
+      "source": "modules/ext-harness/M21-Graphify/README.md",
+      "meta": "따라 하기 가이드",
+      "summary": "코드, 문서, SQL 스키마를 질의할 수 있는 지식 그래프로 바꿉니다.",
+      "how": [
+        "README에서 목적을 확인합니다.",
+        "GUIDE.md를 위에서부터 그대로 따라 합니다.",
+        "GUIDE.md를 마친 뒤 SAMPLE.md의 프롬프트로 이어지는 과제를 해 봅니다."
+      ],
+      "links": [
+        {
+          "label": "가이드 읽기",
+          "path": "modules/ext-harness/M21-Graphify/GUIDE.md",
+          "kind": "file"
+        },
+        {
+          "label": "목적",
+          "path": "modules/ext-harness/M21-Graphify/README.md",
+          "kind": "file"
+        },
+        {
+          "label": "이어지는 과제",
+          "path": "modules/ext-harness/M21-Graphify/SAMPLE.md",
+          "kind": "file"
+        }
+      ]
+    },
+    {
+      "id": "h23",
+      "kind": "guide",
+      "title": "GitNexus로 안전하게 리팩터링하기",
+      "by": "이선아 교수",
+      "source": "modules/ext-harness/M23-GitNexus/README.md",
+      "meta": "따라 하기 가이드",
+      "summary": "영향 분석, 미리보기, 적용, 누락 확인, 검증, 커밋 순서의 리팩터링 루프를 익힙니다.",
+      "how": [
+        "README에서 목적을 확인합니다.",
+        "GUIDE.md를 위에서부터 그대로 따라 합니다.",
+        "GUIDE.md를 마친 뒤 SAMPLE.md의 프롬프트로 이어지는 과제를 해 봅니다."
+      ],
+      "links": [
+        {
+          "label": "가이드 읽기",
+          "path": "modules/ext-harness/M23-GitNexus/GUIDE.md",
+          "kind": "file"
+        },
+        {
+          "label": "목적",
+          "path": "modules/ext-harness/M23-GitNexus/README.md",
+          "kind": "file"
+        },
+        {
+          "label": "이어지는 과제",
+          "path": "modules/ext-harness/M23-GitNexus/SAMPLE.md",
+          "kind": "file"
+        }
+      ]
+    },
+    {
+      "id": "h25",
+      "kind": "guide",
+      "title": "CodeGraph로 안전하게 리팩터링하기",
+      "by": "이선아 교수",
+      "source": "modules/ext-harness/M25-CodeGraph/README.md",
+      "meta": "따라 하기 가이드",
+      "summary": "호출자와 영향 범위를 먼저 확인하는 리팩터링 규칙을 적용합니다.",
+      "how": [
+        "README에서 목적을 확인합니다.",
+        "GUIDE.md를 위에서부터 그대로 따라 합니다.",
+        "GUIDE.md를 마친 뒤 SAMPLE.md의 프롬프트로 이어지는 과제를 해 봅니다."
+      ],
+      "links": [
+        {
+          "label": "가이드 읽기",
+          "path": "modules/ext-harness/M25-CodeGraph/GUIDE.md",
+          "kind": "file"
+        },
+        {
+          "label": "목적",
+          "path": "modules/ext-harness/M25-CodeGraph/README.md",
+          "kind": "file"
+        },
+        {
+          "label": "이어지는 과제",
+          "path": "modules/ext-harness/M25-CodeGraph/SAMPLE.md",
+          "kind": "file"
+        }
+      ]
+    },
+    {
+      "id": "h27",
+      "kind": "guide",
+      "title": "OpenWiki: 저장소의 기억 장치",
+      "by": "이선아 교수",
+      "source": "modules/ext-harness/M27-openwiki/README.md",
+      "meta": "따라 하기 가이드",
+      "summary": "저장소 위키를 만들고 Claude Code가 그 위키를 검색하고 갱신하게 합니다.",
+      "how": [
+        "README에서 목적을 확인합니다.",
+        "GUIDE.md를 위에서부터 그대로 따라 합니다.",
+        "GUIDE.md 4단계 전에 SAMPLE.md에서 예제 저장소 todo-cli의 소스를 읽고 실행해 봅니다."
+      ],
+      "links": [
+        {
+          "label": "가이드 읽기",
+          "path": "modules/ext-harness/M27-openwiki/GUIDE.md",
+          "kind": "file"
+        },
+        {
+          "label": "목적",
+          "path": "modules/ext-harness/M27-openwiki/README.md",
+          "kind": "file"
+        },
+        {
+          "label": "예제 소스 안내",
+          "path": "modules/ext-harness/M27-openwiki/SAMPLE.md",
+          "kind": "file"
+        }
+      ]
+    },
+    {
+      "id": "h31",
+      "kind": "guide",
+      "title": "mattpocock/skills: 기본 흐름 한 바퀴",
+      "by": "이선아 교수",
+      "source": "modules/ext-harness/M31-mattpocock/README.md",
+      "meta": "따라 하기 가이드",
+      "summary": "인터뷰, 스펙, 티켓, TDD 구현, 리뷰로 이어지는 흐름을 작은 예제로 돌려 봅니다.",
+      "how": [
+        "README에서 목적을 확인합니다.",
+        "GUIDE.md를 위에서부터 그대로 따라 합니다.",
+        "SAMPLE.md에서 명령어와 프롬프트만 모은 요약을 보고 다시 실행해 봅니다."
+      ],
+      "links": [
+        {
+          "label": "가이드 읽기",
+          "path": "modules/ext-harness/M31-mattpocock/GUIDE.md",
+          "kind": "file"
+        },
+        {
+          "label": "목적",
+          "path": "modules/ext-harness/M31-mattpocock/README.md",
+          "kind": "file"
+        },
+        {
+          "label": "명령어와 프롬프트 요약",
+          "path": "modules/ext-harness/M31-mattpocock/SAMPLE.md",
+          "kind": "file"
+        }
+      ]
+    },
+    {
+      "id": "h33",
+      "kind": "guide",
+      "title": "mattpocock/skills: 할 일 앱에 기능 추가",
+      "by": "이선아 교수",
+      "source": "modules/ext-harness/M33-mattpocock2/README.md",
+      "meta": "따라 하기 가이드",
+      "summary": "mattpocock/skills로 할 일 앱에 반복 할 일 기능을 추가합니다.",
+      "how": [
+        "README에서 목적을 확인합니다.",
+        "SAMPLE.md에서 예제 앱 todo-app의 처음 상태를 확인합니다.",
+        "GUIDE.md를 위에서부터 따라 하고, 실습 뒤에 바뀐 점을 SAMPLE.md와 비교합니다."
+      ],
+      "links": [
+        {
+          "label": "가이드 읽기",
+          "path": "modules/ext-harness/M33-mattpocock2/GUIDE.md",
+          "kind": "file"
+        },
+        {
+          "label": "목적",
+          "path": "modules/ext-harness/M33-mattpocock2/README.md",
+          "kind": "file"
+        },
+        {
+          "label": "예제 앱 안내",
+          "path": "modules/ext-harness/M33-mattpocock2/SAMPLE.md",
+          "kind": "file"
+        }
+      ]
+    },
+    {
+      "id": "h35",
+      "kind": "guide",
+      "title": "gstack: 역할이 나뉜 가상 개발팀",
+      "by": "이선아 교수",
+      "source": "modules/ext-harness/M35-gstack/README.md",
+      "meta": "따라 하기 가이드",
+      "summary": "Think, Plan, Build, Review, Test, Ship, Reflect 스프린트를 스킬로 한 바퀴 돌립니다.",
+      "how": [
+        "README에서 목적을 확인합니다.",
+        "SAMPLE.md에서 예제 앱 todo-app의 처음 상태를 확인합니다.",
+        "GUIDE.md를 위에서부터 따라 하고, 실습 뒤에 바뀐 점을 SAMPLE.md와 비교합니다."
+      ],
+      "links": [
+        {
+          "label": "가이드 읽기",
+          "path": "modules/ext-harness/M35-gstack/GUIDE.md",
+          "kind": "file"
+        },
+        {
+          "label": "목적",
+          "path": "modules/ext-harness/M35-gstack/README.md",
+          "kind": "file"
+        },
+        {
+          "label": "예제 앱 안내",
+          "path": "modules/ext-harness/M35-gstack/SAMPLE.md",
+          "kind": "file"
+        }
+      ]
+    },
+    {
+      "id": "h37",
+      "kind": "guide",
+      "title": "pstack: 목표와 완료 조건으로 맡기기",
+      "by": "이선아 교수",
+      "source": "modules/ext-harness/M37-pstack/README.md",
+      "meta": "따라 하기 가이드",
+      "summary": "목표와 완료 조건만 주면 에이전트가 설계, 구현, 검증까지 증거와 함께 끝내는 방식을 익힙니다.",
+      "how": [
+        "README에서 목적을 확인합니다.",
+        "SAMPLE.md에서 예제 앱 todo-app의 처음 상태를 확인합니다.",
+        "GUIDE.md를 위에서부터 따라 하고, 실습 뒤에 바뀐 점을 SAMPLE.md와 비교합니다."
+      ],
+      "links": [
+        {
+          "label": "가이드 읽기",
+          "path": "modules/ext-harness/M37-pstack/GUIDE.md",
+          "kind": "file"
+        },
+        {
+          "label": "목적",
+          "path": "modules/ext-harness/M37-pstack/README.md",
+          "kind": "file"
+        },
+        {
+          "label": "예제 앱 안내",
+          "path": "modules/ext-harness/M37-pstack/SAMPLE.md",
+          "kind": "file"
+        }
+      ]
+    },
+    {
+      "id": "h39",
+      "kind": "guide",
+      "title": "MAFIA 코드 리뷰 하니스",
+      "by": "이선아 교수",
+      "source": "modules/ext-harness/M39-mafia/README.md",
+      "meta": "따라 하기 가이드",
+      "summary": "설계 의도와 팀 컨벤션, ADR을 근거로 삼는 코드 리뷰 파이프라인을 구성합니다.",
+      "how": [
+        "README에서 목적을 확인합니다.",
+        "SAMPLE.md에서 예제 앱 todo-app의 처음 상태를 확인합니다.",
+        "GUIDE.md를 위에서부터 따라 하고, 실습 뒤에 바뀐 점을 SAMPLE.md와 비교합니다."
+      ],
+      "links": [
+        {
+          "label": "가이드 읽기",
+          "path": "modules/ext-harness/M39-mafia/GUIDE.md",
+          "kind": "file"
+        },
+        {
+          "label": "목적",
+          "path": "modules/ext-harness/M39-mafia/README.md",
+          "kind": "file"
+        },
+        {
+          "label": "예제 앱 안내",
+          "path": "modules/ext-harness/M39-mafia/SAMPLE.md",
+          "kind": "file"
+        }
+      ]
+    },
+    {
+      "id": "s01",
+      "kind": "soon",
+      "title": "비즈니스 리인벤션",
+      "by": "협의 중",
+      "path": "modules/01-business-reinvention"
+    },
+    {
+      "id": "s02",
+      "kind": "soon",
+      "title": "시맨틱 모델(온톨로지)",
+      "by": "김정아 교수",
+      "path": "modules/02-semantic-model"
+    },
+    {
+      "id": "s03",
+      "kind": "soon",
+      "title": "유즈케이스·요구사항",
+      "by": "윤성열",
+      "path": "modules/03-requirements"
+    },
+    {
+      "id": "s05",
+      "kind": "soon",
+      "title": "BDD 인수조건",
+      "by": "박준성 회장",
+      "path": "modules/05-bdd"
+    },
+    {
+      "id": "s07",
+      "kind": "soon",
+      "title": "객체설계(SOLID·API)",
+      "by": "협의 중",
+      "path": "modules/07-object-design"
+    },
+    {
+      "id": "s08",
+      "kind": "soon",
+      "title": "CI 테스트 게이트",
+      "by": "윤성열, 최성웅",
+      "path": "modules/08-ci"
+    },
+    {
+      "id": "s09",
+      "kind": "soon",
+      "title": "CD·아키텍처 검증",
+      "by": "최성웅",
+      "path": "modules/09-cd-architecture"
+    },
+    {
+      "id": "s10",
+      "kind": "soon",
+      "title": "보안·규제·윤리",
+      "by": "협의 중",
+      "path": "modules/10-security"
+    },
+    {
+      "id": "semb",
+      "kind": "soon",
+      "title": "임베디드 분야 확장",
+      "by": "최성웅 교수",
+      "path": "modules/ext-embedded"
+    }
+  ],
+  "people": [
+    {
+      "name": "박준성",
+      "groups": [
+        {
+          "label": "강의",
+          "items": [
+            "golf",
+            "agent"
+          ]
+        }
+      ]
+    },
+    {
+      "name": "윤성열",
+      "groups": [
+        {
+          "label": "강의",
+          "items": [
+            "vibe",
+            "sddc",
+            "design"
+          ]
+        },
+        {
+          "label": "규칙과 스킬",
+          "items": [
+            "tdd"
+          ]
+        },
+        {
+          "label": "예제",
+          "items": [
+            "todo"
+          ]
+        }
+      ]
+    },
+    {
+      "name": "이선아 교수",
+      "wide": true,
+      "groups": [
+        {
+          "label": "SDD 도구 가이드",
+          "items": [
+            "kiro",
+            "openspec",
+            "speckit",
+            "gsd",
+            "bmad"
+          ]
+        },
+        {
+          "label": "하니스 가이드",
+          "items": [
+            "h01",
+            "h03",
+            "h05",
+            "h07",
+            "h09",
+            "h11",
+            "h13",
+            "h15",
+            "h21",
+            "h23",
+            "h25",
+            "h27",
+            "h31",
+            "h33",
+            "h35",
+            "h37",
+            "h39"
+          ]
+        }
+      ]
+    }
+  ]
+}
