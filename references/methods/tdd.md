@@ -8,7 +8,7 @@
 
 ## 절차·단계 (Red - Green - Refactor)
 
-1. **Red**: 인수 조건을 테스트로 옮기고, 구현이 없어 실패하는 것을 먼저 확인한다.
+1. **Red**: 인수 조건을 테스트로 옮기고, 구현 전에 테스트가 단언에서 실패하는 것을 먼저 확인한다.
 2. **Green**: 테스트를 통과하는 최소 코드를 생성한다.
 3. **Refactor**: 테스트를 통과한 채로 구조를 다듬는다.
 4. 테스트를 회귀 스위트에 누적해 CI 게이트로 건다.
@@ -24,9 +24,11 @@
 
 - **코딩·검증 단계**의 핵심 실천으로 채택한다. 회장님이 강조한 "코딩 시 반드시 TDD"의 구체화다.
 - 입력은 **BDD**의 인수 조건, 출력은 **CI**의 회귀 게이트로 연결된다.
-- 구현 자산은 `modules/06-coding-tdd/`에 시드로 작성되어 있다(가이드·규칙·자동화·샘플).
+- 구현 자산은 `modules/06-coding-tdd/`의 단원 M01~M03에 있다(가이드·규칙·자동화·샘플).
 
 ## 출처
 
-- Kent Beck, Test-Driven Development: By Example
+- Kent Beck, *Test-Driven Development: By Example*, Addison-Wesley, 2002
+- Kent Beck, "Canon TDD", 2023-12-11. https://newsletter.kentbeck.com/p/canon-tdd
+- Martin Fowler, "Test Driven Development", 2005-03-05 작성, 2023-12-11 개정. https://martinfowler.com/bliki/TestDrivenDevelopment.html
 - AI 환각·비일관성 억제 맥락 — 본 프로젝트 modules/06-coding-tdd

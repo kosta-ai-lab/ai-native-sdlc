@@ -1,6 +1,18 @@
 # 자동화 — test-first (스킬·서브에이전트 명세)
 
-> Claude Code에서 TDD 흐름을 자동으로 돌리는 스킬/서브에이전트의 명세. 공개 런칭 시 실제 `SKILL.md`와 서브에이전트 정의로 구현한다.
+> Claude Code에서 TDD 흐름을 자동으로 돌리는 스킬/서브에이전트의 명세. 구현은 [단원 M03의 harness/.claude/](../M03-test-first-skill/harness/.claude/)에 있다.
+
+## 구현 현황 (2026-11-24)
+
+| 명세 | 구현 |
+|------|------|
+| 테스트 우선 루프 | `/test-first <인수조건 파일>` 스킬로 구현했다. 한 번에 한 항목씩 진행하고 `docs/tdd-log.md`에 Red와 Green을 적는다 |
+| 호출 형식 | `--spec`, `--target` 옵션은 없다. 인수조건 파일 경로 하나만 받는다 |
+| implementer | 서브에이전트로 구현했다. 테스트 수정은 `PreToolUse` 훅이 막는다 |
+| test-writer, reviewer | 아직 구현하지 않았다. 테스트는 메인 세션이 쓴다 |
+| pre-commit 훅 | 아직 구현하지 않았다 |
+
+아래는 처음 적은 명세 그대로다.
 
 ## 무엇을 하는가
 

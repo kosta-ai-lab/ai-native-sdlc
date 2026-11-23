@@ -1,0 +1,15 @@
+{
+  "name": "todo-app",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "모듈 06 실습 출발점: 할 일 생성 기능을 TDD로 만든다",
+  "scripts": {
+    "test": "vitest run",
+    "typecheck": "tsc --noEmit"
+  },
+  "devDependencies": {
+    "typescript": "^5.7.2",
+    "vitest": "^3.2.4"
+  }
+}
