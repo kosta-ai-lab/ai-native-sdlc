@@ -6,7 +6,7 @@ import fs from 'node:fs';
 import http from 'node:http';
 import os from 'node:os';
 import path from 'node:path';
-import { REPO_ROOT, SITE_DIR, BASE_PATH, MARKER, build, distAllowlist, listFiles, readJSON, resolveOutDir } from './lib.mjs';
+import { REPO_ROOT, SITE_DIR, BASE_PATH, MARKER, DATES_FILE, build, collectDates, distAllowlist, listFiles, readHistory, readJSON, resolveOutDir, watchedPaths } from './lib.mjs';
 import { collectProblems, parseCsp, visibleStrings, REQUIRED_CSP, COLUMNS } from './check.mjs';
 import { createSiteServer, normalizeBase } from './serve.mjs';
 import '../src/core.js';
@@ -55,6 +55,20 @@ test('자식 목록: 배열이 겹쳐 있어도 요소만 남긴다 (강사별 �
   // 안내판: h('div', props, [p, learn ? [h3, ul] : null, button])
   assert.deepEqual(R.flatKids([['요약', [h3, ula], null, false, '단추']]), ['요약', h3, ula, '단추']);
   assert.ok(R.flatKids([h3, [[h4a, ula]]]).every((c) => !Array.isArray(c)));
+});
+test('새로움: 올라온 날을 포함해 14일 동안 NEW, 그 뒤에 내용이 바뀌면 14일 동안 업데이트', () => {
+  const f = (added, updated, today) => R.freshness({ added, updated }, today, 14);
+  assert.equal(f('2026-11-11', '2026-11-11', '2026-11-11'), 'new');
+  assert.equal(f('2026-11-11', '2026-11-11', '2026-11-24'), 'new'); // 14일째
+  assert.equal(f('2026-11-11', '2026-11-11', '2026-11-25'), ''); // 15일째
+  assert.equal(f('2026-08-20', '2026-11-20', '2026-11-24'), 'updated');
+  assert.equal(f('2026-08-20', '2026-11-10', '2026-11-24'), '');
+  assert.equal(f('2026-11-20', '2026-11-23', '2026-11-24'), 'new'); // 새 자료는 고쳐도 NEW
+  assert.equal(f('2026-12-25', '2026-12-25', '2027-01-07'), 'new'); // 해를 넘겨도 날수로 센다
+  assert.equal(f('2026-12-25', '2026-12-25', '2027-01-08'), '');
+  assert.equal(f('2026-11-25', '2026-11-25', '2026-11-24'), 'new'); // 방문자의 날짜가 하루 늦은 시간대
+  assert.equal(R.freshness(undefined, '2026-11-24', 14), '');
+  assert.equal(f('날짜 아님', '날짜 아님', '2026-11-24'), '');
 });
 test('저장소 주소: 공백이 있는 폴더를 인코딩하고, 폴더는 tree, 파일은 blob으로 연다', () => {
   assert.equal(R.repoUrl(data, { path: 'courses/Agentic Coding using Claude Code/README.md', kind: 'file' }),
@@ -177,7 +191,9 @@ test('check는 화면 원본의 CSP·inline 코드·경로 위반을 잡아낸�
 test('check는 화면 스크립트의 위험한 API·추적·외부 요청을 잡아낸다', () => {
   caught(withApp((s) => s.replace('e.textContent = v;', 'e.innerHTML = v;')), /문자열을 HTML이나 코드로 실행하는 API/);
   caught(withApp((s) => s + '\nsessionStorage.setItem("a", "b");\n'), /추적·외부 전송 API/);
-  caught(withApp((s) => s + '\nfetch("https://example.com/collect");\n'), /허용하지 않은 주소|fetch는 로드맵 데이터를 읽는 한 번만/);
+  caught(withApp((s) => s + '\nfetch("https://example.com/collect");\n'), /허용하지 않은 주소/);
+  caught(withApp((s) => s + "\nfetch(new URL('data/roadmap.json', document.baseURI));\n"), /fetch는 로드맵 데이터와 자료 날짜를 읽는 두 번만/);
+  caught(withApp((s) => s.replace("new URL('data/dates.json', document.baseURI)", "new URL('data/other.json', document.baseURI)")), /날짜는 fetch/);
   caught(withApp((s) => s + '\nlocalStorage.setItem("visits", "1");\n'), /localStorage는 마친 자료 표시/);
   caught(withApp((s) => s.replace("new URL('data/roadmap.json', document.baseURI)", "'/data/roadmap.json'")), /절대 경로 fetch 금지|데이터는 fetch/);
 });
@@ -186,6 +202,39 @@ test('meta CSP 정책: 같은 출처의 스크립트·스타일·글꼴·데이�
   assert.ok(m);
   assert.deepEqual(parseCsp(m[1]), REQUIRED_CSP);
   assert.ok(html.indexOf(m[0]) < html.search(/<(link|script)\b/));
+});
+
+// ── 자료 날짜 ──
+test('자료 날짜: 처음 올라온 날과 마지막으로 내용이 바뀐 날을 읽고, 옮긴 파일은 옛 경로까지 따라간다', () => {
+  const log = [
+    '@2026-11-20', 'M\tmodules/x/GUIDE.md', 'M\tREADME.md',
+    '@2026-11-10', 'R100\tmodules/old/GUIDE.md\tmodules/x/GUIDE.md', 'R100\tmodules/old/README.md\tmodules/x/README.md', 'R100\tmodules/old-y/README.md\tmodules/y/README.md',
+    '@2026-10-01', 'M\tmodules/old/README.md', 'R090\tdraft/app/a.ts\tsamples/app/a.ts',
+    '@2026-09-01', 'A\tmodules/old/GUIDE.md', 'A\tmodules/old/README.md', 'A\tmodules/old-y/README.md', 'A\tdraft/app/a.ts', ''
+  ].join('\n');
+  const sample = { items: [
+    { id: 'x', kind: 'guide', source: 'modules/x/README.md', links: [{ path: 'modules/x/GUIDE.md', kind: 'file' }] },
+    { id: 'y', kind: 'guide', source: 'modules/y/README.md', links: [{ path: 'modules/y/README.md', kind: 'file' }] },
+    { id: 'app', kind: 'sample', source: 'samples/app/README.md', links: [{ path: 'samples/app', kind: 'dir' }] },
+    { id: 'fresh', kind: 'guide', source: 'modules/z/README.md', links: [] },
+    { id: 'soon', kind: 'soon', path: 'modules/09' }
+  ] };
+  assert.deepEqual(readHistory(log, watchedPaths(sample)), {
+    app: { added: '2026-09-01', updated: '2026-10-01' }, // 내용이 바뀐 이동(R090)은 바뀐 날로 센다
+    x: { added: '2026-09-01', updated: '2026-11-20' }, // 옛 경로의 이력까지 이어서 읽는다
+    y: { added: '2026-09-01', updated: '2026-09-01' } // 내용이 그대로인 이동(R100)은 세지 않는다
+  }); // 이력에 없는 자료(fresh)와 준비 중 자료(soon)는 나오지 않는다
+});
+test('자료 날짜: 저장소 이력에서 읽은 값이 날짜 형식이고, 할 일 생성 예제는 2026-07-02에 올라왔다', () => {
+  const dated = collectDates({ data });
+  if (!dated.complete) { console.log('test: · git 이력이 온전하지 않아(얕은 복제) 이 시험은 날짜 값을 확인하지 않음'); return; }
+  for (const [id, e] of Object.entries(dated.items)) {
+    assert.ok(R.isOpen(items.get(id)), id);
+    assert.match(e.added, /^\d{4}-\d\d-\d\d$/, id);
+    assert.match(e.updated, /^\d{4}-\d\d-\d\d$/, id);
+    assert.ok(e.added <= e.updated, id);
+  }
+  assert.equal(dated.items.todo.added, '2026-07-02');
 });
 
 // ── 빌드 출력 ──
@@ -201,7 +250,8 @@ test('빌드: 허용 목록의 파일만 원본과 같은 바이트로 복사하
   const out = path.join(tmp(), 'dist');
   const first = build(out);
   assert.deepEqual(listFiles(out), distAllowlist());
-  assert.ok(first.files.includes('fonts/OFL.txt') && first.files.includes('data/roadmap.json'));
+  assert.ok(first.files.includes('fonts/OFL.txt') && first.files.includes('data/roadmap.json') && first.files.includes(DATES_FILE));
+  assert.deepEqual(JSON.parse(fs.readFileSync(path.join(out, DATES_FILE), 'utf8')), collectDates({ data }));
   const snapshot = () => listFiles(out).map((f) => f + ':' + fs.readFileSync(path.join(out, f)).toString('base64').length);
   const before = snapshot();
   build(out);
@@ -222,6 +272,40 @@ test('check --dist는 원본과 달라진 산출물을 잡아낸다', () => {
   build(out);
   fs.appendFileSync(path.join(out, 'app.js'), '\n// 고침\n');
   caught(collectProblems({ dist: out }).problems, /원본과 다른 파일 app\.js/);
+});
+
+test('빌드: 이력이 온전하지 않으면 날짜 없이 만들고, 이력을 요구하면 아무것도 쓰지 않고 멈춘다', () => {
+  const shallow = { complete: false, items: {} };
+  const out = path.join(tmp(), 'dist');
+  build(out, { dates: shallow });
+  assert.deepEqual(JSON.parse(fs.readFileSync(path.join(out, DATES_FILE), 'utf8')), shallow);
+  const strict = path.join(tmp(), 'dist');
+  assert.throws(() => build(strict, { dates: shallow, requireHistory: true }), (e) => e.code === 'EHISTORY');
+  assert.ok(!fs.existsSync(strict));
+});
+test('check --dist는 자료 날짜가 이력과 다르거나 형식이 틀리면 잡아낸다', () => {
+  const out = path.join(tmp(), 'dist');
+  const { dates } = build(out);
+  const put = (v) => fs.writeFileSync(path.join(out, DATES_FILE), typeof v === 'string' ? v : JSON.stringify(v, null, 1) + '\n');
+  const problems = () => collectProblems({ dist: out }).problems;
+  put({ ...dates, items: { ...dates.items, todo: { added: '2020-01-01', updated: '2020-01-01' } } });
+  caught(problems(), /지금 저장소 이력과 다름/);
+  put({ complete: true, items: { todo: { added: '2026/07/02', updated: '2026-07-02' } } });
+  caught(problems(), /날짜\(YYYY-MM-DD\)/);
+  put({ complete: true, items: { nope: { added: '2026-07-02', updated: '2026-07-02' } } });
+  caught(problems(), /공개 자료가 아닌 id nope/);
+  put({ complete: true, items: {}, extra: 1 });
+  caught(problems(), /\{ complete, items \} 형식/);
+  put('고장');
+  caught(problems(), /읽을 수 없음/);
+});
+test('check는 워크플로가 이력 전체를 받지 않거나, 이력 확인 없이 빌드하거나, 자료가 바뀌어도 다시 빌드하지 않으면 잡아낸다', () => {
+  const wf = fs.readFileSync(path.join(REPO_ROOT, '.github/workflows/learning-site.yml'), 'utf8');
+  const withWorkflow = (mutate) => collectProblems({ overrides: { workflow: mutate(wf) } }).problems;
+  caught(withWorkflow((s) => s.replace(/\n\s+fetch-depth: 0/, '')), /fetch-depth: 0/);
+  caught(withWorkflow((s) => s.replace('build.mjs --require-history', 'build.mjs')), /build\.mjs --require-history 실행 필요/);
+  // 자료 폴더의 push에서 다시 빌드하지 않으면 날짜가 낡는다
+  caught(withWorkflow((s) => s.replace(/(\n {2}push:[\s\S]*?)\n\s+- "modules\/\*\*"/, (_all, head) => head)), /main push의 paths에 "modules\/\*\*" 필요/);
 });
 
 // ── 미리보기 서버 ──
