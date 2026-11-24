@@ -59,7 +59,9 @@ gh pr checks --watch      # 통과
 
 ## 5단계: 필수 검사로 지정
 
-저장소의 Settings → Branches → Add classic branch protection rule에서 `main`에 Require status checks to pass before merging을 켜고 `Test and typecheck`를 선택합니다. Do not allow bypassing the above settings도 켠 뒤 Create를 누릅니다.
+저장소의 Settings → Branches → Add classic branch protection rule에서 `main`에 Require status checks to pass before merging을 켜고 `Test and typecheck`를 선택합니다. Do not allow bypassing the above settings도 켠 뒤 Create를 누릅니다. GitHub가 본인 확인을 요구하면 화면의 안내대로 확인합니다.
+
+명령으로 같은 규칙을 걸려면 [GUIDE.md의 5단계](GUIDE.md#5단계--필수-검사로-지정하기)에 있는 `gh api` 명령을 씁니다.
 
 ## 6단계: CI 실패를 AI에게 맡기기
 

@@ -25,7 +25,7 @@ CI가 막지 못하는 것도 있습니다.
 
 ## 3. 단계별 실습
 
-실습은 자기 GitHub 계정의 저장소에서 합니다. 1·3·4단계의 ‘검증 실행에서 본 것’은 이 강의 자료 저장소의 PR에서 실행한 결과이고, 6단계는 로컬 사본에서 실행한 결과입니다. 2단계와 5단계는 새 저장소와 저장소 설정이 필요해서 검증 실행에서 직접 하지 않았습니다.
+실습은 자기 GitHub 계정의 저장소에서 합니다. ‘검증 실행에서 본 것’에는 두 가지 실행이 있습니다. 하나는 이 강의 자료 저장소의 PR에서 실행한 결과이고, 다른 하나는 이 가이드의 0~6단계를 공개 연습용 저장소(`my-todo-ci`)에서 처음부터 끝까지 따라 한 결과입니다. 어느 쪽인지는 항목마다 적었습니다.
 
 ### 0단계 — 준비하기
 
@@ -125,7 +125,7 @@ git add -A && git commit -m "ci: 테스트와 타입 검사 워크플로 추가"
 
 - 이 강의 자료 저장소에는 같은 단계를 가진 워크플로(`.github/workflows/practice-examples.yml`)가 있습니다. 설치, 테스트, 타입 검사 단계는 같고 다른 점은 다섯 가지입니다. 예제 폴더 안에서 실행하도록 `working-directory`를 정했고, 예제 폴더나 그 워크플로 파일이 바뀔 때만 돌도록 `paths`를 정했습니다. 같은 PR에 새 커밋이 오면 앞선 실행을 취소하는 `concurrency`와 Checkout의 `persist-credentials: false`를 넣었고, 워크플로와 작업의 이름이 다릅니다.
 - 그 워크플로는 PR에서 12초 만에 성공했습니다. 러너의 Node.js는 v24.22.3이었고 `Tests  4 passed (4)`가 나왔습니다. 단계는 Checkout, Install pnpm, Install Node.js, Install dependencies, Run tests, Type check 순서로 모두 성공했습니다.
-- 위 완성본 그대로 저장소 루트에서 실행하는 것은 확인하지 않았습니다.
+- 연습용 저장소에서는 위 완성본을 그대로 `.github/workflows/test.yml`에 넣었습니다. 2단계에서 main에 올리자 실행이 시작됐고 8초 만에 성공했습니다. 작업 이름은 `Test and typecheck`였습니다.
 
 **검토**
 
@@ -145,7 +145,10 @@ gh run list --limit 1     # main 푸시로 시작된 실행이 보인다
 
 **결과:** GitHub 저장소와, main 푸시로 시작된 첫 실행.
 
-이 단계의 명령은 검증 실행에서 실행하지 않았습니다. 새 저장소를 만들지 않았기 때문입니다. 옵션의 뜻은 gh 2.105.0의 도움말(`gh repo create --help`)에서 확인했습니다.
+**검증 실행에서 본 것**
+
+- `gh repo create my-todo-ci --public --source=. --push`는 새 저장소의 주소를 출력하고, 원격 `origin`을 등록한 뒤 `main`을 올렸습니다.
+- 바로 뒤에 실행한 `gh run list --limit 1`에는 main 푸시로 시작된 ‘Test’ 실행이 `queued` 상태로 보였습니다. 이 실행은 8초 만에 성공했습니다.
 
 **검토**
 
@@ -180,6 +183,7 @@ gh pr checks --watch      # 검사가 끝날 때까지 기다린다
   ```
 - 이 한 줄은 출력을 스크립트로 받았을 때의 형식입니다. 터미널에서는 `All checks were successful` 같은 요약과 표가 나옵니다.
 - 자기 저장소에서는 검사 이름이 `Test and typecheck`로 나옵니다. 워크플로의 `jobs.test.name`에 적은 이름입니다.
+- 연습용 저장소에서는 `gh pr create --fill` 바로 뒤의 `gh pr checks --watch`가 `no checks reported on the 'docs/readme-note' branch`를 내고 끝났습니다. 8초 뒤에 다시 실행하자 `pending`에서 `pass`로 바뀌었고, 검사는 9초가 걸렸습니다.
 
 **검토**
 
@@ -224,7 +228,8 @@ gh pr checks --watch      # 다시 통과한다
        → expected [Function] to throw error including '제목은 필수' but got '제목을 입력하세요'
   ```
 - `git revert`로 되돌린 커밋을 올리자 14초 만에 다시 통과했습니다.
-- 검사가 실패했다고 해서 병합이 저절로 막히지는 않습니다. 병합을 막는 것은 5단계의 설정입니다. 강의 자료 저장소의 main에는 보호 규칙이 없고, 실패한 상태에서 병합 버튼이 어떻게 보이는지는 확인하지 않았습니다.
+- 연습용 저장소에서도 같은 순서로 실행했습니다. 실패는 9초, 되돌린 뒤의 통과는 12초가 걸렸고 실패 로그의 핵심 줄은 위와 같았습니다. `gh pr checks --watch`는 검사가 실패로 끝나면 종료 코드 1, 통과로 끝나면 0이었습니다.
+- 검사가 실패했다고 해서 병합이 저절로 막히지는 않습니다. 병합을 막는 것은 5단계의 설정입니다. 보호 규칙을 걸기 전의 연습용 저장소에서 검사가 실패한 PR을 `gh pr view --json mergeable,mergeStateStatus`로 보면 `MERGEABLE`, `UNSTABLE`이었습니다. 병합할 수 있는 상태라는 뜻입니다. 이 상태의 병합 버튼을 화면에서 보지는 않았습니다.
 
 **검토**
 
@@ -247,7 +252,37 @@ gh pr checks --watch      # 다시 통과한다
 
 그다음 4단계의 `sed`, 커밋, 푸시 명령으로 실패하는 커밋을 다시 올려 병합 버튼이 막히는지 확인합니다. 6단계를 이어서 한다면 되돌리지 않고 둡니다.
 
-이 단계는 검증 실행에서 하지 않았습니다. 강의 자료 저장소의 설정을 바꾸지 않았기 때문입니다. 절차는 GitHub 문서 “Managing a branch protection rule”에서 옮겼습니다(2026-11-24 확인). 화면의 이름은 바뀔 수 있습니다.
+절차는 GitHub 문서 “Managing a branch protection rule”에서 옮겼습니다(2026-11-24 확인). 화면의 이름은 바뀔 수 있습니다.
+
+화면 대신 명령으로 같은 규칙을 걸 수도 있습니다. 프로젝트 폴더에서 실행합니다. `enforce_admins`가 화면의 Do not allow bypassing the above settings에 해당합니다.
+
+```bash
+cat > protect.json <<'JSON'
+{
+  "required_status_checks": { "strict": false, "contexts": ["Test and typecheck"] },
+  "enforce_admins": true,
+  "required_pull_request_reviews": null,
+  "restrictions": null
+}
+JSON
+gh api -X PUT "repos/{owner}/{repo}/branches/main/protection" --input protect.json --jq '.required_status_checks.contexts, .enforce_admins.enabled'
+rm protect.json
+```
+
+`{owner}`와 `{repo}`는 그대로 입력합니다. gh가 지금 폴더의 저장소 이름으로 바꿔 줍니다. 성공하면 `["Test and typecheck"]`와 `true`가 나옵니다.
+
+**검증 실행에서 본 것**
+
+- 연습용 저장소의 화면에서 1~7번의 이름을 확인했습니다. Branch protection rules, Add classic branch protection rule, Branch name pattern, Require status checks to pass before merging, Do not allow bypassing the above settings, Create가 화면에 그대로 있었습니다.
+- Branches 화면에는 Add branch ruleset 버튼도 함께 있습니다. GitHub는 그 화면에서 ruleset을 권장하고 classic 규칙은 기능이 더 적다고 안내합니다. 이 단원은 필수 검사 하나만 걸면 되므로 classic 규칙을 씁니다.
+- 5번의 검색 칸은 최근 일주일 동안 그 저장소에서 실행된 검사를 찾습니다. `Test and typecheck`를 입력하자 같은 이름의 검사가 나왔고, 선택하자 필수 검사 목록에 들어갔습니다.
+- Create를 누르자 GitHub가 본인 확인 화면(Confirm access)을 띄웠습니다. 화면은 패스키, GitHub Mobile, 인증 앱, 이메일 코드 가운데 하나로 확인하라고 안내합니다. 검증 실행에서는 여기서 멈추고 위의 명령으로 같은 규칙을 걸었습니다.
+- 규칙을 건 뒤 실패하는 커밋을 올리자 병합이 막혔습니다.
+  - `gh pr view --json mergeStateStatus`가 `BLOCKED`로 바뀌었습니다.
+  - `gh pr merge --squash`는 `is not mergeable: the base branch policy prohibits the merge.`를 내고 병합하지 않았습니다.
+  - 관리자 권한으로 병합하는 `gh pr merge --squash --admin`도 `Required status check "Test and typecheck" is failing.`으로 거부됐습니다.
+  - PR 화면에는 `All checks have failed`와 `1 failing check`가 나오고, 검사 옆에 `Required` 표시가 붙었습니다. Merge pull request 버튼은 누를 수 없는 상태였습니다.
+- 6단계에서 고친 커밋을 올려 검사가 통과하자 상태가 `CLEAN`으로 바뀌었고 `gh pr merge --squash`로 병합됐습니다.
 
 **검토**
 
@@ -276,15 +311,20 @@ git push
 gh pr checks --watch
 ```
 
-**검증 실행에서 본 것 (2회)**
+**검증 실행에서 본 것 (3회)**
 
-- 두 번 모두 `src/todo.ts` 한 파일만 고쳤습니다. 오류 문구를 “제목은 필수”로 되돌렸고, 테스트와 `docs/`는 고치지 않았습니다.
-- 두 번 모두 원인을 직전 커밋(오류 문구 변경)으로 짚었고, 인수조건과 테스트가 “제목은 필수”를 요구한다는 것을 근거로 들었습니다.
-- 두 번 모두 `pnpm test`를 실행해 `Tests  4 passed (4)`를 보였습니다.
+실패 커밋까지 만든 로컬 사본에서 두 번, 연습용 저장소에서 한 번 실행했습니다.
+
+- 세 번 모두 `src/todo.ts` 한 파일만 고쳤고, 테스트와 `docs/`는 고치지 않았습니다.
+- 세 번 모두 원인을 직전 커밋(오류 문구 변경)으로 짚었고, 인수조건과 테스트가 “제목은 필수”를 요구한다는 것을 근거로 들었습니다.
+- 세 번 모두 `pnpm test`를 실행해 `Tests  4 passed (4)`를 보였습니다.
+- 고친 문구는 같지 않았습니다. 로컬 사본의 두 번은 “제목은 필수”로 되돌렸고, 연습용 저장소의 한 번은 “제목은 필수입니다”로 고쳤습니다. 테스트는 `toThrow("제목은 필수")`로 그 문구가 들어 있는지만 확인하므로 두 수정 모두 통과합니다. 원래 문구와 같은지는 테스트가 알려 주지 않으므로 `git diff`로 직접 봅니다.
+- 연습용 저장소에서는 고친 커밋을 올리자 검사가 13초 만에 통과했고 PR을 병합할 수 있었습니다.
 
 **검토**
 
 - [ ] `git status --short`에 `M src/todo.ts`만 나온다. `test/`나 `docs/`가 바뀌었다면 되돌린다.
+- [ ] `git diff`로 고친 줄을 읽었다. 통과하더라도 인수조건과 다르게 고쳤다면 다시 요청한다.
 - [ ] 고친 커밋을 올린 뒤 PR의 검사가 통과했다.
 
 ## 4. 자주 막히는 곳
@@ -296,6 +336,8 @@ gh pr checks --watch
 | 로컬에서는 통과하는데 CI에서 실패한다 | 러너는 저장소에 커밋된 파일만 봅니다. 커밋하지 않은 파일이 있는지 `git status`로 확인합니다 |
 | `gh pr checks`가 “no checks reported”라고 한다 | 검사가 아직 등록되지 않았습니다. `--watch`를 붙여도 같은 메시지를 내고 바로 끝납니다. 5~10초 뒤에 다시 실행합니다 |
 | 푸시가 `without workflow scope`로 거부된다 | `gh auth status`의 Token scopes에 `workflow`가 있는지 봅니다. 없으면 `gh auth refresh -s workflow`를 실행합니다 |
+| 5단계의 검색 칸에 검사 이름이 나오지 않는다 | 검색 칸은 최근 일주일 동안 그 저장소에서 실행된 검사만 찾습니다. 3단계의 검사가 끝난 뒤에 다시 검색합니다 |
+| Create를 눌렀더니 Confirm access 화면이 나온다 | GitHub가 설정을 바꾸기 전에 본인 확인을 요구하는 화면입니다. 화면이 안내하는 방법 가운데 하나로 확인합니다. 5단계의 명령으로 규칙을 걸 수도 있습니다 |
 | `sed` 명령이 오류를 낸다 | macOS와 Linux의 `sed -i` 문법이 다릅니다. 편집기로 `src/todo.ts`의 오류 문구 한 줄을 직접 고칩니다 |
 
 ## 참고 자료
