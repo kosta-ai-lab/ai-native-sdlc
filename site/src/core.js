@@ -48,6 +48,21 @@
   /** 요소에 붙일 자식 목록을 한 줄로 편다. 배열이 몇 겹이든 풀고 null과 false는 뺀다. */
   function flatKids(kids) { return kids.flat(Infinity).filter(function (c) { return c != null && c !== false; }); }
 
+  /** 'YYYY-MM-DD' 두 날짜 사이의 날수(to − from). 형식이 다르면 NaN. */
+  function dayGap(from, to) {
+    return Math.round((Date.parse(to + 'T00:00:00Z') - Date.parse(from + 'T00:00:00Z')) / 86400000);
+  }
+  /**
+   * 자료의 새로움. 올라온 날을 포함해 days일 동안은 'new', 그 뒤에 내용이 바뀌면 바뀐 날을 포함해 days일 동안 'updated', 아니면 ''.
+   * entry: { added, updated } (없으면 ''), today: 방문자의 오늘 날짜.
+   */
+  function freshness(entry, today, days) {
+    if (!entry) return '';
+    if (dayGap(entry.added, today) < days) return 'new';
+    if (entry.updated !== entry.added && dayGap(entry.updated, today) < days) return 'updated';
+    return '';
+  }
+
   /** 저장소 경로를 GitHub 주소로. 폴더는 tree, 파일은 blob. 경로 조각마다 인코딩한다. */
   function repoUrl(data, link) {
     var enc = link.path.split('/').map(encodeURIComponent).join('/');
@@ -65,6 +80,6 @@
   root.KostaRoadmap = {
     isOpen: isOpen, index: index, idsOf: idsOf, openIds: openIds, stageState: stageState, stageIndex: stageIndex,
     stageEntry: stageEntry, firstItem: firstItem, lineOfItem: lineOfItem, shortTitle: shortTitle,
-    progress: progress, counts: counts, flatKids: flatKids, repoUrl: repoUrl, parseHash: parseHash
+    progress: progress, counts: counts, flatKids: flatKids, freshness: freshness, repoUrl: repoUrl, parseHash: parseHash
   };
 })(typeof globalThis !== 'undefined' ? globalThis : self);
