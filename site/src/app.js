@@ -23,7 +23,7 @@
       else if (k === 'on') for (const [n, fn] of Object.entries(v)) e.addEventListener(n, fn);
       else e.setAttribute(k, v === true ? '' : String(v));
     }
-    for (const c of kids.flat()) if (c != null && c !== false) e.append(c);
+    for (const c of R.flatKids(kids)) e.append(c);
     return e;
   };
   const icon = (cls, box, d) => {

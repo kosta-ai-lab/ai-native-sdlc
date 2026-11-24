@@ -45,6 +45,9 @@
     return { stages: line.stages.length, open: open.length, soon: all.length - open.length };
   }
 
+  /** 요소에 붙일 자식 목록을 한 줄로 편다. 배열이 몇 겹이든 풀고 null과 false는 뺀다. */
+  function flatKids(kids) { return kids.flat(Infinity).filter(function (c) { return c != null && c !== false; }); }
+
   /** 저장소 경로를 GitHub 주소로. 폴더는 tree, 파일은 blob. 경로 조각마다 인코딩한다. */
   function repoUrl(data, link) {
     var enc = link.path.split('/').map(encodeURIComponent).join('/');
@@ -62,6 +65,6 @@
   root.KostaRoadmap = {
     isOpen: isOpen, index: index, idsOf: idsOf, openIds: openIds, stageState: stageState, stageIndex: stageIndex,
     stageEntry: stageEntry, firstItem: firstItem, lineOfItem: lineOfItem, shortTitle: shortTitle,
-    progress: progress, counts: counts, repoUrl: repoUrl, parseHash: parseHash
+    progress: progress, counts: counts, flatKids: flatKids, repoUrl: repoUrl, parseHash: parseHash
   };
 })(typeof globalThis !== 'undefined' ? globalThis : self);
