@@ -48,6 +48,14 @@ async function withServer(root, base, fn) {
 }
 
 // ── 계산(core.js) ──
+test('자식 목록: 배열이 겹쳐 있어도 요소만 남긴다 (강사별 자료의 묶음, 안내판의 배우는 것)', () => {
+  const h3 = { tag: 'h3' }, h4a = { tag: 'h4' }, ula = { tag: 'ul' }, h4b = { tag: 'h4' }, ulb = { tag: 'ul' };
+  // 강사별 자료: h('div', props, h3, groups.map(g => [h4, ul]))
+  assert.deepEqual(R.flatKids([h3, [[h4a, ula], [h4b, ulb]]]), [h3, h4a, ula, h4b, ulb]);
+  // 안내판: h('div', props, [p, learn ? [h3, ul] : null, button])
+  assert.deepEqual(R.flatKids([['요약', [h3, ula], null, false, '단추']]), ['요약', h3, ula, '단추']);
+  assert.ok(R.flatKids([h3, [[h4a, ula]]]).every((c) => !Array.isArray(c)));
+});
 test('저장소 주소: 공백이 있는 폴더를 인코딩하고, 폴더는 tree, 파일은 blob으로 연다', () => {
   assert.equal(R.repoUrl(data, { path: 'courses/Agentic Coding using Claude Code/README.md', kind: 'file' }),
     'https://github.com/kosta-ai-lab/ai-native-sdlc/blob/main/courses/Agentic%20Coding%20using%20Claude%20Code/README.md');
