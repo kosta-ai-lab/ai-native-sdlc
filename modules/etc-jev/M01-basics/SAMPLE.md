@@ -1,7 +1,7 @@
 # 예제 실행 및 프롬프트
 
 GUIDE.md의 흐름에서 명령어와 확인할 결과만 모은 실행용 요약입니다.
-개념 설명과 체크리스트는 [GUIDE.md](GUIDE.md)를 참고하세요.
+개념 설명은 [README.md](README.md), 단계별 설명과 체크리스트는 [GUIDE.md](GUIDE.md)를 참고하세요.
 
 > 준비물: Python 3.10 이상, TypeSafe 얼리 액세스 승인, API 키 ([console.typesafe.ai/keys](https://console.typesafe.ai/keys))
 
