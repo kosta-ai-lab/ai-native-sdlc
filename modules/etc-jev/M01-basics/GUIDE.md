@@ -25,7 +25,7 @@
 터미널(Windows는 PowerShell)을 열고 Python 버전을 확인합니다.
 
 ```bash
-python3 --version
+python --version
 ```
 
 API 키는 콘솔에서 **Create key**(키 만들기)를 눌러 만들고, 화면에 나온 키를 복사해 둡니다. 키는 보통 만들 때 한 번만 보여 주니 안전한 곳에 저장하세요.
@@ -39,7 +39,7 @@ API 키는 콘솔에서 **Create key**(키 만들기)를 눌러 만들고, 화�
 - 발급받은 API 키 (내 컴퓨터에만 보관)
 
 ## 체크리스트
-- [ ] `py --version`(또는 `python3 --version`)이 3.10 이상인지 확인한다.
+- [ ] `py --version`(또는 `python --version`)이 3.10 이상인지 확인한다.
 - [ ] 콘솔에서 API 키를 발급받아 안전한 곳에 보관했는지 확인한다.
 
 ---
@@ -77,7 +77,7 @@ py -m venv .venv
 
 macOS / Linux:
 ```bash
-python3 -m venv .venv
+python -m venv .venv
 ```
 
 ```bash
