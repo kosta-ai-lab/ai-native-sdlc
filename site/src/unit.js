@@ -6,7 +6,7 @@
   const $ = (s, r = document) => r.querySelector(s);
   const DOC_BASE = 'https://github.com/kosta-ai-lab/ai-native-sdlc/blob/main/';
   const SITE = 'kosta-ai-lab 학습 로드맵';
-  // 마디를 읽는 법에 보이는 순서. 단원이 따로 정한 마디(검증 실행에서 본 것, 더 해 보기 등)는 그 뒤에 오고, 단계 안에서는 한 줄을 다 쓴다.
+  // '칸 읽는 법'에 보이는 순서. 단원이 따로 정한 칸(검증 실행에서 본 것, 더 해 보기 등)은 그 뒤에 오고, 단계 안에서는 한 줄을 다 쓴다.
   const KIND_ORDER = ['hand', 'do', 'check', 'decide', 'pass'];
   const STEP_MS = 2800;
   const still = matchMedia('(prefers-reduced-motion: reduce)');
@@ -38,7 +38,6 @@
     if (at < s.length) out.push(s.slice(at));
     return out;
   };
-  const pn = (n) => h('i', { class: 'pn', 'aria-label': '원칙 ' + n, text: String(n) });
   const dot = (state, i) => h('span', { class: 'dot', data: { state }, text: String(i) });
   /** 출력 한 줄. [[ ]]로 감싼 부분은 눈여겨볼 곳으로 표시한다. */
   const termLine = ([cls, text]) => h('span', { class: cls || null }, String(text).split(/\[\[(.+?)\]\]/).map((p, i) => (i % 2 ? h('mark', { text: p }) : p)));
@@ -48,11 +47,18 @@
 
   let u, cur = -1, timer = 0, stns = [], panes = [];
 
-  /** 마디 안의 조각 하나를 요소로 만든다. */
+  /** 한 줄에 놓을 칸 수: 한 줄을 다 쓰는 칸 사이에 이어서 놓이는 칸이 가장 많은 곳에 맞춘다. */
+  const rowWidth = (lanes) => {
+    let most = 0, run = 0;
+    for (const l of lanes) { run = KIND_ORDER.includes(l.kind) ? run + 1 : 0; most = Math.max(most, run); }
+    return most;
+  };
+
+  /** 칸 안의 조각 하나를 요소로 만든다. */
   function block(b) {
     if (b.p) return h('p', null, rich(b.p));
     if (b.label) return h('p', { class: 'b-label' }, rich(b.label));
-    if (b.prompt) return [h('p', { class: 'b-label', text: u.promptLabel || '요청' }), h('p', { class: 'b-prompt', text: b.prompt })];
+    if (b.prompt) return [h('p', { class: 'b-label', text: u.promptLabel || 'AI에게 입력' }), h('p', { class: 'b-prompt', text: b.prompt })];
     if (b.code) return h('pre', { class: 'b-code', text: b.code });
     if (b.cmd) return h('pre', { class: 'b-cmd' }, b.cmd.split('\n').map((l, i, lines) => {
       // 명령 뒤에 붙은 주석(공백 두 칸 이상 뒤의 #)은 흐리게 보이고, 사이의 긴 공백은 한 칸으로 줄여 보인다
@@ -110,16 +116,15 @@
     panes = u.steps.map((s, i) => h('article', { class: 'pane', id: 'pane-' + i, role: 'tabpanel', 'aria-labelledby': 'stn-' + i, hidden: true },
       h('header', { class: 'step__head' },
         h('h2', { class: 'step__title' }, dot(s.state, i), h('span', null, h('span', { class: 'step__unit', text: i + '단계 ' }), s.title)),
-        s.principles && s.principles.length ? h('ul', { class: 'step__pr' }, h('li', { class: 'step__prl', text: '연습하는 원칙' }),
-          s.principles.map((n) => h('li', null, pn(n), h('span', { text: u.principles[n - 1].name }))), s.note ? h('li', null, h('small', { text: s.note })) : null) : null,
+        s.note ? h('p', { class: 'step__note', text: s.note }) : null,
         h('div', { class: 'step__nav' }, nav('이전 단계', i - 1), nav('다음 단계', i + 1))),
-      h('div', { class: 'lanes', vars: { '--k': Math.max(1, Math.min(4, s.lanes.filter((l) => KIND_ORDER.includes(l.kind)).length)) } }, s.lanes.map((l, k) => h('section', { class: 'lane' + (KIND_ORDER.includes(l.kind) ? '' : ' lane--wide'), vars: { '--i': k } },
+      h('div', { class: 'lanes', vars: { '--k': Math.max(1, Math.min(4, rowWidth(s.lanes))) } }, s.lanes.map((l, k) => h('section', { class: 'lane' + (KIND_ORDER.includes(l.kind) ? '' : ' lane--wide'), vars: { '--i': k } },
         h('h3', { class: 'lane__h' }, h('span', { class: 'lane__no', text: String(k + 1) }), u.kinds[l.kind][0]),
         h('div', { class: 'lane__b' }, l.blocks.map(block)))))));
     $('#step').replaceChildren(h('span', { class: 'step__notch', 'aria-hidden': 'true' }), ...panes);
     const used = new Set(u.steps.flatMap((s) => s.lanes.map((l) => l.kind)));
     const order = [...KIND_ORDER.filter((k) => used.has(k)), ...[...used].filter((k) => !KIND_ORDER.includes(k))];
-    $('#kinds').replaceChildren(h('p', { class: 'kinds__h', text: '마디 읽는 법' }), ...order.map((k) => h('div', null, h('dt', { text: u.kinds[k][0] }), h('dd', { text: u.kinds[k][1] }))));
+    $('#kinds').replaceChildren(h('p', { class: 'kinds__h', text: '칸 읽는 법' }), ...order.map((k) => h('div', null, h('dt', { text: u.kinds[k][0] }), h('dd', { text: u.kinds[k][1] }))));
   }
   function place() {
     if (cur < 0) return;
@@ -154,12 +159,7 @@
     timer = setInterval(() => { if (cur >= u.steps.length - 1) { stop(); return; } select(cur + 1); }, STEP_MS);
   }
 
-  // ── 원칙, 단원마다 다른 구역 ──
-  function renderPrinciples() {
-    if (!u.principles || !u.principles.length) return;
-    $('#principles').hidden = false;
-    $('#prs').replaceChildren(...u.principles.map((p, n) => h('li', { class: 'pr' }, h('h3', { class: 'pr__h' }, pn(n + 1), h('span', { text: p.name })), h('p', { class: 'pr__t' }, rich(p.here)))));
-  }
+  // ── 단원마다 다른 구역 ──
   function chain(s) {
     const box = h('div', { class: 'chain', vars: { '--c': s.cols.length } }, s.cols.map(([t, sub]) => h('div', { class: 'chain__hd' }, t, sub ? h('small', { text: sub }) : null)));
     const light = (row) => box.querySelectorAll('.chain__c').forEach((c) => { c.classList.toggle('is-on', row !== null && c.dataset.row === row); c.classList.toggle('is-off', row !== null && c.dataset.row !== row); });
@@ -183,7 +183,7 @@
 
   function show(json) {
     u = json;
-    renderHead(); renderTrack(); renderPanes(); renderPrinciples(); renderSections();
+    renderHead(); renderTrack(); renderPanes(); renderSections();
     $('#play').addEventListener('click', () => (timer ? stop() : start()));
     addEventListener('resize', place);
     const m = /^#s(\d+)$/.exec(location.hash);

@@ -242,7 +242,8 @@ test('단원 한눈에 보기: 가이드와 다른 줄, 없는 마디, 뜻을 �
   caught(withUnit((u) => { u.steps[4].title = '뼈대로 유효한 Red 만들기'; }), /가이드의 단계 제목과 다름/);
   caught(withUnit((u) => { u.steps[2].lanes[0].kind = 'ask'; }), /kind가 kinds에 없음/);
   caught(withUnit((u) => { delete u.marks.warn; }), /marks\.warn 필요/);
-  caught(withUnit((u) => { u.steps[3].principles = [5]; }), /원칙 번호 목록/);
+  caught(withUnit((u) => { u.steps[3].principles = [1]; }), /3단계: principles는 쓰지 않음/);
+  caught(withUnit((u) => { u.principles = [{ name: 'a', here: 'b' }]; }), /principles는 쓰지 않음/);
   caught(withUnit((u) => { u.steps[0].lanes[0].blocks.push({ html: '<b>x</b>' }); }), /조각은 /);
   caught(withUnit((u) => { u.sections[1].rows[0].pop(); }), /chain은 /);
   caught(withUnit((u) => { u.start = 9; }), /start는/);
@@ -263,7 +264,7 @@ test('단원 한눈에 보기 화면: 같은 CSP와 스크립트 규칙을 지�
   assert.deepEqual(parseCsp(m[1]), REQUIRED_CSP);
   caught(withUnitHtml((h) => h.replace('</body>', '<script>alert(1)</script></body>')), /unit\.html: inline script 금지/);
   caught(withUnitHtml((h) => h.replace('<p class="hero__p" id="lead">', '<p class="hero__p" id="lead" style="color:red">')), /unit\.html: inline style 금지/);
-  caught(withUnitHtml((h) => h.replace('id="prs"', 'id="list"')), /unit\.html: 스크립트가 쓰는 id="prs" 없음/);
+  caught(withUnitHtml((h) => h.replace('id="kinds"', 'id="legend"')), /unit\.html: 스크립트가 쓰는 id="kinds" 없음/);
   caught(withUnitHtml((h) => h.replace('src="unit.js" defer', 'src="app.js" defer')), /core\.js → unit\.js/);
   caught(withUnitHtml((h) => h.replace('단계로 건너뛰기', '단계로 건너뛰기 (시안)')), /unit\.html: 제작 단계 용어/);
   caught(withUnitHtml((h) => h.replace('href="index.html"', 'href="nowhere.html"')), /unit\.html: 없는 내부 링크/);
@@ -274,7 +275,7 @@ test('단원 한눈에 보기 화면: 같은 CSP와 스크립트 규칙을 지�
 });
 test('단원 한눈에 보기: 화면에 나오는 글이 모두 모아진다(글꼴 확인과 한국어 점검의 대상)', () => {
   const shown = unitStrings(unit0601);
-  for (const s of ['맡긴다', '오류와 유효한 Red', '기준이 넘어가는 길', '이것이 유효한 Red입니다', 'pnpm test', '인수조건 두 개', '네모 하나가 테스트 하나']) assert.ok(shown.includes(s), s);
+  for (const s of ['직접 하기', '오류와 유효한 Red', '기준이 넘어가는 길', '이것이 유효한 Red입니다', 'pnpm test', '인수조건 두 개', '네모 하나가 테스트 하나']) assert.ok(shown.includes(s), s);
   assert.ok(!shown.includes(unit0601.guide) && !shown.includes(unit0601.item), '경로와 id는 화면 글이 아님');
 });
 
