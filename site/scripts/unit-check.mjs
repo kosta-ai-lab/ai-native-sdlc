@@ -49,7 +49,6 @@ export function unitStrings(u) {
   const push = (...xs) => { for (const x of xs.flat(Infinity)) if (typeof x === 'string') out.push(x); };
   push(u.where, u.lead, Array.isArray(u.title) ? u.title.map((p) => p[0]) : u.title, Object.values(u.marks || {}), u.pips, u.promptLabel, u.env);
   push(Object.values(u.kinds || {}));
-  for (const p of u.principles || []) push(p.name, p.here);
   for (const s of u.steps || []) push(s.title, s.name, s.out, s.pipsLabel, s.note);
   const block = (b) => {
     push(b.p, b.label, b.prompt, b.code, b.cmd, b.next, b.outs, b.list);
@@ -92,9 +91,8 @@ export function unitProblems(u, ctx = {}) {
   if (!Object.keys(kinds).length) bad('kinds(마디 이름과 설명) 필요');
   for (const [k, v] of Object.entries(kinds)) if (!/^[a-z]+$/.test(k) || !Array.isArray(v) || v.length !== 2 || !v.every(isText)) bad('kinds.' + k + '는 [이름, 설명]');
 
-  const prs = u.principles;
-  if (prs !== undefined && !(isList(prs) && prs.every((p) => p && isText(p.name) && isText(p.here)))) bad('principles는 { name, here }의 목록');
-  const prCount = Array.isArray(prs) ? prs.length : 0;
+  // 과정의 원칙은 글을 쓰는 기준이다. 화면에 싣지 않는다.
+  if (u.principles !== undefined) bad('principles는 쓰지 않음(원칙은 화면에 싣지 않는다)');
 
   const checkBlock = (b, where) => {
     const keys = b && typeof b === 'object' ? Object.keys(b) : [];
@@ -121,7 +119,7 @@ export function unitProblems(u, ctx = {}) {
     if (s.out !== undefined && !(Array.isArray(s.out) && s.out.every(isText))) bad(w + ': out은 글 목록');
     if (s.pips !== undefined && !(isList(s.pips) && s.pips.every((g) => isList(g) && g.every((p) => PIPS.includes(p))) && isText(s.pipsLabel))) bad(w + ': pips는 ok/bad/none 묶음의 목록이고 pipsLabel(읽어 주는 글)이 필요');
     if (s.note !== undefined && !isText(s.note)) bad(w + ': note는 글');
-    if (!(Array.isArray(s.principles) && s.principles.every((n) => Number.isInteger(n) && n >= 1 && n <= prCount) && new Set(s.principles).size === s.principles.length)) bad(w + ': principles는 1~' + prCount + ' 사이의 원칙 번호 목록');
+    if (s && s.principles !== undefined) bad(w + ': principles는 쓰지 않음(원칙은 화면에 싣지 않는다)');
     if (!isList(s.lanes)) { bad(w + ': lanes(마디) 필요'); return; }
     s.lanes.forEach((l, k) => {
       const where = w + ' ' + (k + 1) + '번째 마디';
