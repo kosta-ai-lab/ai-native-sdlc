@@ -115,5 +115,5 @@ Spec Kit은 매우 빠르게 바뀌는 프로젝트다. 인터넷의 예전 글�
 - 공식 문서: https://github.github.io/spec-kit/
 - SDD 방법론 원문: https://github.com/github/spec-kit/blob/main/spec-driven.md
 - Spec Kit 소개 영상: https://www.youtube.com/watch?v=a9eR1xsfvHg
-- Spec Kit 통합 목록(Codex 포함): https://github.com/github/spec-kit/blob/main/docs/reference/integrations.md
+- Spec Kit 통합 목록(Codex 포함): https://github.com/github/spec-kit/blob/main/docs/integrations/index.md
 - Codex CLI: https://github.com/openai/codex · 스킬 문서: https://developers.openai.com/codex/skills
