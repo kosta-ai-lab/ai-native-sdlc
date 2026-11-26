@@ -173,7 +173,10 @@ code{font-family:var(--mono);font-size:.88em;background:#e7e3d9;padding:1px 6px;
 .scrim{position:fixed;inset:0;z-index:39;background:rgba(17,19,17,.4)}
 
 /* 강사별 자료 · 이용 안내 */
-.people,.guide,.about{padding:96px 0;border-top:1px solid var(--rule)}
+.people,.videos,.guide,.about{padding:96px 0;border-top:1px solid var(--rule)}
+.videos__in{display:flex;align-items:flex-end;justify-content:space-between;gap:24px 40px;flex-wrap:wrap}
+.videos__go{padding:12px 24px;border-radius:99px;background:var(--ink);color:#fff;font-weight:600;text-decoration:none;transition:background-color .16s var(--std)}
+.videos__go:hover{background:var(--b)}
 .sec__h{font-size:clamp(26px,2.9vw,40px);line-height:1.2;letter-spacing:-.035em;font-weight:700}
 .sec__p{margin-top:10px;max-width:36em;color:var(--muted)}
 .people__grid{display:grid;grid-template-columns:1fr 1fr 2fr;gap:40px 56px;margin-top:44px}
@@ -227,7 +230,7 @@ code{font-family:var(--mono);font-size:.88em;background:#e7e3d9;padding:1px 6px;
   .sign{position:fixed;z-index:40;left:0;right:0;bottom:0;top:auto;max-height:86vh;max-height:86dvh;border-width:1.5px 0 0;border-radius:22px 22px 0 0;transform:translateY(104%);visibility:hidden;transition:transform .34s var(--out),visibility 0s .34s}
   .sign.is-open{transform:none;visibility:visible;transition:transform .34s var(--out)}
   .sign__close{display:grid;place-items:center;width:100%;height:44px;border:0;border-top:1px solid var(--rule);background:var(--card);font-size:15px;font-weight:600;position:sticky;bottom:0}
-  .people,.guide,.about{padding:64px 0}
+  .people,.videos,.guide,.about{padding:64px 0}
   .people__grid,.guide__steps,.about__in{grid-template-columns:1fr;gap:36px}
   .person--wide ul{columns:1}
 }

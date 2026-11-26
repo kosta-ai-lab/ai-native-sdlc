@@ -4,6 +4,7 @@
 //  - 로드맵 데이터(data/roadmap.json)의 구조와 참조를 확인하고, 연결한 경로를 git ls-files와 대조한다.
 //  - 상태의 근거를 원문에서 확인한다. 준비 중으로 표시한 모듈은 README에 "(작성 예정)"이 있어야 하고, 공개 자료는 없어야 한다.
 //  - 단원 한눈에 보기 내용(data/unit-*.json)의 형식을 확인하고, 프롬프트·명령·출력이 가이드 문서와 같은지 대조한다(scripts/unit-check.mjs).
+//  - 영상 자료(data/videos.json)의 형식을 확인한다(scripts/videos-check.mjs). 주소가 살아 있는지는 네트워크가 필요해 따로 본다(npm run check:videos).
 //  - 화면 원본(src)의 메타데이터, meta CSP, 상대 경로, 안전하지 않은 DOM API, 외부 자원, 글꼴 파일을 확인한다.
 //  - Pages 워크플로의 권한과 배포 조건을 확인한다.
 //  - --dist: 빌드 산출물이 허용 목록과 같고, 원본과 바이트가 같으며, /ai-native-sdlc/ 와 / 양쪽에서 해석되는지 확인한다.
@@ -15,6 +16,7 @@ import {
   readJSON, gitTrackedFiles, assetRefs, anchorRefs, listFiles, distAllowlist, fontFiles, collectDates, watchedPaths, isMain
 } from './lib.mjs';
 import { unitFiles, unitProblems, unitStrings, UNIT_FILE } from './unit-check.mjs';
+import { videoProblems, videoStrings, VIDEOS_FILE } from './videos-check.mjs';
 import '../src/core.js';
 
 const R = globalThis.KostaRoadmap;
@@ -46,6 +48,11 @@ const SCRIPT_ORDER = /<script src="core\.js" defer><\/script>\s*<script src="app
 // 단원 한눈에 보기 화면(unit.html)
 const UNIT_IDS = ['top', 'title', 'lead', 'where', 'doc', 'lap', 'key', 'play', 'track', 'step', 'kinds', 'sections', 'env'];
 const UNIT_SCRIPT_ORDER = /<script src="core\.js" defer><\/script>\s*<script src="unit\.js" defer><\/script>/;
+// 영상 자료 화면(videos.html)
+const VIDEO_PAGE_IDS = ['top', 'title', 'pick', 'count', 'list', 'source'];
+const VIDEO_SCRIPT_ORDER = /<script src="core\.js" defer><\/script>\s*<script src="videos\.js" defer><\/script>/;
+// 화면 스크립트가 만드는 바깥 주소의 머리. 영상 화면만 유튜브의 영상 주소와 채널 주소를 만든다.
+const JS_URL_HEADS = { 'videos.js': ['https://www.youtube.com/watch?v=', 'https://www.youtube.com/channel/'] };
 // 단원 내용에는 실습의 로컬 주소가 나올 수 있어, 개인·내부 주소 가운데 이 둘은 보지 않는다
 const LOCAL_OK = [/127\.0\.0\.1/, /localhost/];
 // 터미널 출력에 나오는 기호. 원본 글꼴에 없어 시스템 글꼴로 보인다
@@ -111,8 +118,12 @@ export function collectProblems({ dist = null, repoRoot = REPO_ROOT, siteDir = S
   const data = overrides.data || readJSON(path.join(dataDir, 'roadmap.json'));
   const html = overrides.html != null ? overrides.html : readSrc('index.html');
   const unitHtml = overrides.unitHtml != null ? overrides.unitHtml : readSrc('unit.html');
-  const css = { 'app.css': readSrc('app.css'), 'unit.css': readSrc('unit.css'), 'fonts.css': readSrc('fonts.css'), ...(overrides.css || {}) };
-  const js = { 'core.js': readSrc('core.js'), 'app.js': readSrc('app.js'), 'unit.js': readSrc('unit.js'), ...(overrides.js || {}) };
+  const videosHtml = overrides.videosHtml != null ? overrides.videosHtml : readSrc('videos.html');
+  const css = { 'app.css': readSrc('app.css'), 'unit.css': readSrc('unit.css'), 'videos.css': readSrc('videos.css'), 'fonts.css': readSrc('fonts.css'), ...(overrides.css || {}) };
+  const js = { 'core.js': readSrc('core.js'), 'app.js': readSrc('app.js'), 'unit.js': readSrc('unit.js'), 'videos.js': readSrc('videos.js'), ...(overrides.js || {}) };
+  // 영상 자료: data/videos.json. overrides.videos로 바꿔 넣을 수 있다.
+  let videos = overrides.videos;
+  if (videos === undefined) { try { videos = readJSON(path.join(dataDir, VIDEOS_FILE)); } catch { videos = null; } }
   // 단원 한눈에 보기 내용: data/unit-<id>.json. overrides.units로 바꿔 넣을 수 있다({ id: 내용 }).
   const units = overrides.units
     ? Object.entries(overrides.units).map(([id, u]) => ({ id, name: 'unit-' + id + '.json', data: u }))
@@ -250,7 +261,10 @@ export function collectProblems({ dist = null, repoRoot = REPO_ROOT, siteDir = S
   const unitText = unitHtml.replace(/<script[\s\S]*?<\/script>/gi, ' ').replace(/<[^>]+>/g, ' ');
   for (const re of INTERNAL_TERMS) if (re.test(unitText)) bad(`unit.html: 제작 단계 용어 ${re}`);
   if (PROMISES.test(unitText)) bad('unit.html: 근거 없이 약속하는 표현');
-  const allSrc = { 'index.html': html, 'unit.html': unitHtml, 'roadmap.json': JSON.stringify(data), ...css, ...js };
+  const videosText = videosHtml.replace(/<script[\s\S]*?<\/script>/gi, ' ').replace(/<[^>]+>/g, ' ');
+  for (const re of INTERNAL_TERMS) if (re.test(videosText)) bad(`videos.html: 제작 단계 용어 ${re}`);
+  if (PROMISES.test(videosText)) bad('videos.html: 근거 없이 약속하는 표현');
+  const allSrc = { 'index.html': html, 'unit.html': unitHtml, 'videos.html': videosHtml, 'roadmap.json': JSON.stringify(data), 'videos.json': JSON.stringify(videos), ...css, ...js };
   for (const [name, text] of Object.entries(allSrc)) for (const re of PRIVATE_MARKERS) if (re.test(text)) bad(`${name}: 개인·내부 주소 ${re}`);
 
   // 5-1) 단원 한눈에 보기 내용: 형식, 가이드 대조, 로드맵 자료와의 짝
@@ -274,6 +288,19 @@ export function collectProblems({ dist = null, repoRoot = REPO_ROOT, siteDir = S
   for (const it of items.values()) {
     if (it.visual === undefined) continue;
     if (!isText(it.visual) || !unitIds.has(it.visual)) bad(`자료 ${it.id}: visual이 가리키는 단원 내용이 없음 — data/unit-${it.visual}.json`);
+  }
+
+  // 5-2) 영상 자료: 형식, 사람 이름의 화면 표기, 사이트가 쓴 글
+  const videoShown = [];
+  if (!videos) bad(`${VIDEOS_FILE}: JSON으로 읽을 수 없음`);
+  else {
+    for (const p of videoProblems(videos, { names: data.names || {} })) bad(p);
+    // 영상 제목은 채널이 붙인 이름이다. 약속 표현과 제작 단계 용어는 사이트가 쓴 글에서만 본다.
+    for (const s of videoStrings(videos, { titles: false })) {
+      for (const re of INTERNAL_TERMS) if (re.test(s)) bad(`${VIDEOS_FILE}: 제작 단계 용어 ${re} — ${s}`);
+      if (PROMISES.test(s)) bad(`${VIDEOS_FILE}: 근거 없이 약속하는 표현 — ${s.trim().slice(0, 60)}`);
+    }
+    videoShown.push(...videoStrings(videos));
   }
 
   // 6) 메타데이터, meta CSP, 자산 경로 (화면마다 같은 규칙)
@@ -333,10 +360,11 @@ export function collectProblems({ dist = null, repoRoot = REPO_ROOT, siteDir = S
   };
   checkPage('index.html', html, { ids: REQUIRED_IDS, order: SCRIPT_ORDER, orderHint: 'core.js → app.js' });
   checkPage('unit.html', unitHtml, { ids: UNIT_IDS, order: UNIT_SCRIPT_ORDER, orderHint: 'core.js → unit.js' });
+  checkPage('videos.html', videosHtml, { ids: VIDEO_PAGE_IDS, order: VIDEO_SCRIPT_ORDER, orderHint: 'core.js → videos.js' });
   const allCss = Object.values(css).join('\n');
   const allJs = Object.values(js).join('\n');
   if (/@import|url\(\s*['"]?(https?:)?\/\//i.test(allCss)) bad('CSS: 외부 import/url 금지');
-  if (/fonts\.googleapis|fonts\.gstatic|cdn\.|unpkg|jsdelivr/i.test(html + unitHtml + allCss + allJs)) bad('외부 글꼴·CDN 참조 금지');
+  if (/fonts\.googleapis|fonts\.gstatic|cdn\.|unpkg|jsdelivr/i.test(html + unitHtml + videosHtml + allCss + allJs)) bad('외부 글꼴·CDN 참조 금지');
   for (const p of [path.join(repoRoot, 'CNAME'), path.join(siteDir, 'CNAME'), path.join(srcDir, 'CNAME')]) if (fs.existsSync(p)) bad(`CNAME은 두지 않음(도메인 미정): ${path.relative(repoRoot, p)}`);
 
   // 7) 화면 스크립트: 안전한 DOM API만, 추적·외부 전송 없음, 데이터는 문서 기준 상대 경로, 저장은 마친 자료 표시 하나뿐
@@ -344,7 +372,7 @@ export function collectProblems({ dist = null, repoRoot = REPO_ROOT, siteDir = S
     for (const re of UNSAFE_DOM) if (re.test(text)) bad(`${name}: 문자열을 HTML이나 코드로 실행하는 API ${re}`);
     for (const re of TRACKING) if (re.test(text)) bad(`${name}: 추적·외부 전송 API ${re}`);
     // 허용: 이 저장소 주소, 저장소 주소를 만드는 GitHub 머리, SVG 이름공간
-    for (const u of text.match(/https?:\/\/[^'"\s)]+/g) || []) if (!allowedExternal(u) && u !== 'https://github.com/' && u !== 'http://www.w3.org/2000/svg') bad(`${name}: 허용하지 않은 주소 ${u}`);
+    for (const u of text.match(/https?:\/\/[^'"\s)]+/g) || []) if (!allowedExternal(u) && u !== 'https://github.com/' && u !== 'http://www.w3.org/2000/svg' && !(JS_URL_HEADS[name] || []).includes(u)) bad(`${name}: 허용하지 않은 주소 ${u}`);
     if (/fetch\(\s*['"`]\//.test(text) || /new URL\(\s*['"`]\//.test(text)) bad(`${name}: 절대 경로 fetch 금지`);
     if (/(?:href|src)\s*[=:]\s*['"]\.\.\//.test(text)) bad(`${name}: 상위 폴더 경로 금지`);
   }
@@ -358,6 +386,11 @@ export function collectProblems({ dist = null, repoRoot = REPO_ROOT, siteDir = S
   if ((js['unit.js'].match(/\bfetch\(/g) || []).length !== 1) bad('unit.js: fetch는 단원 내용을 읽는 한 번만');
   if (/localStorage/.test(js['unit.js'])) bad('unit.js: 저장 API를 쓰지 않음');
   if (!/\^\[a-z0-9\]\+\(\?:-\[a-z0-9\]\+\)\*\$/.test(js['unit.js'])) bad('unit.js: 주소의 단원 id는 소문자·숫자·붙임표만 받아야 함');
+  if (!/fetch\(new URL\('data\/videos\.json', document\.baseURI\)\)/.test(js['videos.js'])) bad("videos.js: 영상 목록은 fetch(new URL('data/videos.json', document.baseURI))로 읽어야 함");
+  if ((js['videos.js'].match(/\bfetch\(/g) || []).length !== 1) bad('videos.js: fetch는 영상 목록을 읽는 한 번만');
+  if (/localStorage/.test(js['videos.js'])) bad('videos.js: 저장 API를 쓰지 않음');
+  // 영상은 주소로만 연결한다. 끼워 넣는 주소와 미리보기 그림 주소를 만들지 않는다.
+  if (/youtube\.com\/embed|youtube-nocookie|ytimg|youtu\.be/i.test(js['videos.js'] + videosHtml)) bad('영상 화면: 영상을 끼워 넣거나 미리보기 그림을 불러오지 않음(영상 주소로만 연결)');
 
   // 8) 글꼴: 선언한 파일이 있고, 화면 글자가 글꼴에 들어 있다
   const fontDir = path.join(srcDir, 'fonts');
@@ -375,7 +408,7 @@ export function collectProblems({ dist = null, repoRoot = REPO_ROOT, siteDir = S
   else {
     const core = new Set(fs.readFileSync(charsetFile('charset-core.txt'), 'utf8'));
     const rest = new Set(fs.readFileSync(charsetFile('charset-rest.txt'), 'utf8'));
-    const used = new Set([...(htmlText + unitText + shown.join('') + unitShown.join('') + js['app.js'] + js['unit.js'])].filter((c) => c.codePointAt(0) > 0x7e && !/\s/.test(c) && !SYSTEM_GLYPHS.includes(c)));
+    const used = new Set([...(htmlText + unitText + videosText + shown.join('') + unitShown.join('') + videoShown.join('') + js['app.js'] + js['unit.js'] + js['videos.js'])].filter((c) => c.codePointAt(0) > 0x7e && !/\s/.test(c) && !SYSTEM_GLYPHS.includes(c)));
     const outside = [...used].filter((c) => !core.has(c) && !rest.has(c));
     const late = [...used].filter((c) => !core.has(c) && rest.has(c));
     if (outside.length) bad(`fonts: 글꼴에 없는 글자 ${outside.join('')} — scripts/fonts.py로 다시 만든다`);
@@ -460,7 +493,7 @@ export function collectProblems({ dist = null, repoRoot = REPO_ROOT, siteDir = S
         const marker = fs.readFileSync(path.join(dist, MARKER), 'utf8');
         if (/\/Users\/|\/home\/|[A-Z]:\\|\d{4}-\d\d-\d\dT/.test(marker)) bad('dist: 빌드 표식에 로컬 경로·시각 금지');
       }
-      const distHtml = ['index.html', 'unit.html'].map((n) => (fs.existsSync(path.join(dist, n)) ? fs.readFileSync(path.join(dist, n), 'utf8') : '')).join('\n');
+      const distHtml = ['index.html', 'unit.html', 'videos.html'].map((n) => (fs.existsSync(path.join(dist, n)) ? fs.readFileSync(path.join(dist, n), 'utf8') : '')).join('\n');
       const loaded = files.filter((f) => f.startsWith('data/') || /^fonts\/.+\.woff2$/.test(f));
       for (const base of SERVE_BASES) {
         const page = new URL(base, 'https://example.invalid');
@@ -477,6 +510,7 @@ export function collectProblems({ dist = null, repoRoot = REPO_ROOT, siteDir = S
 
   const open = [...items.values()].filter((i) => R.isOpen(i)).length;
   notes.push(`단원 한눈에 보기 ${units.length}개`);
+  notes.push(`영상 자료 ${videos && Array.isArray(videos.videos) ? videos.videos.length : 0}개`);
   notes.unshift(`로드맵 ${data.lines.length}개 · 단계 ${data.lines.reduce((n, l) => n + (l.stages || []).length, 0)}개 · 공개 자료 ${open}개 · 준비 중 ${items.size - open}개 · git 추적 파일 ${tracked.length}개와 대조`);
   return { problems, notes };
 }

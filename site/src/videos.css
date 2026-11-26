@@ -1,0 +1,95 @@
+/* kosta-ai-lab 학습 로드맵: 영상 자료 화면 스타일 (Apache-2.0). 글꼴 선언은 fonts.css(생성 파일)에 있다. */
+html,body{background:#f3f1ec;color:#111311}
+:root{
+  --paper:#f3f1ec;--ink:#111311;--muted:#5b5e56;--rule:#d6d2c7;--card:#fff;--tint:#e9e5db;--blue:#2d4bf0;
+  --font:"Roadmap Sans",-apple-system,BlinkMacSystemFont,"Apple SD Gothic Neo","Noto Sans KR","Malgun Gothic",sans-serif;
+  --mono:"Roadmap Mono","Roadmap Sans",ui-monospace,Menlo,Consolas,monospace;
+  --gut:40px;--std:cubic-bezier(.4,0,.2,1);
+}
+*,*::before,*::after{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%;text-size-adjust:100%;overflow-x:clip}
+body{margin:0;font-family:var(--font);font-size:16px;line-height:1.7;letter-spacing:-.008em;-webkit-font-smoothing:antialiased;word-break:keep-all;overflow-wrap:break-word}
+h1,h2,h3,p,ol,ul{margin:0}ol,ul{padding:0;list-style:none}
+a{color:inherit;text-underline-offset:.22em;text-decoration-thickness:1px}
+button{font:inherit;color:inherit;letter-spacing:inherit;cursor:pointer}
+:focus-visible{outline:3px solid var(--blue);outline-offset:3px;border-radius:6px}
+[hidden]{display:none!important}
+.wrap{max-width:1320px;margin:0 auto;padding:0 var(--gut)}
+.skip{position:absolute;left:12px;top:-120px;z-index:99;padding:10px 18px;border-radius:99px;background:var(--ink);color:#fff;font-weight:600;text-decoration:none}
+.skip:focus{top:10px}
+.notice{margin-top:22px;padding:14px 18px;border:1.5px dashed var(--muted);border-radius:12px;color:var(--muted)}
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip-path:inset(50%);white-space:nowrap}
+
+/* 상단 */
+.top{position:sticky;top:0;z-index:20;background:var(--paper);border-bottom:1px solid var(--rule)}
+.top__in{display:flex;align-items:center;gap:10px 22px;min-height:60px;flex-wrap:wrap;padding-top:8px;padding-bottom:8px}
+.brand{display:inline-flex;align-items:center;gap:10px;font-weight:700;text-decoration:none}
+.brand__mark{width:22px;height:22px;fill:var(--ink)}
+.top__where{flex:1;color:var(--muted);font-size:15px}
+.top__doc{padding:8px 16px;border-radius:99px;background:var(--ink);color:#fff;font-size:14px;font-weight:600;text-decoration:none;transition:background-color .16s var(--std)}
+.top__doc:hover{background:var(--blue)}
+
+/* 첫 화면 */
+.hero{padding-top:56px;padding-bottom:6px}
+.hero__h{font-size:clamp(32px,4.6vw,64px);line-height:1.16;letter-spacing:-.045em;font-weight:700}
+.hero__p{margin-top:20px;max-width:40em;font-size:clamp(16px,1.25vw,18px);color:var(--muted)}
+.hero__note{margin-top:8px;max-width:44em;font-size:14.5px;color:var(--muted)}
+
+/* 주제 고르기 */
+.pick{display:flex;flex-wrap:wrap;gap:8px;margin-top:34px}
+.pick button{padding:8px 16px;border:1.5px solid var(--rule);border-radius:99px;background:none;font-size:14.5px;font-weight:600;transition:border-color .16s var(--std),background-color .16s var(--std),color .16s var(--std)}
+.pick button small{margin-left:8px;font-family:var(--mono);font-size:12.5px;font-weight:400;color:var(--muted)}
+.pick button:hover{border-color:var(--ink)}
+.pick button[aria-pressed="true"]{background:var(--ink);border-color:var(--ink);color:#fff}
+.pick button[aria-pressed="true"] small{color:#c9c6bb}
+.count{margin-top:14px;min-height:1.7em;font-size:14px;color:var(--muted)}
+
+/* 길이별 묶음 */
+.reels{padding-bottom:84px}
+.reel{padding-top:50px}
+.reel__head{display:flex;align-items:baseline;gap:6px 16px;flex-wrap:wrap;padding-bottom:14px;border-bottom:3px solid var(--ink)}
+.reel__h{font-size:clamp(22px,2.2vw,30px);line-height:1.25;letter-spacing:-.035em;font-weight:700}
+.reel__p{flex:1;font-size:14.5px;color:var(--muted)}
+.reel__n{font-family:var(--mono);font-size:13.5px;color:var(--muted)}
+
+/* 영상 한 줄: 왼쪽에 길이, 가운데에 제목과 정보, 오른쪽에 여는 곳 */
+.v{position:relative;display:grid;grid-template-columns:96px minmax(0,1fr) auto;gap:4px 26px;align-items:baseline;padding:18px 0;border-bottom:1px solid var(--rule);text-decoration:none}
+.v__main{grid-column:2;grid-row:1}
+.v__time{grid-column:1;grid-row:1;font-family:var(--mono);font-size:20px;letter-spacing:-.02em;line-height:1.4;white-space:nowrap}
+.v__title{display:block;font-size:18px;font-weight:700;letter-spacing:-.025em;line-height:1.45}
+.v:hover .v__title{text-decoration:underline;text-decoration-thickness:1.5px}
+.v__meta{display:flex;flex-wrap:wrap;gap:2px 18px;margin-top:6px;font-size:13.5px;color:var(--muted)}
+.v__meta span:first-child{font-family:var(--mono);font-size:13px}
+.v__go{grid-column:3;grid-row:1;font-size:13.5px;font-weight:600;color:var(--muted);white-space:nowrap;transition:color .16s var(--std)}
+.v:hover .v__go{color:var(--ink)}
+
+/* 1분 영상은 수가 많고 짧아서 두 단으로 좁게 놓는다. 유튜브에서 열기는 보이지 않게 하되 읽어 주는 글로는 남긴다 */
+.reel--short .reel__list{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:0 56px}
+.reel--short .v{grid-template-columns:54px minmax(0,1fr);gap:4px 18px;padding:14px 0}
+.reel--short .v__time{font-size:15px}
+.reel--short .v__title{font-size:16px;font-weight:600}
+.reel--short .v__go{position:absolute;width:1px;height:1px;overflow:hidden;clip-path:inset(50%)}
+
+.foot{padding:40px 0 70px;border-top:1px solid var(--rule);font-size:14px;color:var(--muted)}
+.foot p+p{margin-top:8px}
+
+body[data-state="error"] .pick,body[data-state="error"] .count,body[data-state="error"] .hero__p,body[data-state="error"] .hero__note{display:none}
+
+@media (max-width:900px){
+  .reel--short .reel__list{grid-template-columns:1fr}
+}
+@media (max-width:760px){
+  :root{--gut:20px}
+  .hero{padding-top:36px}
+  .brand{flex:1}
+  .top__where{order:5;flex:none;width:100%;font-size:14px}
+  .top__doc{padding:7px 14px}
+  .v{grid-template-columns:70px minmax(0,1fr);gap:4px 14px}
+  .v__time{font-size:15px;line-height:1.7}
+  .v__title{font-size:16.5px}
+  .v__go{position:absolute;width:1px;height:1px;overflow:hidden;clip-path:inset(50%)}
+  .reel__p{flex:none;width:100%}
+}
+@media (prefers-reduced-motion:reduce){
+  *,*::before,*::after{transition:none!important}
+}

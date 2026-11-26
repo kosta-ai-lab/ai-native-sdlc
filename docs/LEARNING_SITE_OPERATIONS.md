@@ -10,6 +10,7 @@ site/
   package.json         스크립트만 있고 의존성은 없다(Node 내장 모듈만 사용)
   data/roadmap.json    로드맵·단계·자료·강사별 묶음
   data/unit-<단원>.json 단원 한눈에 보기의 내용. 단원마다 하나(예: unit-06-m01.json)
+  data/videos.json     영상 자료의 목록. 영상 번호, 제목, 올라온 날, 길이, 주제
   src/index.html       고정 문구, 메타데이터, meta CSP
   src/app.css          화면 스타일
   src/core.js          계산(단계 상태, 마친 자료 수, 새로움, 저장소 주소). 화면과 시험이 함께 쓴다
@@ -17,17 +18,20 @@ site/
   src/unit.html        단원 한눈에 보기 화면의 고정 문구, 메타데이터, meta CSP
   src/unit.css         단원 한눈에 보기 화면 스타일
   src/unit.js          단원 한눈에 보기 화면 동작. 단원 내용을 읽어 DOM API로 화면을 만든다
+  src/videos.html      영상 자료 화면의 고정 문구, 메타데이터, meta CSP
+  src/videos.css       영상 자료 화면 스타일
+  src/videos.js        영상 자료 화면 동작. 영상 목록을 읽어 DOM API로 화면을 만든다
   src/favicon.svg      사이트 표식
   src/fonts.css        글꼴 선언(생성 파일)
   src/fonts/           글꼴 woff2와 OFL.txt(생성 파일)
   fonts/               글꼴에 든 글자 목록(생성 파일, 배포하지 않음)
-  scripts/             build · check · test · serve · lib, 단원 내용 검사 unit-check, 글꼴 도구 fonts.py
+  scripts/             build · check · test · serve · lib, 단원 내용 검사 unit-check, 영상 목록 검사 videos-check, 글꼴 도구 fonts.py
   dist/                빌드 산출물(.gitignore의 dist/ 규칙으로 추적하지 않음)
   dist/data/dates.json 자료 날짜. 빌드가 git 이력에서 만든다(원본 site/data에는 두지 않는다)
 .github/workflows/learning-site.yml
 ```
 
-사이트는 교재 파일을 복사하지 않는다. 다만 따라 하기 단원에는 가이드를 한 화면으로 옮긴 한눈에 보기를 둔다(3절, [ADR 0007](../decisions/0007-unit-overview-pages.md)). 자료 링크는 모두 `https://github.com/kosta-ai-lab/ai-native-sdlc/blob|tree/main/<경로>` 형식이며 경로 조각마다 URL 인코딩을 적용한다. 그 밖에 검사가 허용하는 외부 주소는 조직 페이지, 저장소 첫 화면, 저장소 아래 주소(Issues 등)뿐이다.
+사이트는 교재 파일을 복사하지 않는다. 다만 따라 하기 단원에는 가이드를 한 화면으로 옮긴 한눈에 보기를 둔다(3절, [ADR 0007](../decisions/0007-unit-overview-pages.md)). 자료 링크는 모두 `https://github.com/kosta-ai-lab/ai-native-sdlc/blob|tree/main/<경로>` 형식이며 경로 조각마다 URL 인코딩을 적용한다. 그 밖에 검사가 허용하는 외부 주소는 조직 페이지, 저장소 첫 화면, 저장소 아래 주소(Issues 등)뿐이다. 영상 자료 화면만 예외로 유튜브의 영상 주소와 채널 주소를 만든다(3절, [ADR 0008](../decisions/0008-video-links.md)).
 
 ## 2. 로컬 명령
 
@@ -42,6 +46,7 @@ site/
 | `node scripts/test.mjs` | 계산, 자료 날짜, 검사의 변조 검출, 빌드 재현성, 미리보기 서버 시험 |
 | `node scripts/serve.mjs --port 0` | `site/dist`만 `http://127.0.0.1:<빈 포트>/ai-native-sdlc/`로 제공한다. `--base /`는 루트로, `--host <주소>`는 다른 기기에서 열 수 있게 제공한다 |
 | `npm run verify` | build → check --dist → test |
+| `npm run check:videos` | 영상마다 유튜브에 물어 주소가 열리는지, 제목과 채널 이름이 적어 둔 것과 같은지 본다. 네트워크가 필요해 `verify`와 CI에는 들어 있지 않다(3절) |
 
 **출력 경로 안전 규칙**
 - 저장소 안에서는 `site/dist`만 허용한다. 저장소 루트·상위 폴더·파일시스템 루트·홈·`site/` 자체·심볼릭 링크는 거부한다.
@@ -72,7 +77,7 @@ site/
 - **상태는 원문을 따른다.** 준비 중 표시는 README에 "(작성 예정)"이 있는 모듈에만 쓴다. 담당은 README의 표기를 따른다('협의'는 '협의 중'으로 적는다).
 - **만든 사람에는 근거가 있어야 한다.** `by`가 자료의 안내 문서나 `courses/README.md`에 나와야 한다. 문서에 이름이 없고 커밋 기록으로만 확인한 자료는 `byEvidence: "git-history"`로 표시한다.
 - **약속하지 않는다.** 무료, 보장 같은 표현은 원문에 있어도 요약에 옮기지 않는다.
-- **한국어 문장은 배포 전에 모두 검사한다.** 화면에 나오는 글은 `index.html`·`unit.html`, `app.js`·`unit.js`의 문구, `roadmap.json`과 `unit-*.json`의 글 항목이다.
+- **한국어 문장은 배포 전에 모두 검사한다.** 화면에 나오는 글은 `index.html`·`unit.html`·`videos.html`, `app.js`·`unit.js`·`videos.js`의 문구, `roadmap.json`·`unit-*.json`·`videos.json`의 글 항목이다.
 
 ### 자료 날짜와 NEW·업데이트 표시
 
@@ -122,6 +127,30 @@ npm run verify                         # 로드맵 자료와의 짝, 글꼴, 산
 node scripts/serve.mjs --port 0        # 띄운 뒤 unit.html?u=06-m01 을 연다
 ```
 
+### 영상 자료
+
+강사가 유튜브 채널에 나와 이야기한 영상의 목록이다. 주소는 `videos.html`이고, 첫 화면의 메뉴와 '영상 자료' 구역에서 들어온다. 영상은 사이트에 옮겨 오거나 끼워 넣지 않고 유튜브의 영상 주소로만 연결한다([ADR 0008](../decisions/0008-video-links.md)).
+
+목록은 `data/videos.json` 한 파일에서 관리한다.
+
+| 항목 | 내용 |
+|---|---|
+| `schema` | 형식 번호. 지금은 1이다 |
+| `checked` | 주소를 마지막으로 확인한 날. 화면 아래에 나온다 |
+| `names` | 사람 이름과 화면 표기. `roadmap.json`의 `names`와 같아야 한다 |
+| `channels` | 채널의 이름과 채널 번호(`UC`로 시작한다) |
+| `kinds` | 길이별 묶음의 이름과 한 문장 설명. 적은 순서대로 화면에 나온다 |
+| `topics` | 주제의 이름. 화면의 주제 고르기 버튼이 된다 |
+| `videos` | 영상 목록. 영상마다 `id`(영상 번호 11자), `title`(화면에 보일 제목), `yt`(유튜브의 원래 제목), `date`(올라온 날), `seconds`(길이, 초), `kind`, `topic`, `channel`, `by`(나온 사람), `series`(회차, 있을 때만) |
+
+- **주소:** 통째로 적지 않는다. 화면이 영상 번호로 `https://www.youtube.com/watch?v=<영상 번호>`를 만든다. 그래서 다른 사이트의 주소는 목록에 넣을 수 없다.
+- **제목:** `yt`에는 유튜브의 제목을 글자 그대로 적는다. `title`은 거기서 대괄호 안의 회차와 출연자 표기, `#shorts`를 떼고 다듬은 것이다. 다듬는 범위는 붙어 버린 낱말과 구두점 앞뒤의 띄어쓰기, 철자 오타까지다. 그 밖의 띄어쓰기는 원래 제목을 따른다.
+- **주제:** 제목을 보고 사이트에서 나눈 것이다. 채널이 붙인 분류가 아니다.
+- **영상을 더할 때:** `videos`에 항목 하나를 더하고 `node scripts/check.mjs`를 돌린다. 영상 번호가 겹치거나 형식이 틀리면 검사가 알려 준다. 올라온 날, 길이, 제목은 `yt-dlp --skip-download --print "%(upload_date>%Y-%m-%d)s %(duration)s %(title)s" <영상 주소>`로 읽을 수 있다. 날짜는 유튜브가 알려 주는 값(UTC 기준)을 그대로 적는다.
+- **주소 확인:** `npm run check:videos`가 영상마다 유튜브에 물어 주소가 열리는지, 제목과 채널 이름이 `yt`와 `channels`에 적은 것과 같은지 본다. 영상을 더하거나 뺐을 때와 배포하기 전에 돌린다. `node scripts/videos-check.mjs --live --stamp`로 돌리면 모두 맞을 때 `checked`를 오늘 날짜로 고쳐 쓴다. 채널이 다른 사이트에 끼워 넣는 것을 막아 둔 영상은 유튜브가 제목을 알려 주지 않는다. 이런 영상은 열리는 것으로 보되 따로 알려 주고, 하나라도 있으면 날짜를 고쳐 쓰지 않는다. 그 영상은 직접 열어 본다.
+- **채널이나 사람을 더할 때:** `channels`와 `names`에 더한다. `videos.html`과 `index.html`의 소개 문장에는 채널 이름이 적혀 있으므로 함께 고친다.
+- **영상이 내려갔을 때:** 확인에서 열리지 않는다고 나온 영상은 `videos`에서 지운다. 제목만 바뀌었으면 `yt`와 `title`을 고친다.
+
 ## 4. 글꼴 다시 만들기
 
 화면 글꼴은 IBM Plex Sans KR과 IBM Plex Mono의 부분집합이다(SIL OFL 1.1). Sans KR은 두 묶음으로 나눈다.
@@ -148,10 +177,11 @@ uv run --with fonttools --with brotli python site/scripts/fonts.py
   - 공개 자료의 안내 문서에 "(작성 예정)"이 없는지
   - 만든 사람의 근거가 있는지, 강의 제목이 README 제목과 같은지
 - **단원 한눈에 보기:** 내용 파일의 형식, 요청문·명령·코드·출력의 모든 줄이 가이드 문서에 있는지, 로드맵 자료의 `visual`과 서로 가리키는지, `guide`가 그 자료의 링크에 있는 문서인지. 설명 문장은 대조하지 않는다
-- **화면 글:** `index.html`과 `roadmap.json`에 제작 단계 용어(시안·초안 등)와 근거 없이 약속하는 표현이 없는지, 모든 원본에 개인·내부 주소가 없는지. `unit.html`에도 같은 검사를 한다. 단원 내용에는 '초안'처럼 가이드의 낱말이 나오므로 개인·내부 주소만 본다(실습의 로컬 주소는 허용). `app.js`와 `unit.js`의 문구는 사람이 검사한다
+- **영상 자료:** 목록의 형식, 영상 번호의 형식과 중복, 묶음·주제·채널·사람이 표에 있는지, 사람 이름의 화면 표기가 `roadmap.json`과 같은지, 주소를 통째로 적지 않았는지. 주소가 실제로 열리는지는 이 검사가 보지 않는다(`npm run check:videos`)
+- **화면 글:** `index.html`과 `roadmap.json`에 제작 단계 용어(시안·초안 등)와 근거 없이 약속하는 표현이 없는지, 모든 원본에 개인·내부 주소가 없는지. `unit.html`과 `videos.html`에도 같은 검사를 한다. 영상 목록에서는 사이트가 쓴 글(묶음, 주제, 이름)만 보고, 채널이 붙인 영상 제목은 보지 않는다. 단원 내용에는 '초안'처럼 가이드의 낱말이 나오므로 개인·내부 주소만 본다(실습의 로컬 주소는 허용). `app.js`, `unit.js`, `videos.js`의 문구는 사람이 검사한다
 - **메타데이터·CSP:** title·description과 같은 og 값, favicon, canonical·og:url·og:image·noindex·CNAME 없음. meta CSP 1개가 link/script보다 먼저 있고 정책이 정확히 일치하는지
 - **화면 원본:** inline script·inline style·이벤트 속성·iframe·form 없음, 스크립트 순서, 스크립트가 쓰는 id, `noscript` 안내, 상대 경로, 외부 링크 허용 목록과 링크 경로의 git 추적 여부, 외부 글꼴·CDN 없음
-- **화면 스크립트:** 문자열을 HTML로 넣는 API 없음, 추적·외부 전송 API 없음, `app.js`가 읽는 파일은 문서 기준 상대 경로의 로드맵 데이터와 자료 날짜 둘뿐, `localStorage`는 마친 자료 표시 한 항목만. `unit.js`가 읽는 파일은 단원 내용 하나뿐이고 저장 API는 쓰지 않는다. 주소의 단원 id는 소문자·숫자·붙임표만 받는다
+- **화면 스크립트:** 문자열을 HTML로 넣는 API 없음, 추적·외부 전송 API 없음, `app.js`가 읽는 파일은 문서 기준 상대 경로의 로드맵 데이터와 자료 날짜 둘뿐, `localStorage`는 마친 자료 표시 한 항목만. `unit.js`가 읽는 파일은 단원 내용 하나뿐이고 저장 API는 쓰지 않는다. 주소의 단원 id는 소문자·숫자·붙임표만 받는다. `videos.js`가 읽는 파일은 영상 목록 하나뿐이고, 만들 수 있는 바깥 주소는 유튜브의 영상 주소와 채널 주소 둘뿐이다. 영상을 끼워 넣는 주소와 미리보기 그림 주소는 쓰지 않는다
 - **글꼴:** 선언한 파일이 있는지, 선언에 없는 woff2가 없는지, `OFL.txt`가 있는지, 화면 글자가 글꼴 두 묶음 안에 있는지(터미널 출력의 기호 ❯와 ✓는 원본 글꼴에 없어 시스템 글꼴로 보인다)
 - **워크플로:** 권한 범위, main 전용 배포 조건, configure/deploy는 deploy job에만, `github-pages` environment와 `needs: build`, build job의 build·check·test, 이력 전체 받기(`fetch-depth: 0`)와 `--require-history`, action major(6절)
 - **`--dist`:** 허용 목록과의 정확한 일치, 원본과 바이트 동일(재현성), 원본 교재·스크립트·CNAME 미포함, 빌드 표식에 로컬 경로 없음, `/ai-native-sdlc/`와 `/` 양쪽 해석, 자료 날짜 파일의 형식과 지금 이력에서 다시 읽은 값과의 일치

@@ -1,0 +1,57 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self' data:; font-src 'self'; connect-src 'self'; object-src 'none'; base-uri 'self'; form-action 'none'">
+  <meta name="referrer" content="strict-origin-when-cross-origin">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>영상 자료 | kosta-ai-lab 학습 로드맵</title>
+  <meta name="description" content="강사가 유튜브 채널 토크아이티(Talk IT)에 나와 이야기한 영상을 주제와 길이로 나눠 모았습니다. 영상을 누르면 유튜브에서 열립니다.">
+  <meta name="color-scheme" content="light">
+  <meta name="theme-color" content="#f3f1ec">
+  <meta property="og:type" content="website">
+  <meta property="og:locale" content="ko_KR">
+  <meta property="og:site_name" content="kosta-ai-lab">
+  <meta property="og:title" content="영상 자료 | kosta-ai-lab 학습 로드맵">
+  <meta property="og:description" content="강사가 유튜브 채널 토크아이티(Talk IT)에 나와 이야기한 영상을 주제와 길이로 나눠 모았습니다. 영상을 누르면 유튜브에서 열립니다.">
+  <meta name="twitter:card" content="summary">
+  <link rel="icon" href="favicon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="fonts.css">
+  <link rel="stylesheet" href="videos.css">
+  <script src="core.js" defer></script>
+  <script src="videos.js" defer></script>
+</head>
+<body>
+  <a class="skip" href="#list">영상 목록으로 건너뛰기</a>
+
+  <header class="top">
+    <div class="wrap top__in">
+      <a class="brand" href="index.html" aria-label="kosta-ai-lab 학습 로드맵으로"><svg class="brand__mark" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><circle cx="6" cy="7" r="3.2"/><rect x="13" y="3.8" width="6.4" height="6.4"/><path d="M6 13.5l5.6 6.5H.4z"/><path d="M16.2 13.2l4 4-4 4-4-4z"/></svg><span>kosta-ai-lab</span></a>
+      <span class="top__where">영상 자료</span>
+      <a class="top__doc" href="index.html">학습 로드맵 보기</a>
+    </div>
+  </header>
+
+  <main id="top">
+    <section class="hero" aria-labelledby="title">
+      <div class="wrap">
+        <h1 class="hero__h" id="title">영상 자료</h1>
+        <p class="hero__p">강사가 유튜브 채널 토크아이티(Talk IT)에 나와 이야기한 영상을 모았습니다. 영상을 누르면 유튜브에서 열립니다.</p>
+        <p class="hero__note">영상마다 올라온 날을 적었습니다. AI 도구는 빨리 바뀌므로, 도구를 다루는 영상은 날짜를 함께 봐 주세요.</p>
+        <noscript><p class="notice">이 화면은 JavaScript로 영상 목록을 그립니다. JavaScript를 켤 수 없다면 <a href="https://github.com/kosta-ai-lab/ai-native-sdlc/blob/main/site/data/videos.json">GitHub 저장소의 영상 목록 파일</a>에서 제목과 영상 번호를 볼 수 있습니다. 주소 youtube.com/watch?v= 뒤에 영상 번호를 붙이면 그 영상이 열립니다.</p></noscript>
+        <div class="pick" id="pick" role="group" aria-label="주제 고르기"></div>
+        <p class="count" id="count" aria-live="polite"></p>
+      </div>
+    </section>
+
+    <div class="reels" id="list"></div>
+  </main>
+
+  <footer class="foot">
+    <div class="wrap">
+      <p>영상은 각 유튜브 채널의 것입니다. 이 사이트는 영상의 정보와 주소만 싣고, 영상을 옮겨 오거나 화면에 끼워 넣지 않습니다.</p>
+      <p id="source"></p>
+    </div>
+  </footer>
+</body>
+</html>

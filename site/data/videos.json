@@ -1,0 +1,670 @@
+{
+  "schema": 1,
+  "checked": "2026-11-26",
+  "names": {
+    "윤성열": "윤성열 대표",
+    "박준성": "박준성 교수"
+  },
+  "channels": {
+    "talkit": {
+      "name": "토크아이티(Talk IT)",
+      "id": "UCIIxE0wO6-BFt1H_bi8KqtQ"
+    }
+  },
+  "kinds": {
+    "webinar": [
+      "웨비나",
+      "한 시간 남짓 이어지는 강의입니다."
+    ],
+    "talk": [
+      "세미나 토크",
+      "주제 하나를 십 분 안팎으로 이야기합니다."
+    ],
+    "short": [
+      "1분 영상",
+      "생각 하나를 1분 안에 말합니다."
+    ]
+  },
+  "topics": {
+    "ai": "AI 활용과 에이전트",
+    "env": "개발 환경과 도구",
+    "method": "개발 방법과 절차",
+    "work": "개발자의 일"
+  },
+  "videos": [
+    {
+      "id": "Nzvdqehpoeo",
+      "title": "AI로 인한, 개발 아웃소싱 사업의 위기",
+      "yt": "AI로 인한, 개발 아웃소싱 사업의 위기 [1분테크293@토크아이티, 윤성열 대표 / 드림플로우] #shorts",
+      "date": "2025-06-18",
+      "seconds": 54,
+      "kind": "short",
+      "series": "1분테크 293",
+      "channel": "talkit",
+      "by": [
+        "윤성열"
+      ],
+      "topic": "work"
+    },
+    {
+      "id": "TgjgBnyOdJo",
+      "title": "GPU as a Service, RunPod SaaS",
+      "yt": "GPU as a Service , RunPod SaaS [1분테크287@토크아이티, 윤성열 대표 / 드림플로우] #shorts",
+      "date": "2025-06-16",
+      "seconds": 48,
+      "kind": "short",
+      "series": "1분테크 287",
+      "channel": "talkit",
+      "by": [
+        "윤성열"
+      ],
+      "topic": "env"
+    },
+    {
+      "id": "bu1orjUZNl4",
+      "title": "MCP와 워크플로우가 만나면 무엇이 좋아지나?",
+      "yt": "MCP와 워크플로우가 만나면 무엇이 좋아지나? [1분테크294@토크아이티, 윤성열 대표 / 드림플로우] #shorts",
+      "date": "2025-06-13",
+      "seconds": 59,
+      "kind": "short",
+      "series": "1분테크 294",
+      "channel": "talkit",
+      "by": [
+        "윤성열"
+      ],
+      "topic": "ai"
+    },
+    {
+      "id": "OGJ0Z41qdUE",
+      "title": "개발자가 바이브코딩을 처음 해볼때 Tip",
+      "yt": "개발자가 바이브코딩을 처음 해볼때 Tip [1분테크292@토크아이티, 윤성열 대표 / 드림플로우] #shorts",
+      "date": "2025-06-10",
+      "seconds": 28,
+      "kind": "short",
+      "series": "1분테크 292",
+      "channel": "talkit",
+      "by": [
+        "윤성열"
+      ],
+      "topic": "ai"
+    },
+    {
+      "id": "Viu-ygNiGD8",
+      "title": "왜 노코드 솔루션들이 확산되지 못했을까?",
+      "yt": "왜 노코드 솔루션들이 확산되지 못했을까? [1분테크282@토크아이티, 윤성열 대표 / 드림플로우] #shorts",
+      "date": "2025-06-09",
+      "seconds": 34,
+      "kind": "short",
+      "series": "1분테크 282",
+      "channel": "talkit",
+      "by": [
+        "윤성열"
+      ],
+      "topic": "env"
+    },
+    {
+      "id": "-QOZE3EaNi0",
+      "title": "AI는 Glue(접착제)이다.",
+      "yt": "AI는 Glue(접착제)이다. [1분테크284@토크아이티, 윤성열 대표 / 드림플로우] #shorts",
+      "date": "2025-06-06",
+      "seconds": 25,
+      "kind": "short",
+      "series": "1분테크 284",
+      "channel": "talkit",
+      "by": [
+        "윤성열"
+      ],
+      "topic": "ai"
+    },
+    {
+      "id": "S4japI1ggZU",
+      "title": "강추 MCP, Context 7",
+      "yt": "강추 MCP, Context 7 [1분테크285@토크아이티, 윤성열 대표 / 드림플로우] #shorts",
+      "date": "2025-06-04",
+      "seconds": 57,
+      "kind": "short",
+      "series": "1분테크 285",
+      "channel": "talkit",
+      "by": [
+        "윤성열"
+      ],
+      "topic": "ai"
+    },
+    {
+      "id": "BO1iCzHJIbE",
+      "title": "n8n 워크플로우와 MCP가 만난다면?",
+      "yt": "n8n 워크플로우와 MCP가 만난다면?  [세미남640@토크아이티, 윤성열 대표 / 드림플로우]",
+      "date": "2025-06-02",
+      "seconds": 467,
+      "kind": "talk",
+      "series": "세미남 640",
+      "channel": "talkit",
+      "by": [
+        "윤성열"
+      ],
+      "topic": "ai"
+    },
+    {
+      "id": "DHGDqCDGv2Y",
+      "title": "바이브 코딩, MCP, 워크플로우 쉬운 설명",
+      "yt": "바이브 코딩, MCP, 워크플로우 쉬운 설명 [1분테크283@토크아이티, 윤성열 대표 / 드림플로우] #shorts",
+      "date": "2025-05-30",
+      "seconds": 38,
+      "kind": "short",
+      "series": "1분테크 283",
+      "channel": "talkit",
+      "by": [
+        "윤성열"
+      ],
+      "topic": "ai"
+    },
+    {
+      "id": "SH2S0yL96Qc",
+      "title": "MCP(Model Context Protocol)이란?",
+      "yt": "MCP(Model Context Protocol)이란? [1분테크281@토크아이티, 윤성열 대표 / 드림플로우] #shorts",
+      "date": "2025-05-27",
+      "seconds": 50,
+      "kind": "short",
+      "series": "1분테크 281",
+      "channel": "talkit",
+      "by": [
+        "윤성열"
+      ],
+      "topic": "ai"
+    },
+    {
+      "id": "pbZo2Ts9YHg",
+      "title": "MCP 10분 요약 feat. MCP서버 마켓플레이스",
+      "yt": "MCP 10분 요약  feat. MCP서버 마켓플레이스  [세미남638@토크아이티,  윤성열 대표 / 드림플로우]",
+      "date": "2025-05-24",
+      "seconds": 675,
+      "kind": "talk",
+      "series": "세미남 638",
+      "channel": "talkit",
+      "by": [
+        "윤성열"
+      ],
+      "topic": "ai"
+    },
+    {
+      "id": "IgF0vb_4Lc0",
+      "title": "AI 코딩시대, 어떤 신입 개발자를 뽑고 싶으세요?",
+      "yt": "AI 코딩시대,  어떤 신입 개발자를 뽑고 싶으세요? [1분테크280@토크아이티, 윤성열 대표 / 드림플로우] #shorts",
+      "date": "2025-05-23",
+      "seconds": 39,
+      "kind": "short",
+      "series": "1분테크 280",
+      "channel": "talkit",
+      "by": [
+        "윤성열"
+      ],
+      "topic": "work"
+    },
+    {
+      "id": "abZ7NXZO42k",
+      "title": "바이브 코딩, 누구를 위한 것인가?",
+      "yt": "바이브 코딩, 누구를 위한 것인가? [세미남637@토크아이티, 윤성열 대표 / 드림플로우]",
+      "date": "2025-05-22",
+      "seconds": 682,
+      "kind": "talk",
+      "series": "세미남 637",
+      "channel": "talkit",
+      "by": [
+        "윤성열"
+      ],
+      "topic": "ai"
+    },
+    {
+      "id": "RS2OHWEvwns",
+      "title": "AI 기술, 시간이 답입니다!",
+      "yt": "AI 기술, 시간이 답입니다! [1분테크206@토크아이티, 윤성열 대표 / 드림플로우]  #shorts",
+      "date": "2025-05-03",
+      "seconds": 26,
+      "kind": "short",
+      "series": "1분테크 206",
+      "channel": "talkit",
+      "by": [
+        "윤성열"
+      ],
+      "topic": "ai"
+    },
+    {
+      "id": "afS012JcctY",
+      "title": "구글이 만든 AI기반 노트, NotebookLM",
+      "yt": "구글이 만든AI기반 노트,  NotebookLM  [1분테크239@토크아이티, 윤성열 대표 / 드림플로우] #shorts",
+      "date": "2025-04-12",
+      "seconds": 56,
+      "kind": "short",
+      "series": "1분테크 239",
+      "channel": "talkit",
+      "by": [
+        "윤성열"
+      ],
+      "topic": "ai"
+    },
+    {
+      "id": "TSoievx9YdY",
+      "title": "LLM, AI 툴에 바인딩 되지 마라!",
+      "yt": "LLM, AI 툴에 바인딩 되지 마라! [1분테크222@토크아이티, 윤성열 대표 / 드림플로우] #shorts",
+      "date": "2025-04-09",
+      "seconds": 36,
+      "kind": "short",
+      "series": "1분테크 222",
+      "channel": "talkit",
+      "by": [
+        "윤성열"
+      ],
+      "topic": "ai"
+    },
+    {
+      "id": "vmJHUj7lTrs",
+      "title": "코딩 테크닉보다 개념이 중요해지는 시대!",
+      "yt": "코딩 테크닉보다 개념이 중요해지는 시대!  [1분테크194@토크아이티, 윤성열 대표 / 드림플로우] #shorts",
+      "date": "2025-04-02",
+      "seconds": 23,
+      "kind": "short",
+      "series": "1분테크 194",
+      "channel": "talkit",
+      "by": [
+        "윤성열"
+      ],
+      "topic": "work"
+    },
+    {
+      "id": "8kvD4f7b5Pk",
+      "title": "엔비디아 GPU사양 선택 기준",
+      "yt": "엔비디아 GPU사양 선택 기준 [1분테크220@토크아이티, 윤성열 대표 / 드림플로우] #shorts",
+      "date": "2025-03-26",
+      "seconds": 51,
+      "kind": "short",
+      "series": "1분테크 220",
+      "channel": "talkit",
+      "by": [
+        "윤성열"
+      ],
+      "topic": "env"
+    },
+    {
+      "id": "mfM3qwuYUJ4",
+      "title": "GPU as a Service, RunPod",
+      "yt": "GPU as a Service, RunPod [1분테크221@토크아이티, 윤성열 대표 / 드림플로우] #shorts",
+      "date": "2025-03-21",
+      "seconds": 41,
+      "kind": "short",
+      "series": "1분테크 221",
+      "channel": "talkit",
+      "by": [
+        "윤성열"
+      ],
+      "topic": "env"
+    },
+    {
+      "id": "TboCS0Yt-cU",
+      "title": "프라이빗 AI기반 SI/서비스개발 환경 구축 전략 feat. AI 개발툴",
+      "yt": "프라이빗 AI기반 SI/서비스개발 환경 구축 전략feat. AI 개발툴 [토크아이티 프리미엄 웨비나, 윤성열 대표 /드림플로우]",
+      "date": "2025-03-04",
+      "seconds": 4409,
+      "kind": "webinar",
+      "series": "프리미엄 웨비나",
+      "channel": "talkit",
+      "by": [
+        "윤성열"
+      ],
+      "topic": "ai"
+    },
+    {
+      "id": "VtEdcGM7kXs",
+      "title": "개발 유지보수 지옥 갔다 온 적 있나요?",
+      "yt": "개발 유지보수 지옥 갔다 온 적 있나요?  [1분테크202@토크아이티,  윤성열 대표 / 드림플로우] #shorts",
+      "date": "2025-02-19",
+      "seconds": 38,
+      "kind": "short",
+      "series": "1분테크 202",
+      "channel": "talkit",
+      "by": [
+        "윤성열"
+      ],
+      "topic": "work"
+    },
+    {
+      "id": "AOSb78Qq3_w",
+      "title": "백엔드 엔지니어의 직무는 어떻게 변할까?",
+      "yt": "백엔드 엔지니어의 직무는 어떻게 변할까? [1분테크190@토크아이티, 윤성열 대표 / 드림플로우] #shorts",
+      "date": "2025-02-09",
+      "seconds": 55,
+      "kind": "short",
+      "series": "1분테크 190",
+      "channel": "talkit",
+      "by": [
+        "윤성열"
+      ],
+      "topic": "work"
+    },
+    {
+      "id": "bbvIjm8jSWU",
+      "title": "Backend as a Service 시대, 백엔드 엔지니어는 무엇을 준비해야 되나? feat. Supabase",
+      "yt": "Backend as a Service 시대, 백엔드 엔지니어는 무엇을 준비해야 되나? feat. Supabase  [세미남569@토크아이티, 윤성열 대표 / 드림플로우]",
+      "date": "2025-02-06",
+      "seconds": 418,
+      "kind": "talk",
+      "series": "세미남 569",
+      "channel": "talkit",
+      "by": [
+        "윤성열"
+      ],
+      "topic": "work"
+    },
+    {
+      "id": "8NIKwKSLJBI",
+      "title": "AI 에이전트 vs AI 챗봇",
+      "yt": "AI 에이전트 vs AI 챗봇 [1분테크187@토크아이티, 윤성열 대표 / 드림플로우] #shorts",
+      "date": "2025-02-04",
+      "seconds": 56,
+      "kind": "short",
+      "series": "1분테크 187",
+      "channel": "talkit",
+      "by": [
+        "윤성열"
+      ],
+      "topic": "ai"
+    },
+    {
+      "id": "-wXT7nVR1pQ",
+      "title": "디지털 시대의 문제 해결: AI, 로우코드, 서버리스의 조화",
+      "yt": "디지털 시대의 문제 해결:AI, 로우코드, 서버리스의 조화 [토크아이티 프리미엄웨비나, 윤성열 대표 /드림플로우 ]",
+      "date": "2025-01-26",
+      "seconds": 4433,
+      "kind": "webinar",
+      "series": "프리미엄 웨비나",
+      "channel": "talkit",
+      "by": [
+        "윤성열"
+      ],
+      "topic": "ai"
+    },
+    {
+      "id": "yXJfx1Egw4Y",
+      "title": "AI 내재화 Small Start부터!",
+      "yt": "AI 내재화 Small Start부터!  [세미남543@토크아이티, 윤성열 대표 / 드림플로우]",
+      "date": "2025-01-02",
+      "seconds": 339,
+      "kind": "talk",
+      "series": "세미남 543",
+      "channel": "talkit",
+      "by": [
+        "윤성열"
+      ],
+      "topic": "ai"
+    },
+    {
+      "id": "Kf7Y044SOVw",
+      "title": "N8N AI 워크플로우 자동화 왜 인기가 있는가?",
+      "yt": "N8N AI 워크플로우 자동화 왜 인기가 있는가?   [세미남542@토크아이티, 윤성열 대표 / 드림플로우]",
+      "date": "2024-12-18",
+      "seconds": 769,
+      "kind": "talk",
+      "series": "세미남 542",
+      "channel": "talkit",
+      "by": [
+        "윤성열"
+      ],
+      "topic": "ai"
+    },
+    {
+      "id": "c_VFVOFPXa4",
+      "title": "기존 코딩과 AI 차이점은? 룰이 필요없다!",
+      "yt": "기존 코딩과 AI 차이점은? 룰이 필요없다! [1분테크152@토크아이티, 윤성열 대표 / 드림플로우] #shorts",
+      "date": "2024-12-04",
+      "seconds": 41,
+      "kind": "short",
+      "series": "1분테크 152",
+      "channel": "talkit",
+      "by": [
+        "윤성열"
+      ],
+      "topic": "ai"
+    },
+    {
+      "id": "DnVD5aCJU08",
+      "title": "어려울 줄 알았던 AI 도입, 워크플로우 자동화 도구로 하루 만에 끝내기 ft. N8N",
+      "yt": "어려울 줄 알았던 AI 도입, 워크플로우 자동화 도구로 하루 만에 끝내기 ft. N8N [토크아이티 프리미엄웨비나, 윤성열대표/드림플로우]",
+      "date": "2024-11-24",
+      "seconds": 4560,
+      "kind": "webinar",
+      "series": "프리미엄 웨비나",
+      "channel": "talkit",
+      "by": [
+        "윤성열"
+      ],
+      "topic": "ai"
+    },
+    {
+      "id": "ipct4gzjSuI",
+      "title": "릴리스 노트 자동화 feat. 시맨틱 버저닝",
+      "yt": "릴리스 노트 자동화 feat. 시맨틱 버저닝  [세미남488@토크아이티, 윤성열 대표 / 드림플로우]",
+      "date": "2024-10-17",
+      "seconds": 258,
+      "kind": "talk",
+      "series": "세미남 488",
+      "channel": "talkit",
+      "by": [
+        "윤성열"
+      ],
+      "topic": "method"
+    },
+    {
+      "id": "wKpFwWZ6mpg",
+      "title": "클라우드 IDE 언제 쓰면 좋은가? feat. Codespaces, Gitpod",
+      "yt": "클라우드 IDE 언제 쓰면 좋은가? feat. Codespaces, Gitpod  [세미남483@토크아이티, 윤성열 대표 / 드림플로우]",
+      "date": "2024-09-15",
+      "seconds": 609,
+      "kind": "talk",
+      "series": "세미남 483",
+      "channel": "talkit",
+      "by": [
+        "윤성열"
+      ],
+      "topic": "env"
+    },
+    {
+      "id": "J9fl_uGv6sM",
+      "title": "코드 리뷰도 AI가!",
+      "yt": "코드 리뷰도 AI가! [1분테크126@토크아이티, 윤성열대표/드림플로우] #shorts",
+      "date": "2024-09-12",
+      "seconds": 27,
+      "kind": "short",
+      "series": "1분테크 126",
+      "channel": "talkit",
+      "by": [
+        "윤성열"
+      ],
+      "topic": "ai"
+    },
+    {
+      "id": "hLvRJuMfRxA",
+      "title": "AI 시대일수록, 개발자의 기본기가 중요한 이유",
+      "yt": "AI 시대일수록,  개발자의 기본기가 중요한 이유 [1분테크125@토크아이티, 윤성열대표/드림플로우]",
+      "date": "2024-09-08",
+      "seconds": 56,
+      "kind": "short",
+      "series": "1분테크 125",
+      "channel": "talkit",
+      "by": [
+        "윤성열"
+      ],
+      "topic": "work"
+    },
+    {
+      "id": "GmKhTFVVFTQ",
+      "title": "SW버전의 종류, Major vs Minor vs Patch",
+      "yt": "SW버전의 종류, Major vs Minor vs Patch  [1분테크121@토크아이티, 윤성열대표/드림플로우] #shorts",
+      "date": "2024-09-05",
+      "seconds": 25,
+      "kind": "short",
+      "series": "1분테크 121",
+      "channel": "talkit",
+      "by": [
+        "윤성열"
+      ],
+      "topic": "method"
+    },
+    {
+      "id": "oZUEFxqPb58",
+      "title": "로컬 IDE 비교, Intellij vs VSCode",
+      "yt": "로컬 IDE 비교,  Intellij vs VSCode  [세미남481@토크아이티, 윤성열 대표 / 드림플로우]",
+      "date": "2024-09-03",
+      "seconds": 963,
+      "kind": "talk",
+      "series": "세미남 481",
+      "channel": "talkit",
+      "by": [
+        "윤성열"
+      ],
+      "topic": "env"
+    },
+    {
+      "id": "Eff_atnph14",
+      "title": "AI기반 IDE, Cursor IDE",
+      "yt": "AI기반 IDE, Cursor IDE  [세미남482@토크아이티, 윤성열 대표 / 드림플로우]",
+      "date": "2024-09-01",
+      "seconds": 511,
+      "kind": "talk",
+      "series": "세미남 482",
+      "channel": "talkit",
+      "by": [
+        "윤성열"
+      ],
+      "topic": "ai"
+    },
+    {
+      "id": "eGuQbfOOaYk",
+      "title": "좋은 SW회사 조건 중 하나, Pull Request",
+      "yt": "좋은 SW회사 조건 중 하나, Pull Request [1분테크120@토크아이티, 윤성열대표/드림플로우] #shorts",
+      "date": "2024-09-01",
+      "seconds": 47,
+      "kind": "short",
+      "series": "1분테크 120",
+      "channel": "talkit",
+      "by": [
+        "윤성열"
+      ],
+      "topic": "method"
+    },
+    {
+      "id": "7l0zOII_JNY",
+      "title": "주니어 개발자가 줄 수 밖에 없는 이유",
+      "yt": "주니어 개발자가 줄 수 밖에 없는 이유 [1분테크119@토크아이티, 윤성열대표/드림플로우] #shorts",
+      "date": "2024-08-30",
+      "seconds": 31,
+      "kind": "short",
+      "series": "1분테크 119",
+      "channel": "talkit",
+      "by": [
+        "윤성열"
+      ],
+      "topic": "work"
+    },
+    {
+      "id": "4yc8qXjZdkk",
+      "title": "깃 저장소 GitHub vs GitLab vs Bitbucket",
+      "yt": "깃 저장소 GitHub vs GitLab vs Bitbucket [세미남480@토크아이티, 윤성열 대표 / 드림플로우]",
+      "date": "2024-08-29",
+      "seconds": 349,
+      "kind": "talk",
+      "series": "세미남 480",
+      "channel": "talkit",
+      "by": [
+        "윤성열"
+      ],
+      "topic": "env"
+    },
+    {
+      "id": "zNcaXy7IVno",
+      "title": "왜 개발환경이 좋은 회사에 입사해야 되나?",
+      "yt": "왜 개발환경이 좋은 회사에 입사해야 되나?  [1분테크119@토크아이티, 윤성열대표/드림플로우] #shorts",
+      "date": "2024-08-25",
+      "seconds": 49,
+      "kind": "short",
+      "series": "1분테크 119",
+      "channel": "talkit",
+      "by": [
+        "윤성열"
+      ],
+      "topic": "work"
+    },
+    {
+      "id": "yxBgsCMxD5k",
+      "title": "애자일 개발보다 워터폴 모델이 적합한 분야",
+      "yt": "애자일 개발보다 워터폴 모델이 적합한 분야 [세미남445@토크아이티,  윤성열 대표 / 드림플로우, 박준성 회장 / 한국SW기술진흥협회]",
+      "date": "2024-08-19",
+      "seconds": 240,
+      "kind": "talk",
+      "series": "세미남 445",
+      "channel": "talkit",
+      "by": [
+        "윤성열",
+        "박준성"
+      ],
+      "topic": "method"
+    },
+    {
+      "id": "GFCXMVKv-K4",
+      "title": "현대적 개발 환경 마스터하기: IDE, CI/CD 자동화, Git 브랜치 전략, Pull Request, 릴리즈 노트",
+      "yt": "현대적 개발 환경 마스터하기: IDE, CI/CD 자동화, Git 브랜치 전략, Pull Request, 릴리즈 노트 [토크아이티 프리미엄웨비나, 윤성열 대표/드림플로우]",
+      "date": "2024-08-01",
+      "seconds": 4335,
+      "kind": "webinar",
+      "series": "프리미엄 웨비나",
+      "channel": "talkit",
+      "by": [
+        "윤성열"
+      ],
+      "topic": "env"
+    },
+    {
+      "id": "5J32coI1lTM",
+      "title": "테스트 자동화없는 CI/CD는 바퀴없는 자동차",
+      "yt": "테스트 자동화없는 CI/CD는 바퀴없는 자동차 [1분테크105@토크아이티,  윤성열 대표 / 드림플로우, 박준성 회장/한국SW기술진흥협회] #shorts",
+      "date": "2024-07-31",
+      "seconds": 44,
+      "kind": "short",
+      "series": "1분테크 105",
+      "channel": "talkit",
+      "by": [
+        "윤성열",
+        "박준성"
+      ],
+      "topic": "method"
+    },
+    {
+      "id": "yDqnTBPyKhs",
+      "title": "마이크로서비스 아키텍처(MSA) 오해와 진실!",
+      "yt": "마이크로서비스 아키텍처(MSA) 오해와 진실!  [세미남437@토크아이티, 박준성 회장 / 한국SW기술진흥협회, 윤성열 대표 / 드림플로우]",
+      "date": "2024-06-11",
+      "seconds": 733,
+      "kind": "talk",
+      "series": "세미남 437",
+      "channel": "talkit",
+      "by": [
+        "박준성",
+        "윤성열"
+      ],
+      "topic": "method"
+    },
+    {
+      "id": "FZyHrwNIuyA",
+      "title": "TDD기반 Test First Coding 등장 배경과 효과",
+      "yt": "TDD기반 Test Frist Coding 등장 배경과 효과 [세미남431@토크아이티,  박준성 회장 / 한국SW기술진흥협회, 윤성열 대표 / 드림플로우]",
+      "date": "2024-06-04",
+      "seconds": 707,
+      "kind": "talk",
+      "series": "세미남 431",
+      "channel": "talkit",
+      "by": [
+        "박준성",
+        "윤성열"
+      ],
+      "topic": "method"
+    }
+  ]
+}

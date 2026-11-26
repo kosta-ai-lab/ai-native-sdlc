@@ -1,6 +1,6 @@
 # kosta-ai-lab 학습 로드맵 (`site/`)
 
-학생이 무엇부터, 어떤 자료로, 어떻게 배울지 보여 주는 정적 사이트입니다. 강사들이 이 저장소에 공개한 강의 교재와 실습 가이드를 배우는 순서대로 잇습니다. 교재와 실습은 사이트에 복사하지 않고 GitHub 원본으로 연결합니다. 따라 하기 단원에는 가이드를 한 화면으로 옮긴 한눈에 보기를 함께 둡니다.
+학생이 무엇부터, 어떤 자료로, 어떻게 배울지 보여 주는 정적 사이트입니다. 강사들이 이 저장소에 공개한 강의 교재와 실습 가이드를 배우는 순서대로 잇습니다. 교재와 실습은 사이트에 복사하지 않고 GitHub 원본으로 연결합니다. 따라 하기 단원에는 가이드를 한 화면으로 옮긴 한눈에 보기를 함께 둡니다. 강사의 유튜브 영상은 영상 자료 화면에서 주소로 연결합니다.
 
 공개 주소: https://kosta-ai-lab.github.io/ai-native-sdlc/
 
@@ -16,9 +16,11 @@ Node.js 18.17 이상이 필요하며 설치할 의존성은 없습니다. 자세
 
 - 로드맵·단계·자료의 내용: `data/roadmap.json`
 - 단원 한눈에 보기의 내용: `data/unit-<단원>.json`. 원본은 가이드 문서이고, 요청문·명령·출력이 가이드와 같은지 `scripts/unit-check.mjs`가 대조합니다
+- 영상 자료의 목록: `data/videos.json`. 영상은 유튜브 주소로만 연결합니다. 목록의 형식은 `scripts/check.mjs`가 보고, 주소가 열리는지는 `npm run check:videos`로 확인합니다(네트워크 필요)
 - 자료 날짜와 NEW·업데이트 표시: 손으로 적지 않고 빌드가 git 이력에서 읽습니다(`dist/data/dates.json`)
 - 고정 문구·메타데이터·meta CSP: `src/index.html`
 - 화면: `src/app.css`(스타일), `src/core.js`(계산), `src/app.js`(화면 동작)
 - 단원 한눈에 보기 화면: `src/unit.html`, `src/unit.css`, `src/unit.js`
+- 영상 자료 화면: `src/videos.html`, `src/videos.css`, `src/videos.js`
 - 글꼴: `src/fonts/`, `src/fonts.css`. `scripts/fonts.py`가 만드는 생성 파일입니다.
 - 사이트 코드 라이선스: Apache License 2.0. 글꼴은 SIL Open Font License 1.1([제3자 자료 고지](../THIRD_PARTY_NOTICES.md)). 연결된 교재는 각 원본의 라이선스(교육자료 CC BY-NC 4.0 등)를 따릅니다. `data/unit-*.json`은 가이드 문서를 옮긴 교육 자료이므로 CC BY-NC 4.0입니다.

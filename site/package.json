@@ -12,6 +12,7 @@
     "build": "node scripts/build.mjs",
     "check": "node scripts/check.mjs",
     "check:dist": "node scripts/check.mjs --dist",
+    "check:videos": "node scripts/videos-check.mjs --live",
     "test": "node scripts/test.mjs",
     "serve": "node scripts/serve.mjs",
     "verify": "node scripts/build.mjs && node scripts/check.mjs --dist && node scripts/test.mjs"

@@ -21,7 +21,7 @@ export const DATES_FILE = 'data/dates.json';
 export const DATES_TZ = 'Asia/Seoul';
 
 // 배포 화면 파일. 스크립트 실행 순서는 index.html이 정한다(core → app).
-export const SRC_FILES = ['index.html', 'app.css', 'fonts.css', 'core.js', 'app.js', 'unit.html', 'unit.css', 'unit.js', 'favicon.svg'];
+export const SRC_FILES = ['index.html', 'app.css', 'fonts.css', 'core.js', 'app.js', 'unit.html', 'unit.css', 'unit.js', 'videos.html', 'videos.css', 'videos.js', 'favicon.svg'];
 // 글꼴은 site/src/fonts의 woff2와 라이선스 전문(OFL.txt)만 복사한다. 만드는 법은 scripts/fonts.py에 있다.
 const FONT_NAME = /^[a-z0-9][a-z0-9-]*\.woff2$|^OFL\.txt$/;
 export function fontFiles(siteDir = SITE_DIR) {

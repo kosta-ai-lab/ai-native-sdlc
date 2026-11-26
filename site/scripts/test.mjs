@@ -10,6 +10,7 @@ import { REPO_ROOT, SITE_DIR, BASE_PATH, MARKER, DATES_FILE, build, collectDates
 import { collectProblems, parseCsp, visibleStrings, REQUIRED_CSP, COLUMNS } from './check.mjs';
 import { createSiteServer, normalizeBase } from './serve.mjs';
 import { checkUnits, unitProblems, unitStrings, verbatimLines } from './unit-check.mjs';
+import { checkLive, videoProblems, videoStrings } from './videos-check.mjs';
 import '../src/core.js';
 
 const R = globalThis.KostaRoadmap;
@@ -22,6 +23,10 @@ const unitHtmlSrc = fs.readFileSync(path.join(SITE_DIR, 'src', 'unit.html'), 'ut
 const unitJs = fs.readFileSync(path.join(SITE_DIR, 'src', 'unit.js'), 'utf8');
 const unit0601 = readJSON(path.join(SITE_DIR, 'data', 'unit-06-m01.json'));
 const guide0601 = fs.readFileSync(path.join(REPO_ROOT, unit0601.guide), 'utf8');
+// 영상 자료: 화면 원본과 목록
+const videosHtmlSrc = fs.readFileSync(path.join(SITE_DIR, 'src', 'videos.html'), 'utf8');
+const videosJs = fs.readFileSync(path.join(SITE_DIR, 'src', 'videos.js'), 'utf8');
+const videosData = readJSON(path.join(SITE_DIR, 'data', 'videos.json'));
 const clone = (v) => JSON.parse(JSON.stringify(v));
 
 const tests = [];
@@ -38,6 +43,10 @@ const item = (d, id) => d.items.find((i) => i.id === id);
 const withUnit = (mutate) => { const u = clone(unit0601); mutate(u); return unitProblems(u, { name: 'unit-06-m01.json', guide: guide0601 }); };
 const withUnitHtml = (mutate) => collectProblems({ overrides: { unitHtml: mutate(unitHtmlSrc) } }).problems;
 const withUnitJs = (mutate) => collectProblems({ overrides: { js: { 'unit.js': mutate(unitJs) } } }).problems;
+/** 영상 목록을 고친 사본으로 영상 검사를 돌린다. */
+const withVideos = (mutate) => { const d = clone(videosData); mutate(d); return videoProblems(d, { names: data.names }); };
+const withVideosHtml = (mutate) => collectProblems({ overrides: { videosHtml: mutate(videosHtmlSrc) } }).problems;
+const withVideosJs = (mutate) => collectProblems({ overrides: { js: { 'videos.js': mutate(videosJs) } } }).problems;
 const caught = (problems, re) => assert.ok(problems.some((p) => re.test(p)), '검사가 잡아야 함: ' + re + '\n  실제: ' + (problems.join(' | ') || '(문제 없음)'));
 
 function request(port, rawPath, method = 'GET') {
@@ -280,6 +289,53 @@ test('단원 한눈에 보기: 화면에 나오는 글이 모두 모아진다(�
 });
 
 // ── 자료 날짜 ──
+// ── 영상 자료 ──
+test('영상 자료: 목록이 형식에 맞고, 영상 번호가 겹치지 않으며, 사람 이름 표기가 로드맵과 같다', () => {
+  assert.deepEqual(videoProblems(videosData, { names: data.names }), []);
+  assert.ok(videosData.videos.length > 0);
+  assert.equal(new Set(videosData.videos.map((v) => v.id)).size, videosData.videos.length);
+});
+test('영상 자료: 틀린 영상 번호, 겹친 영상, 없는 묶음·주제·사람, 통째로 적은 주소를 잡아낸다', () => {
+  caught(withVideos((d) => { d.videos[0].id = 'short'; }), /id는 유튜브 영상 번호/);
+  caught(withVideos((d) => { d.videos[1].id = d.videos[0].id; }), /같은 영상이 두 번/);
+  caught(withVideos((d) => { d.videos[0].kind = 'movie'; }), /kind가 kinds에 없음/);
+  caught(withVideos((d) => { d.videos[0].topic = 'etc'; }), /topic이 topics에 없음/);
+  caught(withVideos((d) => { d.videos[0].by = ['홍길동']; }), /by의 이름이 names에 없음/);
+  caught(withVideos((d) => { d.videos[0].url = 'https://www.youtube.com/watch?v=' + d.videos[0].id; }), /주소를 통째로 적지 않음/);
+  caught(withVideos((d) => { d.videos[0].date = '2025-13-40'; }), /date는 올라온 날/);
+  caught(withVideos((d) => { d.videos[0].date = '2025-02-30'; }), /date는 올라온 날/);
+  caught(withVideos((d) => { d.videos[0].seconds = 0; }), /seconds는 길이/);
+  caught(withVideos((d) => { d.names['윤성열'] = '윤성열 이사'; }), /로드맵\(roadmap\.json\)과 다름/);
+  caught(withVideos((d) => { d.topics.etc = '그 밖'; }), /topics\.etc: 쓰는 영상이 없음/);
+  caught(withVideos((d) => { d.checked = '어제'; }), /checked는/);
+});
+test('영상 자료 화면: 같은 CSP와 스크립트 규칙을 지키고, 영상을 끼워 넣으면 check가 잡아낸다', () => {
+  const m = /<meta http-equiv="Content-Security-Policy" content="([^"]*)">/.exec(videosHtmlSrc);
+  assert.ok(m);
+  assert.deepEqual(parseCsp(m[1]), REQUIRED_CSP);
+  caught(withVideosHtml((h) => h.replace('</body>', '<iframe src="https://www.youtube.com/embed/abZ7NXZO42k"></iframe></body>')), /videos\.html: iframe/);
+  caught(withVideosHtml((h) => h.replace('id="pick"', 'id="chips"')), /videos\.html: 스크립트가 쓰는 id="pick" 없음/);
+  caught(withVideosHtml((h) => h.replace('href="index.html">학습', 'href="https://www.youtube.com/">학습')), /videos\.html: 허용하지 않은 외부 링크/);
+  caught(withVideosJs((s) => s.replace("'https://www.youtube.com/watch?v='", "'https://example.org/watch?v='")), /videos\.js: 허용하지 않은 주소/);
+  caught(withVideosJs((s) => s + "\nfetch(new URL('data/roadmap.json', document.baseURI));\n"), /videos\.js: fetch는 영상 목록을 읽는 한 번만/);
+  caught(withVideosJs((s) => s.replace('WATCH + v.id', "'https://www.youtube.com/embed/' + v.id")), /영상을 끼워 넣거나/);
+  caught(withApp((s) => s + "\nconst y = 'https://www.youtube.com/watch?v=';\n"), /app\.js: 허용하지 않은 주소/);
+  caught(collectProblems({ overrides: { videos: null } }).problems, /videos\.json: JSON으로 읽을 수 없음/);
+});
+test('영상 자료: 유튜브 확인은 열리지 않는 영상을 가려낸다(네트워크 없이 시험)', async () => {
+  const d = { channels: { talkit: { name: '채널' } }, videos: ['aaaaaaaaaaa', 'bbbbbbbbbbb', 'ccccccccccc'].map((id) => ({ id, title: id, channel: 'talkit' })) };
+  const ask = async (v) => (v.id.startsWith('a') ? { ok: true, note: '' } : v.id.startsWith('b') ? { ok: false, note: '열리지 않음(HTTP 404)' } : { ok: true, note: '제목을 확인하지 못함' });
+  const out = await checkLive(d, { ask, width: 2 });
+  assert.equal(out.length, 3);
+  assert.deepEqual(out.filter((r) => !r.ok).map((r) => r.id), ['bbbbbbbbbbb']);
+});
+test('영상 자료: 화면에 나오는 글이 모두 모아지고, 영상 제목은 따로 뺄 수 있다', () => {
+  const all = videoStrings(videosData), own = videoStrings(videosData, { titles: false });
+  for (const s of ['세미나 토크', 'AI 활용과 에이전트', '윤성열 대표', '토크아이티(Talk IT)', videosData.videos[0].title]) assert.ok(all.includes(s), s);
+  assert.ok(!own.includes(videosData.videos[0].title));
+  assert.ok(!all.includes(videosData.videos[0].id), '영상 번호는 화면 글이 아님');
+});
+
 test('자료 날짜: 처음 올라온 날과 마지막으로 내용이 바뀐 날을 읽고, 옮긴 파일은 옛 경로까지 따라간다', () => {
   const log = [
     '@2026-11-20', 'M\tmodules/x/GUIDE.md', 'M\tREADME.md',
@@ -398,6 +454,8 @@ test('서버: 하위 경로와 루트 양쪽에서 화면·데이터·글꼴을 
     assert.equal(unitPage.status, 200);
     assert.match(unitPage.headers['content-type'], /text\/html/);
     assert.equal((await request(port, BASE_PATH + 'data/unit-06-m01.json')).status, 200);
+    assert.equal((await request(port, BASE_PATH + 'videos.html')).status, 200);
+    assert.equal((await request(port, BASE_PATH + 'data/videos.json')).status, 200);
     const font = await request(port, BASE_PATH + 'fonts/roadmap-sans-400-core.woff2');
     assert.equal(font.status, 200);
     assert.equal(font.headers['content-type'], 'font/woff2');

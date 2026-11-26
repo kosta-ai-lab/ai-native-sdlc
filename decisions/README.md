@@ -26,5 +26,6 @@
 | [0005](0005-education-cc-by-nc.md) | 교육자료 공개 라이선스 CC BY-NC 4.0 | 각 문서의 상태 설명 참고 |
 | [0006](0006-learning-roadmap-site.md) | 사이트를 조직 소개 포털에서 학습 로드맵으로 전환 | Accepted |
 | [0007](0007-unit-overview-pages.md) | 따라 하기 단원에 '한눈에 보기' 화면을 둔다 | Accepted |
+| [0008](0008-video-links.md) | 영상 자료는 유튜브 주소로만 연결한다 | Accepted |
 
 > 새 결정은 위 양식으로 `decisions/NNNN-제목.md`를 추가하고 이 표에 등재한다. 프로젝트 전반에 영향을 주는 결정은 보통 RFC를 거쳐 ADR로 남는다.
