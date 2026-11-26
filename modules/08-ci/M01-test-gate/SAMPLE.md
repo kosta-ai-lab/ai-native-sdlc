@@ -73,6 +73,7 @@ CI의 테스트가 실패했어. 아래는 실패 로그야. 원인을 찾아 �
 
 ```bash
 git status --short        # M src/todo.ts만 나와야 한다
+git diff                  # 고친 줄을 읽는다
 git add -A && git commit -m "fix: 오류 문구를 인수조건에 맞춤"
 git push
 gh pr checks --watch
