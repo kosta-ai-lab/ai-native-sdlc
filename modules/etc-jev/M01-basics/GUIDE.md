@@ -68,19 +68,13 @@ ticket-router/
 
 Windows PowerShell:
 ```powershell
-py -m venv .venv
-```
-
-```powershell
+python -m venv .venv
 .venv\Scripts\Activate.ps1
 ```
 
 macOS / Linux:
 ```bash
 python -m venv .venv
-```
-
-```bash
 source .venv/bin/activate
 ```
 
