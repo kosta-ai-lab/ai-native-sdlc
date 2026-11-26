@@ -44,7 +44,7 @@ const KINDS = ['course', 'guide', 'sample', 'rule', 'soon'];
 const REQUIRED_IDS = ['top', 'net', 'route', 'tabs', 'prog', 'route-head', 'rail', 'sign', 'people', 'people-grid', 'guide', 'about', 'scrim'];
 const SCRIPT_ORDER = /<script src="core\.js" defer><\/script>\s*<script src="app\.js" defer><\/script>/;
 // 단원 한눈에 보기 화면(unit.html)
-const UNIT_IDS = ['top', 'title', 'lead', 'where', 'doc', 'lap', 'key', 'play', 'track', 'step', 'kinds', 'principles', 'prs', 'sections', 'review', 'grid', 'env'];
+const UNIT_IDS = ['top', 'title', 'lead', 'where', 'doc', 'lap', 'key', 'play', 'track', 'step', 'kinds', 'principles', 'prs', 'sections', 'env'];
 const UNIT_SCRIPT_ORDER = /<script src="core\.js" defer><\/script>\s*<script src="unit\.js" defer><\/script>/;
 // 단원 내용에는 실습의 로컬 주소가 나올 수 있어, 개인·내부 주소 가운데 이 둘은 보지 않는다
 const LOCAL_OK = [/127\.0\.0\.1/, /localhost/];

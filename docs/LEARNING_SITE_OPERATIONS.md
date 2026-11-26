@@ -105,7 +105,7 @@ site/
 | `start` | 처음에 펼쳐 보일 단계 번호(없으면 0) |
 | `marks`, `pips` | 단계 동그라미 표시의 뜻(`plain`·`ink`·`warn`·`bad`·`good`·`calm`), 단계 아래 작은 네모의 뜻 |
 | `kinds` | 마디의 이름과 한 문장 설명. 예: `"hand": ["맡긴다", "…"]`. 단원이 쓰는 마디를 모두 적는다 |
-| `principles` | `{ name, here, did }`의 목록. 원칙의 이름, 이 단원에서 뜻하는 것, 돌아보기. 없으면 원칙 구역과 돌아보기 구역이 나오지 않는다 |
+| `principles` | `{ name, here }`의 목록. 원칙의 이름과 이 단원에서 뜻하는 것. 없으면 원칙 구역이 나오지 않는다 |
 | `steps` | 단계 목록. 단계마다 `title`, `name`(짧은 이름), `state`(표시), `out`(짧은 출력), `pips`·`pipsLabel`, `principles`(원칙 번호), `note`, `lanes`(마디) |
 | `lanes` | `{ kind, blocks }`의 목록. `kind`는 `kinds`의 열쇠, `blocks`는 조각의 목록 |
 | `sections` | 단원마다 다른 구역. `compare`(나란히 견주기), `chain`(이어지는 길), `table`(표) |

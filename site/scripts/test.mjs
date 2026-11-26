@@ -263,7 +263,7 @@ test('단원 한눈에 보기 화면: 같은 CSP와 스크립트 규칙을 지�
   assert.deepEqual(parseCsp(m[1]), REQUIRED_CSP);
   caught(withUnitHtml((h) => h.replace('</body>', '<script>alert(1)</script></body>')), /unit\.html: inline script 금지/);
   caught(withUnitHtml((h) => h.replace('<p class="hero__p" id="lead">', '<p class="hero__p" id="lead" style="color:red">')), /unit\.html: inline style 금지/);
-  caught(withUnitHtml((h) => h.replace('id="grid"', 'id="table"')), /unit\.html: 스크립트가 쓰는 id="grid" 없음/);
+  caught(withUnitHtml((h) => h.replace('id="prs"', 'id="list"')), /unit\.html: 스크립트가 쓰는 id="prs" 없음/);
   caught(withUnitHtml((h) => h.replace('src="unit.js" defer', 'src="app.js" defer')), /core\.js → unit\.js/);
   caught(withUnitHtml((h) => h.replace('단계로 건너뛰기', '단계로 건너뛰기 (시안)')), /unit\.html: 제작 단계 용어/);
   caught(withUnitHtml((h) => h.replace('href="index.html"', 'href="nowhere.html"')), /unit\.html: 없는 내부 링크/);

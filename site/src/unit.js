@@ -142,7 +142,6 @@
     if (opt.focus) stns[i].focus();
     if (!opt.silent) history.replaceState(null, '', '#s' + i);
   }
-  function go(i) { stop(); select(i); $('#lap').scrollIntoView({ block: 'start' }); }
   function stop() {
     if (timer) { clearInterval(timer); timer = 0; }
     const b = $('#play');
@@ -155,21 +154,11 @@
     timer = setInterval(() => { if (cur >= u.steps.length - 1) { stop(); return; } select(cur + 1); }, STEP_MS);
   }
 
-  // ── 원칙, 단원마다 다른 구역, 돌아보기 ──
+  // ── 원칙, 단원마다 다른 구역 ──
   function renderPrinciples() {
     if (!u.principles || !u.principles.length) return;
     $('#principles').hidden = false;
     $('#prs').replaceChildren(...u.principles.map((p, n) => h('li', { class: 'pr' }, h('h3', { class: 'pr__h' }, pn(n + 1), h('span', { text: p.name })), h('p', { class: 'pr__t' }, rich(p.here)))));
-    $('#review').hidden = false;
-    const grid = $('#grid');
-    grid.style.setProperty('--n', String(u.steps.length));
-    grid.replaceChildren(
-      h('div', { class: 'grid__row grid__row--hd', 'aria-hidden': 'true' }, h('span', { text: '원칙' }), h('span', { class: 'grid__cells' }, u.steps.map((_, i) => h('span', { text: String(i) }))), h('span', { text: '이 단원에서 한 일' })),
-      ...u.principles.map((p, n) => h('div', { class: 'grid__row' },
-        h('p', { class: 'grid__p' }, pn(n + 1), h('span', { text: p.name })),
-        h('div', { class: 'grid__cells' }, u.steps.map((s, i) => ((s.principles || []).includes(n + 1)
-          ? h('button', { type: 'button', 'aria-label': i + '단계로 가기', on: { click: () => go(i) } }, h('b', { text: String(i) })) : h('span')))),
-        h('p', { class: 'grid__t' }, rich(p.did)))));
   }
   function chain(s) {
     const box = h('div', { class: 'chain', vars: { '--c': s.cols.length } }, s.cols.map(([t, sub]) => h('div', { class: 'chain__hd' }, t, sub ? h('small', { text: sub }) : null)));

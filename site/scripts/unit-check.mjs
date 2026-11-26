@@ -49,7 +49,7 @@ export function unitStrings(u) {
   const push = (...xs) => { for (const x of xs.flat(Infinity)) if (typeof x === 'string') out.push(x); };
   push(u.where, u.lead, Array.isArray(u.title) ? u.title.map((p) => p[0]) : u.title, Object.values(u.marks || {}), u.pips, u.promptLabel, u.env);
   push(Object.values(u.kinds || {}));
-  for (const p of u.principles || []) push(p.name, p.here, p.did);
+  for (const p of u.principles || []) push(p.name, p.here);
   for (const s of u.steps || []) push(s.title, s.name, s.out, s.pipsLabel, s.note);
   const block = (b) => {
     push(b.p, b.label, b.prompt, b.code, b.cmd, b.next, b.outs, b.list);
@@ -93,7 +93,7 @@ export function unitProblems(u, ctx = {}) {
   for (const [k, v] of Object.entries(kinds)) if (!/^[a-z]+$/.test(k) || !Array.isArray(v) || v.length !== 2 || !v.every(isText)) bad('kinds.' + k + '는 [이름, 설명]');
 
   const prs = u.principles;
-  if (prs !== undefined && !(isList(prs) && prs.every((p) => p && isText(p.name) && isText(p.here) && isText(p.did)))) bad('principles는 { name, here, did }의 목록');
+  if (prs !== undefined && !(isList(prs) && prs.every((p) => p && isText(p.name) && isText(p.here)))) bad('principles는 { name, here }의 목록');
   const prCount = Array.isArray(prs) ? prs.length : 0;
 
   const checkBlock = (b, where) => {
