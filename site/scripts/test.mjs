@@ -75,6 +75,17 @@ test('저장소 주소: 공백이 있는 폴더를 인코딩하고, 폴더는 tr
     'https://github.com/kosta-ai-lab/ai-native-sdlc/blob/main/courses/Agentic%20Coding%20using%20Claude%20Code/README.md');
   assert.equal(R.repoUrl(data, { path: 'modules/06-coding-tdd/sample', kind: 'dir' }), 'https://github.com/kosta-ai-lab/ai-native-sdlc/tree/main/modules/06-coding-tdd/sample');
 });
+test('사람 이름: 화면에서는 names 표의 표기로 통일하고, 여러 사람은 한 사람씩 바꾸며, 표에 없는 이름은 그대로 둔다', () => {
+  const d = { names: { 박준성: '박준성 교수', 윤성열: '윤성열 대표', 이선아: '이선아 교수' } };
+  assert.equal(R.displayBy(d, '윤성열'), '윤성열 대표');
+  assert.equal(R.displayBy(d, '이선아 교수'), '이선아 교수');
+  assert.equal(R.displayBy(d, '박준성 회장'), '박준성 교수');
+  assert.equal(R.displayBy(d, '윤성열, 최성웅'), '윤성열 대표, 최성웅');
+  assert.equal(R.displayBy(d, '최성웅 교수'), '최성웅 교수');
+  assert.equal(R.displayBy(d, '협의 중'), '협의 중');
+  assert.equal(R.displayBy({}, '윤성열'), '윤성열');
+  assert.deepEqual(data.people.map((p) => R.displayBy(data, p.name)), ['박준성 교수', '윤성열 대표', '이선아 교수']);
+});
 test('단계 상태: 공개 자료가 없으면 soon, 공개 자료를 모두 마치면 done, 준비 중 자료는 세지 않는다', () => {
   const dev = lines.get('dev');
   const mixed = dev.stages.find((s) => s.items.includes('design'));
@@ -139,6 +150,8 @@ test('check는 잘못된 데이터를 잡아낸다', () => {
   caught(withData((d) => { d.lines[2].shape = 'square'; }), /도형이 달라야/);
   caught(withData((d) => { d.lines[0].next.line = 'nowhere'; }), /next는 다른 로드맵/);
   caught(withData((d) => { d.lines[0].stages[0].items = []; }), /자료가 하나도 없음/);
+  caught(withData((d) => { d.names['윤성열'] = '대표 윤성열'; }), /화면 표기는 그 이름으로 시작해야 함/);
+  caught(withData((d) => { d.names['홍길동'] = '홍길동 교수'; }), /names에 쓰이지 않는 이름/);
 });
 test('check는 상태와 만든 사람의 근거가 원문과 다르면 잡아낸다', () => {
   // 본문이 있는 모듈을 준비 중으로 표시
@@ -171,7 +184,7 @@ test('갱신 대응: 강의를 하나 더하고 단계에 놓아도 검사를 �
 });
 test('화면에 나오는 글은 모두 모아진다(검사와 한국어 점검의 대상)', () => {
   const shown = visibleStrings(data);
-  for (const s of ['처음 시작하기', 'AI로 첫 앱 만들어 보기', '규칙과 스킬', '이선아 교수', 'SDD 도구 가이드', '교재 PDF']) assert.ok(shown.includes(s), s);
+  for (const s of ['처음 시작하기', 'AI로 첫 앱 만들어 보기', '규칙과 스킬', '이선아 교수', '윤성열 대표', '박준성 교수', 'SDD 도구 가이드', '교재 PDF']) assert.ok(shown.includes(s), s);
   const paths = new Set(data.items.flatMap((i) => [i.path, i.source, ...(i.links || []).map((k) => k.path)]));
   assert.ok(!shown.some((s) => paths.has(s)), '경로는 화면 글이 아님');
 });
