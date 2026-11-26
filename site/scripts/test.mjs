@@ -88,22 +88,22 @@ test('사람 이름: 화면에서는 names 표의 표기로 통일하고, 여러
 });
 test('단계 상태: 공개 자료가 없으면 soon, 공개 자료를 모두 마치면 done, 준비 중 자료는 세지 않는다', () => {
   const dev = lines.get('dev');
-  const req = dev.stages.find((s) => s.items.includes('todo'));
-  assert.deepEqual(req.items, ['todo', 's03']);
-  assert.equal(R.stageState(req, items, new Set()), 'open');
-  assert.equal(R.stageState(req, items, new Set(['todo'])), 'done');
+  const mixed = dev.stages.find((s) => s.items.includes('design'));
+  assert.deepEqual(mixed.items, ['design', 's07']);
+  assert.equal(R.stageState(mixed, items, new Set()), 'open');
+  assert.equal(R.stageState(mixed, items, new Set(['design'])), 'done');
   assert.equal(R.stageState(dev.stages.find((s) => s.items.includes('s08')), items, new Set(['s08'])), 'soon');
 });
 test('마친 자료 수: 로드맵의 공개 자료만 세고, 두 로드맵에 걸친 강의는 양쪽에 반영된다', () => {
   const done = new Set(['vibe', 's01']);
   assert.deepEqual(R.progress(lines.get('start'), items, done), { total: 3, done: 1 });
-  assert.deepEqual(R.progress(lines.get('dev'), items, done), { total: 13, done: 1 });
-  assert.deepEqual(R.counts(lines.get('dev'), items), { stages: 10, open: 13, soon: 8 });
+  assert.deepEqual(R.progress(lines.get('dev'), items, done), { total: 15, done: 1 });
+  assert.deepEqual(R.counts(lines.get('dev'), items), { stages: 10, open: 15, soon: 7 });
   assert.deepEqual(R.counts(lines.get('harness'), items), { stages: 8, open: 17, soon: 1 });
 });
 test('고르기: 단계를 누르면 공개 자료가 먼저, 없으면 준비 중 자료가 열린다', () => {
   const dev = lines.get('dev');
-  assert.equal(R.stageEntry(dev.stages[2], items), 'todo');
+  assert.equal(R.stageEntry(dev.stages[2], items), 'r01');
   assert.equal(R.stageEntry(dev.stages[1], items), 's01');
   assert.equal(R.firstItem(dev, items), 'vibe');
   assert.equal(R.lineOfItem(data, 'vibe').id, 'start');
@@ -125,9 +125,9 @@ test('로드맵은 세 개이고 노선도 ' + COLUMNS + '칸 안에 놓인다',
   assert.deepEqual(data.lines.map((l) => l.id), ['start', 'dev', 'harness']);
   for (const l of data.lines) assert.ok(l.col + l.stages.length - 1 <= COLUMNS, l.id);
 });
-test('준비 중 자료 9개는 모두 README가 "(작성 예정)"인 모듈을 가리킨다', () => {
+test('준비 중 자료 8개는 모두 README가 "(작성 예정)"인 모듈을 가리킨다', () => {
   const soon = data.items.filter((i) => i.kind === 'soon');
-  assert.equal(soon.length, 9);
+  assert.equal(soon.length, 8);
   for (const s of soon) assert.ok(fs.readFileSync(path.join(REPO_ROOT, s.path, 'README.md'), 'utf8').includes('(작성 예정)'), s.id);
 });
 test('공개 자료의 링크는 모두 저장소에 있는 파일·폴더다', () => {
@@ -155,9 +155,9 @@ test('check는 잘못된 데이터를 잡아낸다', () => {
 });
 test('check는 상태와 만든 사람의 근거가 원문과 다르면 잡아낸다', () => {
   // 본문이 있는 모듈을 준비 중으로 표시
-  caught(withData((d) => { item(d, 's03').path = 'modules/06-coding-tdd'; }), /본문이 올라왔다/);
+  caught(withData((d) => { item(d, 's08').path = 'modules/06-coding-tdd'; }), /본문이 올라왔다/);
   // 본문이 없는 모듈을 공개 자료로 표시
-  caught(withData((d) => { item(d, 'tdd').source = 'modules/03-requirements/README.md'; }), /아직 "\(작성 예정\)"/);
+  caught(withData((d) => { item(d, 'tdd').source = 'modules/08-ci/README.md'; }), /아직 "\(작성 예정\)"/);
   caught(withData((d) => { item(d, 's02').by = '윤성열'; }), /담당 '윤성열'가 원문/);
   caught(withData((d) => { item(d, 'kiro').by = '홍길동'; d.people[2].groups[0].items = d.people[2].groups[0].items.filter((x) => x !== 'kiro'); d.people.push({ name: '홍길동', groups: [{ label: '가이드', items: ['kiro'] }] }); }), /만든 사람 '홍길동'의 근거/);
   caught(withData((d) => { item(d, 'sddc').title = '스펙 주도 개발'; }), /제목\(또는 원제\)이/);
@@ -166,7 +166,7 @@ test('check는 상태와 만든 사람의 근거가 원문과 다르면 잡아�
 test('check는 강사별 자료가 만든 사람과 어긋나면 잡아낸다', () => {
   caught(withData((d) => { d.people[0].groups[0].items.push('vibe'); }), /만든 사람은 윤성열|두 번 나옴/);
   caught(withData((d) => { d.people[1].groups[0].items = ['sddc', 'design']; }), /강사별 자료에 빠진 공개 자료: vibe/);
-  caught(withData((d) => { d.people[1].groups[1].items.push('s03'); }), /준비 중 자료 s03는 넣지 않음/);
+  caught(withData((d) => { d.people[1].groups[1].items.push('s08'); }), /준비 중 자료 s08는 넣지 않음/);
 });
 test('check는 화면 글의 제작 단계 용어·근거 없는 약속·내부 주소를 잡아낸다', () => {
   caught(withData((d) => { item(d, 'golf').summary = '비용 없이 앱을 만듭니다.'; }), /근거 없이 약속하는 표현/);
