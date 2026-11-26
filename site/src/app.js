@@ -125,7 +125,7 @@
         const m = items.get(id), soon = !R.isOpen(m), when = stamp(id);
         return h('li', null, h('button', { class: 'exit' + (soon ? ' is-soon' : ''), type: 'button', data: { id }, on: { click: () => { select(l.id, id); if (narrow.matches) openSheet(); } } },
           h('span', { class: 'exit__k', text: data.kinds[m.kind] }),
-          h('span', null, h('span', { class: 'exit__t' }, m.title, badge(id)), h('span', { class: 'exit__m' }, soon ? '담당 ' + m.by : m.by + ', ' + m.meta, when ? ', ' : null, when)),
+          h('span', null, h('span', { class: 'exit__t' }, m.title, badge(id)), h('span', { class: 'exit__m' }, soon ? '담당 ' + R.displayBy(data, m.by) : R.displayBy(data, m.by) + ', ' + m.meta, when ? ', ' : null, when)),
           check()));
       })))));
     if (l.next) {
@@ -160,7 +160,7 @@
     let body;
     if (!R.isOpen(m)) {
       body = [h('p', { class: 'sign__k', text: data.kinds.soon }), h('h2', { class: 'sign__t', text: m.title }),
-        h('div', { class: 'soonbox' }, '아직 본문이 올라오지 않은 자리입니다. 담당은 ', h('b', { text: m.by }), '입니다. 자료가 올라오면 이 자리에서 바로 열 수 있습니다.'),
+        h('div', { class: 'soonbox' }, '아직 본문이 올라오지 않은 자리입니다. 담당은 ', h('b', { text: R.displayBy(data, m.by) }), '입니다. 자료가 올라오면 이 자리에서 바로 열 수 있습니다.'),
         h('h3', { text: '지금 할 수 있는 것' }),
         h('div', { class: 'opens' },
           open('모듈 폴더 보기', R.repoUrl(data, { path: m.path, kind: 'dir' }), 'GitHub에서 열기'),
@@ -168,7 +168,7 @@
     } else {
       const marked = done.has(m.id), d = dates[m.id] || {};
       body = [h('p', { class: 'sign__k' }, data.kinds[m.kind], badge(m.id)), h('h2', { class: 'sign__t', text: m.title }), h('p', { class: 'sign__sum', text: m.summary }),
-        h('dl', { class: 'facts' }, fact('만든 사람', m.by), fact('구성', m.meta), fact('대상', m.audience), fact('선수 지식', m.prerequisite), fact('원제', m.original),
+        h('dl', { class: 'facts' }, fact('만든 사람', R.displayBy(data, m.by)), fact('구성', m.meta), fact('대상', m.audience), fact('선수 지식', m.prerequisite), fact('원제', m.original),
           fact('공개한 날', d.added), fact('업데이트한 날', d.updated !== d.added ? d.updated : null)),
         m.learn ? [h('h3', { text: '배우는 것' }), h('ul', { class: 'pts' }, m.learn.map(t => h('li', { text: t })))] : null,
         h('h3', { text: '이용 순서' }), h('ol', { class: 'steps' }, m.how.map(t => h('li', { text: t }))),
@@ -237,7 +237,7 @@
 
   // ── 강사별 자료 ──
   function renderPeople() {
-    $('#people-grid').replaceChildren(...data.people.map(p => h('div', { class: 'person' + (p.wide ? ' person--wide' : '') }, h('h3', { text: p.name }),
+    $('#people-grid').replaceChildren(...data.people.map(p => h('div', { class: 'person' + (p.wide ? ' person--wide' : '') }, h('h3', { text: R.displayBy(data, p.name) }),
       p.groups.map(g => [h('h4', { text: g.label + ' ' + g.items.length + '개' }), h('ul', null, g.items.map(id => {
         const l = R.lineOfItem(data, id);
         return h('li', null, h('button', { class: 'plink', type: 'button', data: { line: l.id }, on: { click: () => { select(l.id, id); goStage(R.stageIndex(l, id)); if (narrow.matches) openSheet(); } } },
