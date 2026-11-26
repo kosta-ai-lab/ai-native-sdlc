@@ -131,9 +131,9 @@
         },
         {
           "title": "CI",
-          "summary": "테스트 통과를 머지와 빌드의 관문으로 둡니다.",
+          "summary": "테스트 통과를 병합의 관문으로 둡니다.",
           "items": [
-            "s08"
+            "ci01"
           ]
         },
         {
@@ -1467,11 +1467,46 @@
       "path": "modules/07-object-design"
     },
     {
-      "id": "s08",
-      "kind": "soon",
-      "title": "CI 테스트 게이트",
-      "by": "윤성열, 최성웅",
-      "path": "modules/08-ci"
+      "id": "ci01",
+      "kind": "guide",
+      "title": "테스트를 PR의 관문으로 걸기",
+      "by": "윤성열",
+      "source": "modules/08-ci/M01-test-gate/README.md",
+      "meta": "따라 하기 가이드, 워크플로 완성본, 실습 출발점",
+      "summary": "GitHub Actions 워크플로로 PR마다 테스트와 타입 검사를 실행하고, 일부러 실패시켜 본 뒤 필수 검사로 지정합니다.",
+      "how": [
+        "README에서 목적과 준비물을 확인합니다.",
+        "GUIDE.md의 0단계에서 실습 출발점을 저장소 밖으로 복사합니다.",
+        "1단계부터 순서대로 따라 합니다. GitHub 계정이 필요하고, 저장소는 2단계에서 만듭니다.",
+        "막히면 워크플로 완성본과 비교합니다."
+      ],
+      "links": [
+        {
+          "label": "가이드 읽기",
+          "path": "modules/08-ci/M01-test-gate/GUIDE.md",
+          "kind": "file"
+        },
+        {
+          "label": "목적과 준비물",
+          "path": "modules/08-ci/M01-test-gate/README.md",
+          "kind": "file"
+        },
+        {
+          "label": "명령 요약",
+          "path": "modules/08-ci/M01-test-gate/SAMPLE.md",
+          "kind": "file"
+        },
+        {
+          "label": "워크플로 완성본",
+          "path": "modules/08-ci/M01-test-gate/harness/.github/workflows/test.yml",
+          "kind": "file"
+        },
+        {
+          "label": "실습 출발점",
+          "path": "modules/08-ci/M01-test-gate/todo-app",
+          "kind": "dir"
+        }
+      ]
     },
     {
       "id": "s09",
@@ -1539,6 +1574,12 @@
             "t01",
             "t02",
             "t03"
+          ]
+        },
+        {
+          "label": "CI 가이드",
+          "items": [
+            "ci01"
           ]
         },
         {
