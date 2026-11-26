@@ -94,6 +94,7 @@
           "note": "강의로 원리를 잡고, 도구 가이드는 하나만 골라도 됩니다.",
           "items": [
             "sddc",
+            "sdd06",
             "kiro",
             "openspec",
             "speckit",
@@ -381,6 +382,43 @@
         {
           "label": "강의 안내",
           "path": "courses/spec-driven-development-practice/README.md",
+          "kind": "file"
+        }
+      ]
+    },
+    {
+      "id": "sdd06",
+      "kind": "guide",
+      "title": "요구사항에서 명세·설계·구현 검증으로",
+      "by": "윤성열",
+      "source": "modules/04-sdd/M06-requirements-to-spec/README.md",
+      "meta": "따라 하기 가이드, 결과 예제와 확인 절차",
+      "summary": "준비된 요구사항에서 출발해 명세와 설계를 쓰고 작업을 나눈 다음, 한 묶음씩 구현하고 브라우저에서 직접 확인합니다.",
+      "how": [
+        "README에서 목적과 준비물을 확인합니다.",
+        "GUIDE.md의 0단계에서 실습 폴더를 만들고 준비된 요구사항을 복사합니다.",
+        "1단계부터 순서대로 따라 합니다.",
+        "구현이 끝나면 SAMPLE.md 5~8장의 절차로 앱을 직접 확인합니다."
+      ],
+      "links": [
+        {
+          "label": "가이드 읽기",
+          "path": "modules/04-sdd/M06-requirements-to-spec/GUIDE.md",
+          "kind": "file"
+        },
+        {
+          "label": "목적과 준비물",
+          "path": "modules/04-sdd/M06-requirements-to-spec/README.md",
+          "kind": "file"
+        },
+        {
+          "label": "결과 예제와 확인 절차",
+          "path": "modules/04-sdd/M06-requirements-to-spec/SAMPLE.md",
+          "kind": "file"
+        },
+        {
+          "label": "준비된 요구사항",
+          "path": "modules/03-requirements/M01-ai-requirements/requirements.md",
           "kind": "file"
         }
       ]
@@ -1448,6 +1486,12 @@
           "items": [
             "r01",
             "r02"
+          ]
+        },
+        {
+          "label": "SDD 가이드",
+          "items": [
+            "sdd06"
           ]
         },
         {
