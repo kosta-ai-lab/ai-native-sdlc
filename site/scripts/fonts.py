@@ -64,7 +64,7 @@ def ksx1001_hangul():
 
 
 def used_chars():
-    files = [SRC / "index.html", SRC / "app.js", SRC / "unit.html", SRC / "unit.js", *sorted(DATA.glob("*.json"))]
+    files = [SRC / "index.html", SRC / "app.js", SRC / "unit.html", SRC / "unit.js", SRC / "videos.html", SRC / "videos.js", *sorted(DATA.glob("*.json"))]
     text = "".join(p.read_text(encoding="utf-8") for p in files)
     return {c for c in text if ord(c) > 0x7E and not c.isspace()}
 
