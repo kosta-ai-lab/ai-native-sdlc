@@ -95,6 +95,7 @@
           "items": [
             "sddc",
             "sdd06",
+            "sdd07",
             "kiro",
             "openspec",
             "speckit",
@@ -419,6 +420,43 @@
         {
           "label": "준비된 요구사항",
           "path": "modules/03-requirements/M01-ai-requirements/requirements.md",
+          "kind": "file"
+        }
+      ]
+    },
+    {
+      "id": "sdd07",
+      "kind": "guide",
+      "title": "양식으로 명세를 쓰고 요구에서 테스트까지 추적하기",
+      "by": "윤성열",
+      "source": "modules/04-sdd/M07-spec-template-and-trace/README.md",
+      "meta": "따라 하기 가이드, 빈 양식, 완성 예제",
+      "summary": "기능 하나의 요구를 빈 양식에 채워 명세로 만들고, 작은 사례에서 요구가 인수조건과 테스트까지 이어지는지 따라갑니다.",
+      "how": [
+        "README에서 목적과 준비물을 확인합니다.",
+        "GUIDE.md의 0단계에서 실습 폴더를 만들고 요구사항과 빈 양식을 복사합니다.",
+        "1단계부터 순서대로 따라 합니다.",
+        "3단계에서 자기 명세를 SAMPLE.md와 비교합니다."
+      ],
+      "links": [
+        {
+          "label": "가이드 읽기",
+          "path": "modules/04-sdd/M07-spec-template-and-trace/GUIDE.md",
+          "kind": "file"
+        },
+        {
+          "label": "목적과 준비물",
+          "path": "modules/04-sdd/M07-spec-template-and-trace/README.md",
+          "kind": "file"
+        },
+        {
+          "label": "빈 양식",
+          "path": "modules/04-sdd/M07-spec-template-and-trace/TEMPLATE.md",
+          "kind": "file"
+        },
+        {
+          "label": "완성 예제",
+          "path": "modules/04-sdd/M07-spec-template-and-trace/SAMPLE.md",
           "kind": "file"
         }
       ]
@@ -1491,7 +1529,8 @@
         {
           "label": "SDD 가이드",
           "items": [
-            "sdd06"
+            "sdd06",
+            "sdd07"
           ]
         },
         {
