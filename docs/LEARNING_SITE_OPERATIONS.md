@@ -8,22 +8,26 @@
 ```text
 site/
   package.json         스크립트만 있고 의존성은 없다(Node 내장 모듈만 사용)
-  data/roadmap.json    로드맵·단계·자료·강사별 묶음. 사이트의 내용은 모두 여기에 있다
+  data/roadmap.json    로드맵·단계·자료·강사별 묶음
+  data/unit-<단원>.json 단원 한눈에 보기의 내용. 단원마다 하나(예: unit-06-m01.json)
   src/index.html       고정 문구, 메타데이터, meta CSP
   src/app.css          화면 스타일
   src/core.js          계산(단계 상태, 마친 자료 수, 새로움, 저장소 주소). 화면과 시험이 함께 쓴다
   src/app.js           화면 동작. 데이터를 읽어 DOM API로 화면을 만든다
+  src/unit.html        단원 한눈에 보기 화면의 고정 문구, 메타데이터, meta CSP
+  src/unit.css         단원 한눈에 보기 화면 스타일
+  src/unit.js          단원 한눈에 보기 화면 동작. 단원 내용을 읽어 DOM API로 화면을 만든다
   src/favicon.svg      사이트 표식
   src/fonts.css        글꼴 선언(생성 파일)
   src/fonts/           글꼴 woff2와 OFL.txt(생성 파일)
   fonts/               글꼴에 든 글자 목록(생성 파일, 배포하지 않음)
-  scripts/             build · check · test · serve · lib, 글꼴 도구 fonts.py
+  scripts/             build · check · test · serve · lib, 단원 내용 검사 unit-check, 글꼴 도구 fonts.py
   dist/                빌드 산출물(.gitignore의 dist/ 규칙으로 추적하지 않음)
   dist/data/dates.json 자료 날짜. 빌드가 git 이력에서 만든다(원본 site/data에는 두지 않는다)
 .github/workflows/learning-site.yml
 ```
 
-사이트는 교재를 복사하지 않는다. 자료 링크는 모두 `https://github.com/kosta-ai-lab/ai-native-sdlc/blob|tree/main/<경로>` 형식이며 경로 조각마다 URL 인코딩을 적용한다. 그 밖에 검사가 허용하는 외부 주소는 조직 페이지, 저장소 첫 화면, 저장소 아래 주소(Issues 등)뿐이다.
+사이트는 교재 파일을 복사하지 않는다. 다만 따라 하기 단원에는 가이드를 한 화면으로 옮긴 한눈에 보기를 둔다(3절, [ADR 0007](../decisions/0007-unit-overview-pages.md)). 자료 링크는 모두 `https://github.com/kosta-ai-lab/ai-native-sdlc/blob|tree/main/<경로>` 형식이며 경로 조각마다 URL 인코딩을 적용한다. 그 밖에 검사가 허용하는 외부 주소는 조직 페이지, 저장소 첫 화면, 저장소 아래 주소(Issues 등)뿐이다.
 
 ## 2. 로컬 명령
 
@@ -49,7 +53,7 @@ site/
 
 ## 3. 내용 갱신
 
-고칠 곳은 대부분 `data/roadmap.json` 하나다. 고친 뒤 `npm run verify`를 실행한다.
+로드맵의 내용은 `data/roadmap.json`에, 단원 한눈에 보기의 내용은 `data/unit-<단원>.json`에 있다. 고친 뒤 `npm run verify`를 실행한다.
 
 | 하고 싶은 일 | 고칠 곳 |
 |---|---|
@@ -57,6 +61,8 @@ site/
 | 준비 중이던 모듈에 본문이 올라옴 | 해당 `kind: "soon"` 항목을 공개 자료 형식으로 바꾼다. README에서 "(작성 예정)"이 없어지면 검사가 알려 준다 |
 | 강의 제목 변경 | 강의의 `title`(또는 `original`)은 강의 README의 첫 제목과 같아야 한다. 화면에 다른 제목을 쓰려면 `title`에 쓰고 README 제목을 `original`에 둔다 |
 | 단계 추가·순서 변경 | 로드맵의 `stages`를 고친다. 노선도는 11칸이다. 마지막 단계가 11칸을 벗어나면(`col` + 단계 수 − 1이 11보다 크면) 검사가 막는다 |
+| 단원 한눈에 보기 추가 | `data/unit-<단원>.json`을 쓰고, 그 자료의 `items` 항목에 `"visual": "<단원>"`을 넣는다. 아래 '단원 한눈에 보기'를 본다 |
+| 가이드 문서를 고침 | 한눈에 보기가 있는 단원이면 `data/unit-<단원>.json`도 같이 고친다. 요청문·명령·출력이 달라지면 검사가 '가이드에 없는 줄'로 알려 준다 |
 | 사람 이름의 화면 표기 변경 | `names`에서 이름과 화면 표기를 고친다. 화면 표기는 그 이름으로 시작해야 한다(예: `"윤성열": "윤성열 대표"`). `by`와 `people`의 이름은 원문 표기 그대로 둔다 |
 | 고정 문구 수정 | `src/index.html`(제목, 설명, 이용 방법, 소개, 하단) 또는 `src/app.js`(버튼과 안내 문구) |
 | 로드맵 추가 | 화면이 세 로드맵과 환승 표시 하나를 전제로 한다. 기획과 화면 명세를 고친 뒤 `app.css`·`app.js`·검사를 함께 바꾼다 |
@@ -66,7 +72,7 @@ site/
 - **상태는 원문을 따른다.** 준비 중 표시는 README에 "(작성 예정)"이 있는 모듈에만 쓴다. 담당은 README의 표기를 따른다('협의'는 '협의 중'으로 적는다).
 - **만든 사람에는 근거가 있어야 한다.** `by`가 자료의 안내 문서나 `courses/README.md`에 나와야 한다. 문서에 이름이 없고 커밋 기록으로만 확인한 자료는 `byEvidence: "git-history"`로 표시한다.
 - **약속하지 않는다.** 무료, 보장 같은 표현은 원문에 있어도 요약에 옮기지 않는다.
-- **한국어 문장은 배포 전에 모두 검사한다.** 화면에 나오는 글은 `index.html`, `app.js`의 문구, `roadmap.json`의 글 항목이다.
+- **한국어 문장은 배포 전에 모두 검사한다.** 화면에 나오는 글은 `index.html`·`unit.html`, `app.js`·`unit.js`의 문구, `roadmap.json`과 `unit-*.json`의 글 항목이다.
 
 ### 자료 날짜와 NEW·업데이트 표시
 
@@ -78,6 +84,42 @@ site/
 - **기준:** main의 첫 부모 이력만 따라가므로(`git log --first-parent`) PR로 들어온 자료는 병합한 날로 잡힌다. 날짜는 한국 시간이다.
 - **표시:** 공개한 날을 포함해 14일 동안 NEW, 그 뒤에 내용이 바뀌면 바뀐 날을 포함해 14일 동안 업데이트가 붙는다. 날수는 `src/app.js`의 `FRESH_DAYS`다. 방문자가 여는 날을 기준으로 계산하므로 다시 배포하지 않아도 기간이 지나면 표시가 사라진다.
 - **알아 둘 것:** 오타 수정 같은 작은 변경도 업데이트로 잡힌다. 연결하지 않은 파일의 변경은 잡히지 않는다. 얕은 복제에서 빌드하면 틀린 날짜를 내지 않으려고 날짜를 넣지 않는다(`git fetch --unshallow` 뒤에 다시 빌드한다).
+
+### 단원 한눈에 보기
+
+따라 하기 단원의 가이드 문서를 한 화면으로 옮긴 것이다. 주소는 `unit.html?u=<단원>`이고, 로드맵의 자료 안내판 '자료 열기'에 첫 버튼으로 나온다. 화면 틀(`src/unit.html`·`unit.css`·`unit.js`)은 모든 단원이 함께 쓰고, 단원마다 내용 파일 하나만 쓴다.
+
+**원본은 가이드 문서다.** 내용 파일은 가이드를 옮긴 것이므로 가이드에 없는 사실을 넣지 않는다.
+
+- **요청문, 명령, 코드, 출력:** 가이드와 글자 그대로 같아야 한다. 검사가 한 줄씩 대조한다. 긴 출력은 줄을 골라 넣어도 되지만 넣은 줄은 가이드의 줄 그대로여야 한다.
+- **설명 문장:** 가이드의 문장을 줄여 옮긴다. 말투는 사이트와 같은 합니다체다. 이 부분은 검사가 대조하지 않으므로 사람이 읽고 확인한다.
+- **마디의 순서:** 가이드에 나오는 순서 그대로 적는다. 같은 마디가 두 번 나오면 두 번 적는다.
+- **단계 표시의 색:** 색이 실제 상태를 뜻할 때만 쓰고 `marks`에 뜻을 적는다.
+
+내용 파일의 모양은 다음과 같다. 본보기는 `data/unit-06-m01.json`이다.
+
+| 항목 | 내용 |
+|---|---|
+| `id`, `item`, `guide` | 단원 id(파일 이름과 같다), 로드맵의 자료 id, 가이드 문서 경로 |
+| `where`, `title`, `lead` | 화면 위쪽의 위치, 제목, 두세 문장 소개. `title`은 글이거나 `[글, 색]` 조각의 목록 |
+| `start` | 처음에 펼쳐 보일 단계 번호(없으면 0) |
+| `marks`, `pips` | 단계 동그라미 표시의 뜻(`plain`·`ink`·`warn`·`bad`·`good`·`calm`), 단계 아래 작은 네모의 뜻 |
+| `kinds` | 마디의 이름과 한 문장 설명. 예: `"hand": ["맡긴다", "…"]`. 단원이 쓰는 마디를 모두 적는다 |
+| `principles` | `{ name, here, did }`의 목록. 원칙의 이름, 이 단원에서 뜻하는 것, 돌아보기. 없으면 원칙 구역과 돌아보기 구역이 나오지 않는다 |
+| `steps` | 단계 목록. 단계마다 `title`, `name`(짧은 이름), `state`(표시), `out`(짧은 출력), `pips`·`pipsLabel`, `principles`(원칙 번호), `note`, `lanes`(마디) |
+| `lanes` | `{ kind, blocks }`의 목록. `kind`는 `kinds`의 열쇠, `blocks`는 조각의 목록 |
+| `sections` | 단원마다 다른 구역. `compare`(나란히 견주기), `chain`(이어지는 길), `table`(표) |
+| `promptLabel`, `env` | 요청문 위에 붙는 말(기본 "요청"), 검증 환경 |
+
+조각은 열쇠가 하나인 객체다: `p`(설명), `label`(이름표), `prompt`(요청문), `cmd`(직접 실행하는 명령), `code`(코드와 파일 내용), `term`(터미널 출력), `verdict`(판단 한 줄), `ticks`(확인 목록), `outs`(산출물), `list`(목록), `next`(다음 단계와 잇는 말), `table`(작은 표). 글 안에서는 억음 부호로 감싼 코드와 별표 두 개로 감싼 굵은 글씨를 쓸 수 있다.
+
+확인하는 법:
+
+```bash
+node scripts/unit-check.mjs 06-m01     # 형식과 가이드 대조만 빠르게
+npm run verify                         # 로드맵 자료와의 짝, 글꼴, 산출물까지
+node scripts/serve.mjs --port 0        # 띄운 뒤 unit.html?u=06-m01 을 연다
+```
 
 ## 4. 글꼴 다시 만들기
 
@@ -104,11 +146,12 @@ uv run --with fonttools --with brotli python site/scripts/fonts.py
   - 준비 중 모듈의 README에 "(작성 예정)"이 있고 담당이 같은지
   - 공개 자료의 안내 문서에 "(작성 예정)"이 없는지
   - 만든 사람의 근거가 있는지, 강의 제목이 README 제목과 같은지
-- **화면 글:** `index.html`과 `roadmap.json`에 제작 단계 용어(시안·초안 등)와 근거 없이 약속하는 표현이 없는지, 모든 원본에 개인·내부 주소가 없는지. `app.js`의 문구는 사람이 검사한다
+- **단원 한눈에 보기:** 내용 파일의 형식, 요청문·명령·코드·출력의 모든 줄이 가이드 문서에 있는지, 로드맵 자료의 `visual`과 서로 가리키는지, `guide`가 그 자료의 링크에 있는 문서인지. 설명 문장은 대조하지 않는다
+- **화면 글:** `index.html`과 `roadmap.json`에 제작 단계 용어(시안·초안 등)와 근거 없이 약속하는 표현이 없는지, 모든 원본에 개인·내부 주소가 없는지. `unit.html`에도 같은 검사를 한다. 단원 내용에는 '초안'처럼 가이드의 낱말이 나오므로 개인·내부 주소만 본다(실습의 로컬 주소는 허용). `app.js`와 `unit.js`의 문구는 사람이 검사한다
 - **메타데이터·CSP:** title·description과 같은 og 값, favicon, canonical·og:url·og:image·noindex·CNAME 없음. meta CSP 1개가 link/script보다 먼저 있고 정책이 정확히 일치하는지
 - **화면 원본:** inline script·inline style·이벤트 속성·iframe·form 없음, 스크립트 순서, 스크립트가 쓰는 id, `noscript` 안내, 상대 경로, 외부 링크 허용 목록과 링크 경로의 git 추적 여부, 외부 글꼴·CDN 없음
-- **화면 스크립트:** 문자열을 HTML로 넣는 API 없음, 추적·외부 전송 API 없음, 읽는 파일은 문서 기준 상대 경로의 로드맵 데이터와 자료 날짜 둘뿐, `localStorage`는 마친 자료 표시 한 항목만
-- **글꼴:** 선언한 파일이 있는지, 선언에 없는 woff2가 없는지, `OFL.txt`가 있는지, 화면 글자가 글꼴 두 묶음 안에 있는지
+- **화면 스크립트:** 문자열을 HTML로 넣는 API 없음, 추적·외부 전송 API 없음, `app.js`가 읽는 파일은 문서 기준 상대 경로의 로드맵 데이터와 자료 날짜 둘뿐, `localStorage`는 마친 자료 표시 한 항목만. `unit.js`가 읽는 파일은 단원 내용 하나뿐이고 저장 API는 쓰지 않는다. 주소의 단원 id는 소문자·숫자·붙임표만 받는다
+- **글꼴:** 선언한 파일이 있는지, 선언에 없는 woff2가 없는지, `OFL.txt`가 있는지, 화면 글자가 글꼴 두 묶음 안에 있는지(터미널 출력의 기호 ❯와 ✓는 원본 글꼴에 없어 시스템 글꼴로 보인다)
 - **워크플로:** 권한 범위, main 전용 배포 조건, configure/deploy는 deploy job에만, `github-pages` environment와 `needs: build`, build job의 build·check·test, 이력 전체 받기(`fetch-depth: 0`)와 `--require-history`, action major(6절)
 - **`--dist`:** 허용 목록과의 정확한 일치, 원본과 바이트 동일(재현성), 원본 교재·스크립트·CNAME 미포함, 빌드 표식에 로컬 경로 없음, `/ai-native-sdlc/`와 `/` 양쪽 해석, 자료 날짜 파일의 형식과 지금 이력에서 다시 읽은 값과의 일치
 

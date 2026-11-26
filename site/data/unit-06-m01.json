@@ -1,0 +1,1135 @@
+{
+  "schema": 1,
+  "id": "06-m01",
+  "item": "t01",
+  "guide": "modules/06-coding-tdd/M01-red-green-refactor/GUIDE.md",
+  "where": "모듈 06 코딩(TDD), 단원 M01",
+  "title": [
+    [
+      "Red",
+      "bad"
+    ],
+    [
+      " → "
+    ],
+    [
+      "Green",
+      "good"
+    ],
+    [
+      " → "
+    ],
+    [
+      "Refactor",
+      "calm"
+    ],
+    [
+      " 한 바퀴"
+    ]
+  ],
+  "lead": "AI에게 맡기면 코드는 금방 나옵니다. 이 단원은 그 코드가 요구대로 나왔는지 무엇으로 판단하는지를 다룹니다. 인수조건 두 개를 아홉 단계로 구현하면서, 단계마다 직접 실행한 결과를 보고 판단합니다.",
+  "marks": {
+    "plain": "준비하거나 정리하는 단계",
+    "warn": "오류. 아직 Red가 아닙니다",
+    "bad": "Red",
+    "good": "Green",
+    "calm": "Refactor"
+  },
+  "pips": "네모 하나가 테스트 하나",
+  "kinds": {
+    "hand": [
+      "맡긴다",
+      "AI에게 하는 요청입니다. AI가 내놓는 것은 제안입니다."
+    ],
+    "do": [
+      "한다",
+      "AI에게 맡기지 않고 직접 하는 준비입니다."
+    ],
+    "check": [
+      "확인한다",
+      "직접 실행하는 명령과 그 출력, 직접 열어 읽는 파일입니다."
+    ],
+    "decide": [
+      "정한다",
+      "확인한 것을 보고 사람이 내리는 판단입니다."
+    ],
+    "pass": [
+      "넘긴다",
+      "다음 단계의 기준이 되는 산출물입니다."
+    ]
+  },
+  "principles": [
+    {
+      "name": "AI는 제안하고, 결정은 사람이 한다",
+      "here": "테스트와 구현은 AI가 씁니다. 그 테스트가 인수조건과 맞는지, 구현에 요구하지 않은 것이 들어갔는지는 사람이 판단합니다.",
+      "did": "테스트 목록(2단계)과 최소 구현(5단계)에서 인수조건에 없는 것이 들어갔는지 보고 걸러 냈습니다. 다듬기(7단계)에서는 \"다듬을 곳 없음\"도 결과로 받아들였습니다."
+    },
+    {
+      "name": "말이 아니라 실행 결과로 확인한다",
+      "here": "AI가 \"실패를 확인했다\", \"통과했다\"고 말해도 `pnpm test`의 출력을 직접 봅니다.",
+      "did": "3단계의 오류와 4단계의 유효한 Red를 `pnpm test` 출력에서 구분했습니다. 6단계에서는 Red 출력을 보지 못했으면 직접 다시 실패시켜 봤습니다."
+    },
+    {
+      "name": "맡길수록 절차가 필요하다",
+      "here": "한 번에 하나만 맡기고, 테스트부터 쓰게 합니다. 절차가 있어야 AI의 결과를 매번 같은 기준으로 판정할 수 있습니다.",
+      "did": "요청문 여섯 개(2~7단계)에는 모두 \"첫 번째 항목만\", \"아직 테스트 코드나 구현 코드는 쓰지 마\", \"최소 구현만\", \"결과를 그대로 보여줘\"처럼 범위를 좁히거나 출력을 요구하는 말을 넣었습니다."
+    },
+    {
+      "name": "앞 단계가 뒤 단계의 기준이다",
+      "here": "인수조건으로 테스트 목록과 테스트를, 테스트로 구현을 판정합니다.",
+      "did": "1단계에서 읽은 인수조건이 이 단원의 기준이었습니다. 테스트 목록은 2단계에서 인수조건의 시나리오와 하나씩 맞춰 봤습니다. 4단계에서 스테이징한 테스트는 5단계에서 구현을 판정하는 기준이 됐습니다. 인수조건, 테스트, 구현이 8단계의 표에서 하나씩 이어졌습니다."
+    }
+  ],
+  "steps": [
+    {
+      "title": "준비 확인하기",
+      "name": "준비 확인",
+      "state": "plain",
+      "out": [
+        "--version"
+      ],
+      "principles": [],
+      "lanes": [
+        {
+          "kind": "check",
+          "blocks": [
+            {
+              "p": "**Node.js 20.19 이상**(22 계열은 22.12 이상), **pnpm**, **git**, 로그인된 **Claude Code**가 필요합니다. Node.js 버전은 이 실습에서 쓰는 Vite 7이 요구하는 조건입니다."
+            },
+            {
+              "cmd": "node --version\npnpm --version\ngit --version\nclaude --version"
+            },
+            {
+              "p": "pnpm이 없으면 `npm install -g pnpm`으로 설치합니다."
+            }
+          ]
+        },
+        {
+          "kind": "pass",
+          "blocks": [
+            {
+              "outs": [
+                "Node.js, pnpm, git, Claude Code가 준비된 환경"
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "실습 폴더 준비하고 기준 상태 확인하기",
+      "name": "기준 상태",
+      "state": "plain",
+      "out": [
+        "No test files found"
+      ],
+      "principles": [
+        4
+      ],
+      "note": "이 단원의 기준은 출발점 폴더에 들어 있는 인수조건입니다.",
+      "lanes": [
+        {
+          "kind": "do",
+          "blocks": [
+            {
+              "p": "출발점 폴더를 **저장소 밖으로 복사**합니다. 저장소 안에서 실습하면 강의 자료가 바뀝니다. 아래 명령은 강의 자료 저장소의 루트 폴더에서 실행합니다."
+            },
+            {
+              "cmd": "mkdir -p ~/work/tdd\ncp -R modules/06-coding-tdd/M01-red-green-refactor/todo-app ~/work/tdd/todo-app\ncd ~/work/tdd/todo-app"
+            },
+            {
+              "p": "의존성을 설치하고 git 저장소로 만듭니다."
+            },
+            {
+              "cmd": "pnpm install --frozen-lockfile --ignore-scripts\ngit init\ngit add -A && git commit -m \"chore: 실습 출발점\""
+            }
+          ]
+        },
+        {
+          "kind": "check",
+          "blocks": [
+            {
+              "p": "**기준 상태를 확인합니다.** 아직 테스트 파일이 없습니다."
+            },
+            {
+              "term": {
+                "cmd": "pnpm test",
+                "out": [
+                  [
+                    "",
+                    "[[No test files found]], exiting with code 1"
+                  ]
+                ]
+              }
+            },
+            {
+              "p": "인수조건 파일 `docs/05-acceptance.feature`를 읽습니다. 시나리오는 두 개입니다."
+            },
+            {
+              "code": "시나리오: 제목이 있는 할 일을 만든다\n  조건 제목이 \"보고서 작성\"이다\n  만일 할 일을 생성하면\n  그러면 제목이 \"보고서 작성\"이고 상태가 \"할 일\"인 항목이 만들어진다\n\n시나리오: 빈 제목은 거부한다\n  조건 제목이 비어 있다\n  만일 할 일을 생성하면\n  그러면 \"제목은 필수\" 오류가 발생한다"
+            },
+            {
+              "p": "이 파일은 사람이 읽는 기준입니다. 이 단원에서는 Cucumber로 실행하지 않고 Vitest 테스트로 옮깁니다."
+            }
+          ]
+        },
+        {
+          "kind": "decide",
+          "blocks": [
+            {
+              "verdict": [
+                "ink",
+                "이 단원에서 만들 것은 이 두 시나리오까지입니다"
+              ]
+            }
+          ]
+        },
+        {
+          "kind": "pass",
+          "blocks": [
+            {
+              "outs": [
+                "`~/work/tdd/todo-app` (git 저장소, 커밋 1개)",
+                "\"No test files found\"라는 기준 상태",
+                "인수조건 두 개"
+              ]
+            },
+            {
+              "next": "인수조건 두 개가 2단계의 기준이 됩니다"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "인수조건에서 테스트 목록 만들기",
+      "name": "테스트 목록",
+      "state": "plain",
+      "out": [
+        "test-list.md"
+      ],
+      "principles": [
+        4,
+        1
+      ],
+      "lanes": [
+        {
+          "kind": "hand",
+          "blocks": [
+            {
+              "p": "작업 폴더에서 Claude Code를 시작합니다."
+            },
+            {
+              "cmd": "claude"
+            },
+            {
+              "p": "코드를 쓰기 전에 **테스트 목록부터** 만듭니다(Canon TDD 1번)."
+            },
+            {
+              "prompt": "docs/05-acceptance.feature를 읽고 테스트 목록을 docs/test-list.md에 적어줘. 시나리오마다 한 줄씩 쓰고, 아직 테스트 코드나 구현 코드는 쓰지 마."
+            },
+            {
+              "label": "검증 실행에서 만들어진 두 줄"
+            },
+            {
+              "code": "- [ ] 제목이 \"보고서 작성\"이면 제목이 \"보고서 작성\"이고 상태가 \"할 일\"인 항목이 만들어진다\n- [ ] 제목이 비어 있으면 \"제목은 필수\" 오류가 발생한다"
+            }
+          ]
+        },
+        {
+          "kind": "check",
+          "blocks": [
+            {
+              "p": "`docs/test-list.md`를 열어 항목을 읽습니다."
+            },
+            {
+              "p": "`git status`로 `test/`, `src/` 폴더가 아직 없는지 봅니다."
+            }
+          ]
+        },
+        {
+          "kind": "decide",
+          "blocks": [
+            {
+              "p": "**목록에 인수조건에 없는 항목이 들어갔는지 봅니다.** 공백만 있는 제목, 아주 긴 제목 같은 경계 사례는 인수조건에 없습니다. 필요하다고 생각하면 코드에 넣지 말고 인수조건을 정하는 사람에게 묻습니다."
+            },
+            {
+              "verdict": [
+                "ink",
+                "항목이 인수조건의 시나리오와 하나씩 맞으면 이 목록을 받아들입니다"
+              ]
+            }
+          ]
+        },
+        {
+          "kind": "pass",
+          "blocks": [
+            {
+              "outs": [
+                "`docs/test-list.md` (항목 2개)"
+              ]
+            },
+            {
+              "next": "3단계부터는 이 목록에서 한 줄씩 꺼내 테스트로 옮깁니다"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "첫 테스트를 쓰고 실패 확인하기",
+      "name": "첫 테스트",
+      "state": "warn",
+      "out": [
+        "no tests"
+      ],
+      "pips": [
+        [
+          "none"
+        ]
+      ],
+      "pipsLabel": "테스트 1개, 실행되지 않음",
+      "principles": [
+        2
+      ],
+      "lanes": [
+        {
+          "kind": "hand",
+          "blocks": [
+            {
+              "p": "목록에서 **하나만** 테스트로 옮깁니다(Canon TDD 2번)."
+            },
+            {
+              "prompt": "테스트 목록의 첫 번째 항목만 Vitest 테스트로 옮겨 test/todo.test.ts에 작성해줘. src/ 아래 구현 파일은 만들지 마. 그다음 pnpm test를 실행하고, 실패한 이유가 단언 실패인지 파일을 불러오지 못한 오류인지 구분해서 알려줘."
+            },
+            {
+              "label": "만들어진 테스트. 테스트 이름은 다를 수 있습니다"
+            },
+            {
+              "code": "import { describe, it, expect } from \"vitest\";\nimport { createTodo } from \"../src/todo\";\n\ndescribe(\"할 일 생성\", () => {\n  it(\"제목이 있으면 '할 일' 상태로 생성된다\", () => {\n    const todo = createTodo({ title: \"보고서 작성\" });\n    expect(todo.title).toBe(\"보고서 작성\");\n    expect(todo.status).toBe(\"할 일\");\n  });\n});"
+            }
+          ]
+        },
+        {
+          "kind": "check",
+          "blocks": [
+            {
+              "p": "`pnpm test`를 직접 실행해 출력을 봅니다."
+            },
+            {
+              "term": {
+                "cmd": "pnpm test",
+                "out": [
+                  [
+                    "bad",
+                    "FAIL  test/todo.test.ts [ test/todo.test.ts ]"
+                  ],
+                  [
+                    "bad",
+                    "Error: [[Cannot find module]] '../src/todo' imported from '…/test/todo.test.ts'"
+                  ],
+                  [
+                    "",
+                    ""
+                  ],
+                  [
+                    "",
+                    " Test Files  1 failed (1)"
+                  ],
+                  [
+                    "",
+                    "      [[Tests  no tests]]"
+                  ]
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "kind": "decide",
+          "blocks": [
+            {
+              "verdict": [
+                "warn",
+                "이것은 아직 유효한 Red가 아닙니다"
+              ]
+            },
+            {
+              "p": "`Tests  no tests`는 테스트가 한 건도 실행되지 않았다는 뜻입니다. 구현 파일을 불러오지 못해 멈춘 **오류**이고, `expect`는 한 번도 실행되지 않았습니다."
+            },
+            {
+              "p": "이 단계에서 얻은 것은 하나입니다. 테스트가 **구현의 겉모습**을 먼저 정했습니다. 함수 이름은 `createTodo`, 입력은 `{ title }`이고, 돌려주는 값에는 `title`과 `status`가 있습니다."
+            },
+            {
+              "p": "테스트가 인수조건의 값(\"보고서 작성\", \"할 일\")을 그대로 쓰는지 봅니다. 다르면 Claude에게 인수조건에 맞게 고치게 합니다."
+            }
+          ]
+        },
+        {
+          "kind": "pass",
+          "blocks": [
+            {
+              "outs": [
+                "`test/todo.test.ts` (테스트 1개)",
+                "`Cannot find module` 오류 출력"
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "뼈대를 만들어 유효한 Red 만들기",
+      "name": "유효한 Red",
+      "state": "bad",
+      "out": [
+        "1 failed"
+      ],
+      "pips": [
+        [
+          "bad"
+        ]
+      ],
+      "pipsLabel": "테스트 1개 실패",
+      "principles": [
+        2
+      ],
+      "lanes": [
+        {
+          "kind": "hand",
+          "blocks": [
+            {
+              "p": "테스트가 단언까지 가도록 **뼈대만** 만듭니다. 동작은 넣지 않습니다."
+            },
+            {
+              "prompt": "테스트가 단언에서 실패하도록 src/todo.ts에 뼈대만 만들어줘. createTodo의 동작은 아직 구현하지 마. 다시 pnpm test를 실행해서 실패 메시지를 그대로 보여줘."
+            },
+            {
+              "label": "뼈대. 함수는 있지만 아무 일도 하지 않습니다"
+            },
+            {
+              "code": "export type Todo = {\n  title: string;\n  status: \"할 일\" | \"진행\" | \"완료\";\n};\n\nexport function createTodo(input: { title: string }): Todo {\n  return {} as Todo; // 뼈대: 아직 구현하지 않았다\n}"
+            },
+            {
+              "p": "검증 실행에서 Claude는 빈 문자열을 돌려주는 뼈대(`{ title: \"\", status: \"\" }`)를 만들었습니다. 어느 쪽이든 됩니다. 이 뼈대라면 실패 메시지는 `expected '' to be '보고서 작성'`입니다."
+            }
+          ]
+        },
+        {
+          "kind": "check",
+          "blocks": [
+            {
+              "p": "`pnpm test`를 실행합니다."
+            },
+            {
+              "term": {
+                "cmd": "pnpm test",
+                "out": [
+                  [
+                    "bad",
+                    " ❯ test/todo.test.ts (1 test | 1 failed)"
+                  ],
+                  [
+                    "bad",
+                    "   × 할 일 생성 > 제목이 있으면 '할 일' 상태로 생성된다"
+                  ],
+                  [
+                    "bad",
+                    "     → expected undefined to be '보고서 작성' // Object.is equality"
+                  ],
+                  [
+                    "",
+                    ""
+                  ],
+                  [
+                    "bad",
+                    "[[AssertionError]]: expected undefined to be '보고서 작성' // Object.is equality"
+                  ],
+                  [
+                    "",
+                    ""
+                  ],
+                  [
+                    "",
+                    " Test Files  1 failed (1)"
+                  ],
+                  [
+                    "bad",
+                    "      [[Tests  1 failed (1)]]"
+                  ]
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "kind": "decide",
+          "blocks": [
+            {
+              "verdict": [
+                "bad",
+                "이것이 유효한 Red입니다"
+              ]
+            },
+            {
+              "ticks": [
+                {
+                  "t": "오류가 아니라 테스트가 실패했습니다",
+                  "s": "`Tests  1 failed (1)`, `AssertionError`"
+                },
+                {
+                  "t": "메시지가 예상한 내용입니다",
+                  "s": "제목이 \"보고서 작성\"이어야 하는데 값이 없습니다"
+                },
+                {
+                  "t": "기능이 없어서 실패했습니다",
+                  "s": "`createTodo`가 아직 제목을 넣지 않습니다"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "kind": "pass",
+          "blocks": [
+            {
+              "p": "테스트 파일을 스테이징해 둡니다. 다음 단계에서 테스트가 바뀌었는지 확인하는 기준이 됩니다."
+            },
+            {
+              "cmd": "git add test"
+            },
+            {
+              "outs": [
+                "`src/todo.ts` (뼈대)",
+                "`AssertionError`로 실패한 출력"
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "최소 구현으로 통과시키기",
+      "name": "최소 구현",
+      "state": "good",
+      "out": [
+        "1 passed"
+      ],
+      "pips": [
+        [
+          "ok"
+        ]
+      ],
+      "pipsLabel": "테스트 1개 통과",
+      "principles": [
+        1,
+        4
+      ],
+      "lanes": [
+        {
+          "kind": "hand",
+          "blocks": [
+            {
+              "p": "방금 실패한 테스트를 통과하는 **최소 코드만** 씁니다(Canon TDD 3번)."
+            },
+            {
+              "prompt": "방금 실패한 테스트를 통과하는 최소 구현만 작성해줘. 인수조건에 없는 기능은 넣지 마. pnpm test 결과를 그대로 보여줘."
+            },
+            {
+              "label": "구현"
+            },
+            {
+              "code": "export function createTodo(input: { title: string }): Todo {\n  return { title: input.title, status: \"할 일\" };\n}"
+            }
+          ]
+        },
+        {
+          "kind": "check",
+          "blocks": [
+            {
+              "p": "`pnpm test`를 실행합니다."
+            },
+            {
+              "term": {
+                "cmd": "pnpm test",
+                "out": [
+                  [
+                    "ok",
+                    " ✓ test/todo.test.ts (1 test)"
+                  ],
+                  [
+                    "",
+                    ""
+                  ],
+                  [
+                    "",
+                    " Test Files  1 passed (1)"
+                  ],
+                  [
+                    "ok",
+                    "      [[Tests  1 passed (1)]]"
+                  ]
+                ]
+              }
+            },
+            {
+              "p": "커밋하기 전에 `git diff -- test`를 실행합니다. 아무것도 나오지 않아야 합니다. 테스트 파일이 4단계에서 스테이징한 그대로라는 뜻입니다."
+            }
+          ]
+        },
+        {
+          "kind": "decide",
+          "blocks": [
+            {
+              "p": "**빈 제목 검사가 들어갔는지 봅니다.** 들어갔다면 지웁니다. 빈 제목은 목록의 두 번째 항목이고, 아직 그 테스트가 없습니다."
+            },
+            {
+              "verdict": [
+                "good",
+                "테스트가 통과했고 테스트 파일이 그대로면 이 구현을 받아들입니다"
+              ]
+            }
+          ]
+        },
+        {
+          "kind": "pass",
+          "blocks": [
+            {
+              "p": "통과했으면 커밋합니다."
+            },
+            {
+              "cmd": "git add -A && git commit -m \"feat: 제목이 있는 할 일을 만든다\""
+            },
+            {
+              "outs": [
+                "테스트 1개가 통과하는 `src/todo.ts`",
+                "커밋 1개"
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "두 번째 항목 반복하기",
+      "name": "두 번째 항목",
+      "state": "both",
+      "out": [
+        "1 failed | 1 passed",
+        "2 passed"
+      ],
+      "pips": [
+        [
+          "ok",
+          "bad"
+        ],
+        [
+          "ok",
+          "ok"
+        ]
+      ],
+      "pipsLabel": "테스트 2개 가운데 1개 실패, 구현을 고친 뒤 2개 통과",
+      "principles": [
+        2,
+        3
+      ],
+      "lanes": [
+        {
+          "kind": "hand",
+          "blocks": [
+            {
+              "p": "목록의 다음 항목으로 같은 순서를 반복합니다(Canon TDD 5번)."
+            },
+            {
+              "prompt": "테스트 목록의 두 번째 항목을 같은 순서로 진행해줘. 테스트 추가, 실패 확인, 최소 구현, 통과 확인 순서이고, 단계마다 pnpm test 출력을 보여줘. 테스트는 고치지 말고 구현만 고쳐."
+            },
+            {
+              "label": "추가되는 테스트"
+            },
+            {
+              "code": "it(\"빈 제목은 거부한다\", () => {\n  expect(() => createTodo({ title: \"\" })).toThrow(\"제목은 필수\");\n});"
+            }
+          ]
+        },
+        {
+          "kind": "check",
+          "blocks": [
+            {
+              "p": "**Red를 먼저 확인합니다.** 구현을 고치기 전의 출력은 다음과 같아야 합니다."
+            },
+            {
+              "term": {
+                "title": "Claude가 보여 주는 출력",
+                "out": [
+                  [
+                    "bad",
+                    " ❯ test/todo.test.ts (2 tests | 1 failed)"
+                  ],
+                  [
+                    "ok",
+                    "   ✓ 할 일 생성 > 제목이 있으면 '할 일' 상태로 생성된다"
+                  ],
+                  [
+                    "bad",
+                    "   × 할 일 생성 > 빈 제목은 거부한다"
+                  ],
+                  [
+                    "bad",
+                    "     → expected [Function] to throw an error"
+                  ],
+                  [
+                    "",
+                    ""
+                  ],
+                  [
+                    "bad",
+                    "      [[Tests  1 failed | 1 passed (2)]]"
+                  ]
+                ]
+              }
+            },
+            {
+              "p": "구현에 검사 한 줄이 들어가면 두 테스트가 모두 통과합니다."
+            },
+            {
+              "code": "if (!input.title) throw new Error(\"제목은 필수\");"
+            },
+            {
+              "term": {
+                "title": "Claude가 보여 주는 출력",
+                "out": [
+                  [
+                    "ok",
+                    " ✓ test/todo.test.ts (2 tests)"
+                  ],
+                  [
+                    "",
+                    ""
+                  ],
+                  [
+                    "ok",
+                    "      [[Tests  2 passed (2)]]"
+                  ]
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "kind": "decide",
+          "blocks": [
+            {
+              "p": "Claude가 Red 출력을 보여 주지 않고 통과 결과만 보여 줬다면, Red를 확인했다고 볼 수 없습니다. 구현의 검사 줄을 잠깐 지우고 `pnpm test`를 실행해 새 테스트가 실패하는지 직접 본 뒤 되돌립니다."
+            },
+            {
+              "verdict": [
+                "good",
+                "Red와 Green을 모두 출력으로 봤으면 이 구현을 받아들입니다"
+              ]
+            }
+          ]
+        },
+        {
+          "kind": "pass",
+          "blocks": [
+            {
+              "p": "통과했으면 커밋합니다."
+            },
+            {
+              "cmd": "git add -A && git commit -m \"feat: 빈 제목은 거부한다\""
+            },
+            {
+              "outs": [
+                "테스트 2개가 통과하는 코드",
+                "커밋 1개"
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "다듬기",
+      "name": "다듬기",
+      "state": "calm",
+      "out": [
+        "2 passed"
+      ],
+      "pips": [
+        [
+          "ok",
+          "ok"
+        ]
+      ],
+      "pipsLabel": "테스트 2개 통과",
+      "principles": [
+        1
+      ],
+      "lanes": [
+        {
+          "kind": "hand",
+          "blocks": [
+            {
+              "p": "테스트가 통과하는 상태에서 구조를 다듬습니다(Canon TDD 4번). **동작은 바꾸지 않습니다.**"
+            },
+            {
+              "prompt": "테스트가 통과하는 상태를 유지하면서 src/todo.ts를 읽기 좋게 다듬어줘. 동작은 바꾸지 마. 끝나면 pnpm test와 pnpm typecheck 결과를 보여줘. 다듬을 곳이 없으면 없다고 말해줘."
+            },
+            {
+              "p": "다듬는 동안 **테스트 파일은 건드리지 않습니다.**"
+            }
+          ]
+        },
+        {
+          "kind": "check",
+          "blocks": [
+            {
+              "p": "테스트와 타입 검사를 실행합니다. 타입 검사는 성공하면 `$ tsc --noEmit` 한 줄만 나옵니다."
+            },
+            {
+              "term": {
+                "cmd": "pnpm test && pnpm typecheck",
+                "out": [
+                  [
+                    "ok",
+                    "      [[Tests  2 passed (2)]]"
+                  ]
+                ]
+              }
+            },
+            {
+              "p": "`git diff -- test`를 실행합니다. 아무것도 나오지 않아야 합니다. 테스트 파일이 바뀌지 않았다는 뜻입니다."
+            }
+          ]
+        },
+        {
+          "kind": "decide",
+          "blocks": [
+            {
+              "p": "테스트가 깨지면 다듬기를 되돌립니다."
+            },
+            {
+              "verdict": [
+                "calm",
+                "이만큼 작은 코드에서는 다듬을 곳이 없을 수 있습니다. 그것도 올바른 결과입니다"
+              ]
+            },
+            {
+              "p": "검증 실행에서 Claude는 \"다듬을 곳이 없어서 고치지 않았다\"고 답했습니다."
+            },
+            {
+              "p": "직접 다듬어 보려면 상태 타입과 초기 상태에 이름을 붙입니다."
+            },
+            {
+              "code": "export type TodoStatus = \"할 일\" | \"진행\" | \"완료\";\n\nexport type Todo = {\n  title: string;\n  status: TodoStatus;\n};\n\nconst INITIAL_STATUS: TodoStatus = \"할 일\";\n\nexport function createTodo(input: { title: string }): Todo {\n  if (!input.title) throw new Error(\"제목은 필수\");\n  return { title: input.title, status: INITIAL_STATUS };\n}"
+            },
+            {
+              "p": "다듬은 뒤에는 `pnpm test && pnpm typecheck`를 다시 실행합니다."
+            }
+          ]
+        },
+        {
+          "kind": "pass",
+          "blocks": [
+            {
+              "p": "고친 것이 있으면 커밋합니다."
+            },
+            {
+              "cmd": "git add -A && git commit -m \"refactor: 상태 타입과 초기 상태에 이름을 붙인다\""
+            },
+            {
+              "outs": [
+                "다듬은 `src/todo.ts` 또는 \"다듬을 곳 없음\"이라는 판단"
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "목록을 닫고 기록 확인하기",
+      "name": "목록 닫기",
+      "state": "plain",
+      "out": [
+        "git log"
+      ],
+      "pips": [
+        [
+          "ok",
+          "ok"
+        ]
+      ],
+      "pipsLabel": "테스트 2개 통과",
+      "principles": [
+        4
+      ],
+      "lanes": [
+        {
+          "kind": "check",
+          "blocks": [
+            {
+              "p": "커밋 기록에 순서가 남았는지 봅니다. 커밋 해시는 사람마다 다릅니다."
+            },
+            {
+              "term": {
+                "cmd": "git log --oneline",
+                "out": [
+                  [
+                    "",
+                    "b8b044c refactor: 상태 타입과 초기 상태에 이름을 붙인다"
+                  ],
+                  [
+                    "",
+                    "92e5eaf feat: 빈 제목은 거부한다"
+                  ],
+                  [
+                    "",
+                    "9ae257d feat: 제목이 있는 할 일을 만든다"
+                  ],
+                  [
+                    "",
+                    "812d447 chore: 실습 출발점"
+                  ]
+                ]
+              }
+            },
+            {
+              "p": "인수조건, 테스트, 구현이 이어지는지 표로 확인합니다."
+            },
+            {
+              "table": {
+                "head": [
+                  "인수조건",
+                  "테스트",
+                  "구현"
+                ],
+                "rows": [
+                  [
+                    "제목이 있는 할 일을 만든다",
+                    "제목이 있으면 '할 일' 상태로 생성된다",
+                    "`return { title, status }`"
+                  ],
+                  [
+                    "빈 제목은 거부한다",
+                    "빈 제목은 거부한다",
+                    "`if (!input.title) throw …`"
+                  ]
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "kind": "decide",
+          "blocks": [
+            {
+              "p": "`docs/test-list.md`의 두 항목을 `[x]`로 바꿉니다."
+            },
+            {
+              "verdict": [
+                "ink",
+                "목록에 남은 항목이 없으므로 이 기능은 끝났습니다"
+              ]
+            }
+          ]
+        },
+        {
+          "kind": "pass",
+          "blocks": [
+            {
+              "p": "바꾼 목록을 커밋합니다."
+            },
+            {
+              "cmd": "git add -A && git commit -m \"docs: 테스트 목록을 닫는다\""
+            },
+            {
+              "outs": [
+                "항목이 모두 닫힌 테스트 목록",
+                "테스트와 구현이 인수조건과 하나씩 이어진 저장소"
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "sections": [
+    {
+      "type": "compare",
+      "title": "오류와 유효한 Red",
+      "lead": "3단계와 4단계 모두 `pnpm test`가 실패로 끝나지만 뜻이 다릅니다. Red는 원하는 동작이 아직 없어서, 예상한 이유로 단언이 실패한 상태입니다. 이 차이를 출력으로 직접 봅니다.",
+      "cols": [
+        {
+          "cap": "3단계의 출력",
+          "blocks": [
+            {
+              "term": {
+                "cmd": "pnpm test",
+                "out": [
+                  [
+                    "bad",
+                    "FAIL  test/todo.test.ts [ test/todo.test.ts ]"
+                  ],
+                  [
+                    "bad",
+                    "Error: [[Cannot find module]] '../src/todo' imported from '…/test/todo.test.ts'"
+                  ],
+                  [
+                    "",
+                    ""
+                  ],
+                  [
+                    "",
+                    " Test Files  1 failed (1)"
+                  ],
+                  [
+                    "",
+                    "      [[Tests  no tests]]"
+                  ]
+                ]
+              }
+            },
+            {
+              "verdict": [
+                "warn",
+                "오류입니다. 아직 유효한 Red가 아닙니다"
+              ]
+            },
+            {
+              "ticks": [
+                {
+                  "k": "no",
+                  "t": "오류가 아니라 테스트가 실패했는가",
+                  "s": "`Tests  no tests`. 테스트가 한 건도 실행되지 않았습니다. 오류부터 고치고 다시 실행합니다"
+                },
+                {
+                  "k": "na",
+                  "t": "실패 메시지가 예상한 내용인가"
+                },
+                {
+                  "k": "na",
+                  "t": "오타가 아니라 기능이 없어서 실패했는가",
+                  "s": "`expect`가 한 번도 실행되지 않아 이 둘은 아직 볼 수 없습니다"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "cap": "4단계의 출력",
+          "blocks": [
+            {
+              "term": {
+                "cmd": "pnpm test",
+                "out": [
+                  [
+                    "bad",
+                    " ❯ test/todo.test.ts (1 test | 1 failed)"
+                  ],
+                  [
+                    "bad",
+                    "   × 할 일 생성 > 제목이 있으면 '할 일' 상태로 생성된다"
+                  ],
+                  [
+                    "bad",
+                    "     → expected undefined to be '보고서 작성' // Object.is equality"
+                  ],
+                  [
+                    "",
+                    ""
+                  ],
+                  [
+                    "bad",
+                    "[[AssertionError]]: expected undefined to be '보고서 작성' // Object.is equality"
+                  ],
+                  [
+                    "",
+                    ""
+                  ],
+                  [
+                    "",
+                    " Test Files  1 failed (1)"
+                  ],
+                  [
+                    "bad",
+                    "      [[Tests  1 failed (1)]]"
+                  ]
+                ]
+              }
+            },
+            {
+              "verdict": [
+                "bad",
+                "유효한 Red입니다"
+              ]
+            },
+            {
+              "ticks": [
+                {
+                  "t": "오류가 아니라 테스트가 실패했습니다",
+                  "s": "`Tests  1 failed (1)`, `AssertionError`"
+                },
+                {
+                  "t": "메시지가 예상한 내용입니다",
+                  "s": "제목이 \"보고서 작성\"이어야 하는데 값이 없습니다"
+                },
+                {
+                  "t": "기능이 없어서 실패했습니다",
+                  "s": "`createTodo`가 아직 제목을 넣지 않습니다"
+                }
+              ]
+            }
+          ]
+        }
+      ],
+      "mid": "뼈대만 만듭니다",
+      "note": "세 가지 확인은 obra/superpowers의 TDD 스킬에 있는 \"Verify RED\" 절에서 가져왔습니다."
+    },
+    {
+      "type": "chain",
+      "title": "기준이 넘어가는 길",
+      "lead": "앞 단계의 산출물이 뒤 단계를 판정하는 기준입니다. 인수조건 두 개가 테스트 목록, 테스트, 구현, 커밋으로 하나씩 이어집니다. 8단계에서 인수조건, 테스트, 구현이 이어지는지 표로 확인합니다.",
+      "cols": [
+        [
+          "인수조건",
+          "1단계에서 읽습니다"
+        ],
+        [
+          "테스트 목록",
+          "2단계에서 만듭니다"
+        ],
+        [
+          "테스트",
+          "3단계, 6단계에서 씁니다"
+        ],
+        [
+          "구현",
+          "5단계, 6단계에서 씁니다"
+        ],
+        [
+          "커밋",
+          "5단계, 6단계에서 남깁니다"
+        ]
+      ],
+      "rows": [
+        [
+          "제목이 있는 할 일을 만든다",
+          "제목이 \"보고서 작성\"이면 제목이 \"보고서 작성\"이고 상태가 \"할 일\"인 항목이 만들어진다",
+          "제목이 있으면 '할 일' 상태로 생성된다",
+          "`return { title, status }`",
+          "`feat: 제목이 있는 할 일을 만든다`"
+        ],
+        [
+          "빈 제목은 거부한다",
+          "제목이 비어 있으면 \"제목은 필수\" 오류가 발생한다",
+          "빈 제목은 거부한다",
+          "`if (!input.title) throw …`",
+          "`feat: 빈 제목은 거부한다`"
+        ]
+      ],
+      "note": "4단계에서 스테이징한 테스트는 5단계에서 구현을 판정하는 기준이 됩니다. 5단계에서 `git diff -- test`가 아무것도 출력하지 않으면 테스트 파일이 그대로라는 뜻입니다."
+    }
+  ],
+  "env": "검증 환경(2026-11-24): macOS, Node.js v24.22.0, pnpm 12.21.0, Vitest 3.2.6, TypeScript 5.9.3, Claude Code 2.1.330(모델 Sonnet 5.5). 검증 실행은 가이드의 명령과 요청문을 이 환경에서 실제로 실행해 본 것입니다. AI가 쓰는 테스트 이름과 코드, 설명 문장은 실행할 때마다 달라질 수 있습니다.",
+  "start": 4
+}
