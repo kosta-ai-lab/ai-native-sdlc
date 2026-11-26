@@ -69,6 +69,18 @@
     return 'https://github.com/' + data.repository + '/' + (link.kind === 'dir' ? 'tree' : 'blob') + '/' + data.ref + '/' + enc;
   }
 
+  /**
+   * 화면에 보일 사람 이름. 자료의 by는 원문(README)의 표기를 따르고, 화면에서는 names 표의 표기로 통일한다.
+   * 쉼표로 이은 여러 사람은 한 사람씩 바꾼다. 표에 없는 이름은 그대로 둔다.
+   */
+  function displayBy(data, by) {
+    var names = (data && data.names) || {};
+    return String(by).split(/\s*,\s*/).map(function (part) {
+      var key = Object.keys(names).find(function (n) { return part === n || part.indexOf(n + ' ') === 0; });
+      return key ? names[key] : part;
+    }).join(', ');
+  }
+
   /** 주소의 #로드맵/자료 부분을 읽는다. 없는 로드맵이면 빈 객체, 그 로드맵에 없는 자료면 로드맵만. */
   function parseHash(hash, data) {
     var parts = String(hash || '').replace(/^#/, '').split('/');
@@ -80,6 +92,6 @@
   root.KostaRoadmap = {
     isOpen: isOpen, index: index, idsOf: idsOf, openIds: openIds, stageState: stageState, stageIndex: stageIndex,
     stageEntry: stageEntry, firstItem: firstItem, lineOfItem: lineOfItem, shortTitle: shortTitle,
-    progress: progress, counts: counts, flatKids: flatKids, freshness: freshness, repoUrl: repoUrl, parseHash: parseHash
+    progress: progress, counts: counts, flatKids: flatKids, freshness: freshness, repoUrl: repoUrl, displayBy: displayBy, parseHash: parseHash
   };
 })(typeof globalThis !== 'undefined' ? globalThis : self);
