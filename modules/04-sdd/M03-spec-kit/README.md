@@ -1,7 +1,7 @@
 # 모듈 M03 — Spec Kit으로 하는 단계별 스펙 주도 개발(SDD)
 
 > 상태: 초안 · 담당: 이선아 교수
-> 검증 기준: `specify-cli` **v1.1.3** (2026-10-09 릴리스) · Claude Code 통합(`--integration claude`, Windows: [GUIDE-windows.md](GUIDE-windows.md)) · Codex 통합(`--integration codex`, [GUIDE-codex.md](GUIDE-codex.md)) · macOS/Linux · Windows([GUIDE-codex-windows.md](GUIDE-codex-windows.md))
+> 검증 기준: `specify-cli` **v1.1.3** (2026-10-09 릴리스) · Claude Code 통합(`--integration claude`, Windows: [GUIDE-claude-windows.md](GUIDE-claude-windows.md)) · Codex 통합(`--integration codex`, [GUIDE-codex-mac.md](GUIDE-codex-mac.md)) · macOS/Linux · Windows([GUIDE-codex-windows.md](GUIDE-codex-windows.md))
 
 ## 목적
 
@@ -54,14 +54,14 @@ GitHub의 오픈소스 도구 **[Spec Kit](https://github.com/github/spec-kit)**
 | 파일 | 역할 | 언제 읽나 |
 | --- | --- | --- |
 | [README.md](README.md) | 모듈 소개, 목표, 준비물, 품질 기준 (지금 이 문서) | 가장 먼저 |
-| [GUIDE.md](GUIDE.md) | SDD 개념 + 7단계별 **목적·입력·규칙·산출물·체크리스트** 상세 가이드 (**Claude Code** 사용) | 개념을 이해하며 단계별로 |
-| [GUIDE-windows.md](GUIDE-windows.md) | GUIDE.md 의 **Windows 10/11** 버전 — Claude Code 설치(`install.ps1`/winget), Git Bash, PowerShell 스크립트 `--script ps`, 실행 정책, SAMPLE 바꿔 읽기 표 | Windows PC에서 Claude Code를 쓸 때 |
-| [GUIDE-codex.md](GUIDE-codex.md) | 같은 실습을 **OpenAI Codex CLI** 로 하는 단계별 가이드 (`$speckit-*` 스킬, 샌드박스 권한, `AGENTS.md`) | Claude Code 대신 Codex를 쓸 때 (macOS/Linux) |
+| [GUIDE-claude-mac.md](GUIDE-claude-mac.md) | SDD 개념 + 7단계별 **목적·입력·규칙·산출물·체크리스트** 상세 가이드 (**Claude Code** 사용) | 개념을 이해하며 단계별로 |
+| [GUIDE-claude-windows.md](GUIDE-claude-windows.md) | GUIDE-claude-mac.md 의 **Windows 10/11** 버전 — Claude Code 설치(`install.ps1`/winget), Git Bash, PowerShell 스크립트 `--script ps`, 실행 정책, SAMPLE 바꿔 읽기 표 | Windows PC에서 Claude Code를 쓸 때 |
+| [GUIDE-codex-mac.md](GUIDE-codex-mac.md) | 같은 실습을 **OpenAI Codex CLI** 로 하는 단계별 가이드 (`$speckit-*` 스킬, 샌드박스 권한, `AGENTS.md`) | Claude Code 대신 Codex를 쓸 때 (macOS/Linux) |
 | [GUIDE-codex-windows.md](GUIDE-codex-windows.md) | Codex 가이드의 **Windows 10/11** 버전 (winget 설치, PowerShell 스크립트 `--script ps`, 실행 정책, Windows 샌드박스, SAMPLE 바꿔 읽기 표) | Windows PC에서 Codex를 쓸 때 |
 | [SAMPLE.md](SAMPLE.md) | 완성한 "할 일 관리 앱"을 **실행·사용하고 명세대로 동작하는지 확인**하는 가이드 | GUIDE 7단계(implement) 이후 |
 
-> 💡 추천 학습 순서: README → GUIDE(Windows는 [GUIDE-windows.md](GUIDE-windows.md)) 개념·1~7단계로 앱 만들기 → SAMPLE로 앱 실행·확인 → (도전) GUIDE 8단계 + SAMPLE 8단계
-> 💡 Codex를 쓴다면 GUIDE 대신 [GUIDE-codex.md](GUIDE-codex.md) (Windows는 [GUIDE-codex-windows.md](GUIDE-codex-windows.md)) 1~8단계로 앱을 만들고, SAMPLE은 그대로 쓴다. (개념 설명은 GUIDE.md 를 함께 읽는다)
+> 💡 추천 학습 순서: README → GUIDE(Windows는 [GUIDE-claude-windows.md](GUIDE-claude-windows.md)) 개념·1~7단계로 앱 만들기 → SAMPLE로 앱 실행·확인 → (도전) GUIDE 8단계 + SAMPLE 8단계
+> 💡 Codex를 쓴다면 GUIDE 대신 [GUIDE-codex-mac.md](GUIDE-codex-mac.md) (Windows는 [GUIDE-codex-windows.md](GUIDE-codex-windows.md)) 1~8단계로 앱을 만들고, SAMPLE은 그대로 쓴다. (개념 설명은 GUIDE-claude-mac.md 를 함께 읽는다)
 
 ## 사전 준비물
 
@@ -71,16 +71,16 @@ GitHub의 오픈소스 도구 **[Spec Kit](https://github.com/github/spec-kit)**
 | uv (파이썬 패키지 도구) | 최신 | `uv --version` |
 | Git | 아무 최신 버전 | `git --version` |
 | Claude Code CLI | 로그인 완료 상태 | `claude --version` |
-| *(또는)* Codex CLI | ChatGPT 계정 로그인 — [GUIDE-codex.md](GUIDE-codex.md) / [Windows](GUIDE-codex-windows.md) 사용 시 | `codex --version` |
+| *(또는)* Codex CLI | ChatGPT 계정 로그인 — [GUIDE-codex-mac.md](GUIDE-codex-mac.md) / [Windows](GUIDE-codex-windows.md) 사용 시 | `codex --version` |
 | Node.js *(예제 테스트용)* | 20 이상 | `node --version` |
 | 웹 브라우저 | Chrome/Safari 등 | — |
 
-설치 방법은 [GUIDE.md 1단계](GUIDE.md#1-단계-설치와-프로젝트-초기화)에 있다.
+설치 방법은 [GUIDE-claude-mac.md 1단계](GUIDE-claude-mac.md#1-단계-설치와-프로젝트-초기화)에 있다.
 
 ## 산출물 4종 (체크리스트)
 
-- [x] 가이드 — [GUIDE.md](GUIDE.md) 단계 목적·입력·산출물·체크리스트
-- [x] 규칙 — GUIDE.md 각 단계의 "규칙" 절 + [부록 A. CLAUDE.md 규칙 조각](GUIDE.md#부록-a-claudemd-규칙-조각)
+- [x] 가이드 — [GUIDE-claude-mac.md](GUIDE-claude-mac.md) 단계 목적·입력·산출물·체크리스트
+- [x] 규칙 — GUIDE-claude-mac.md 각 단계의 "규칙" 절 + [부록 A. CLAUDE.md 규칙 조각](GUIDE-claude-mac.md#부록-a-claudemd-규칙-조각)
 - [x] 자동화 — Spec Kit이 `.claude/skills/speckit-*` 로 설치하는 **Claude Code 스킬** 10종 (+ git 확장 스킬 5종) / Codex는 같은 스킬을 `.agents/skills/` 에 설치
 - [x] 샘플 — [SAMPLE.md](SAMPLE.md) 완성 앱 실행·기능별 사용 시나리오·저장 데이터 확인·수정 요청 프롬프트
 
@@ -105,7 +105,7 @@ Spec Kit은 매우 빠르게 바뀌는 프로젝트다. 인터넷의 예전 글�
 | `/speckit.specify` (점 표기, 슬래시 커맨드) | Claude Code에서는 **스킬**로 설치되어 `/speckit-specify` (하이픈 표기) |
 | `specify init` 이 git 브랜치 `001-...` 자동 생성 | git 연동은 **선택 확장**: `specify extension add git` 을 해야 브랜치 생성 |
 | `/speckit.implement` 로 끝 | `/speckit-converge` 로 명세 대비 완성도를 검증하며 반복 |
-| Codex에서 `/prompts:speckit.specify` | Codex는 `.agents/skills` 스킬로 설치되어 **`$speckit-specify`** ([GUIDE-codex.md](GUIDE-codex.md)) |
+| Codex에서 `/prompts:speckit.specify` | Codex는 `.agents/skills` 스킬로 설치되어 **`$speckit-specify`** ([GUIDE-codex-mac.md](GUIDE-codex-mac.md)) |
 
 공식 문서의 명령어 표에 점 표기(`/speckit.plan`)가 나와도, Claude Code에서는 하이픈 표기(`/speckit-plan`)로 입력하면 된다.
 

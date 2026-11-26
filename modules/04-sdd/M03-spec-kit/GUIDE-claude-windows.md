@@ -1,7 +1,7 @@
 # Spec Kit × Claude Code 가이드 (Windows) — Windows PC에서 하는 스펙 주도 개발
 
-> 이 문서는 [GUIDE.md](GUIDE.md)(Claude Code, macOS/Linux)와 **같은 할 일 앱을 같은 순서로** 만들되, **Windows 10/11 PC** 에서 하는 방법을 처음부터 끝까지 안내한다.
-> SDD 개념과 각 문서(spec·plan·tasks …)의 자세한 설명은 [GUIDE.md](GUIDE.md) 와 같으므로, 여기서는 **Windows에서 달라지는 설치·실행·명령**과 **따라 할 입력**에 집중한다.
+> 이 문서는 [GUIDE-claude-mac.md](GUIDE-claude-mac.md)(Claude Code, macOS/Linux)와 **같은 할 일 앱을 같은 순서로** 만들되, **Windows 10/11 PC** 에서 하는 방법을 처음부터 끝까지 안내한다.
+> SDD 개념과 각 문서(spec·plan·tasks …)의 자세한 설명은 [GUIDE-claude-mac.md](GUIDE-claude-mac.md) 와 같으므로, 여기서는 **Windows에서 달라지는 설치·실행·명령**과 **따라 할 입력**에 집중한다.
 > 검증 기준: `specify-cli` **v1.1.3** · `specify init --integration claude --script ps` · Claude Code (Windows 네이티브) · Windows 11 + PowerShell 7
 
 ---
@@ -10,7 +10,7 @@
 
 Spec Kit 단계(`/speckit-constitution` … `/speckit-converge`)와 산출물(`.claude/skills/`, `.specify/`, `specs/001-…/`)은 **macOS와 똑같다.** 달라지는 것은 다음이다.
 
-| 항목 | macOS ([GUIDE.md](GUIDE.md)) | **Windows (이 문서)** |
+| 항목 | macOS ([GUIDE-claude-mac.md](GUIDE-claude-mac.md)) | **Windows (이 문서)** |
 | --- | --- | --- |
 | 터미널 | 터미널 앱 (zsh) | **Windows Terminal + PowerShell 7** (권장) |
 | 도구 설치 | `brew install …` | **`winget install …`** |
@@ -23,13 +23,13 @@ Spec Kit 단계(`/speckit-constitution` … `/speckit-converge`)와 산출물(`.
 | 숨김 폴더 보기 | `ls -a`, Finder `⌘ + Shift + .` | `Get-ChildItem -Force`, 탐색기 **보기 › 표시 › 숨긴 항목** |
 | 단축키 | `⌘` | `Ctrl` (개발자 도구 `F12`) |
 
-> 💡 **WSL(리눅스)을 이미 쓰고 있다면** WSL 안의 Ubuntu에서 [GUIDE.md](GUIDE.md)(macOS/Linux 버전)를 그대로 따라 해도 된다. 처음이라면 이 문서의 **Windows 네이티브** 방식이 설치할 것이 적다.
+> 💡 **WSL(리눅스)을 이미 쓰고 있다면** WSL 안의 Ubuntu에서 [GUIDE-claude-mac.md](GUIDE-claude-mac.md)(macOS/Linux 버전)를 그대로 따라 해도 된다. 처음이라면 이 문서의 **Windows 네이티브** 방식이 설치할 것이 적다.
 
 ## 이 가이드의 단계
 
-[GUIDE.md](GUIDE.md) 의 1단계(설치)를 Windows용 **1~2단계**로 나눴다. 그래서 이후 단계 번호가 GUIDE.md 보다 하나씩 크다.
+[GUIDE-claude-mac.md](GUIDE-claude-mac.md) 의 1단계(설치)를 Windows용 **1~2단계**로 나눴다. 그래서 이후 단계 번호가 GUIDE-claude-mac.md 보다 하나씩 크다.
 
-| 단계 | 내용 | 사용하는 명령 | GUIDE.md |
+| 단계 | 내용 | 사용하는 명령 | GUIDE-claude-mac.md |
 | --- | --- | --- | --- |
 | 1 | 설치 — 준비 도구, Claude Code, specify CLI, 프로젝트 초기화 | `winget`, `irm …install.ps1 \| iex`, `specify init --integration claude --script ps` | 1단계 |
 | 2 | Claude Code 실행 — 로그인, 폴더 신뢰, 스킬 확인 | `claude`, `/doctor` | 1단계 |
@@ -239,7 +239,7 @@ claude
 
 # 3 단계: 헌법 — `/speckit-constitution`
 
-**목적** — 모든 단계가 검사 기준으로 삼을 프로젝트 원칙을 정한다. (자세한 규칙: [GUIDE.md 2단계](GUIDE.md#2-단계-헌법constitution--프로젝트-원칙-정하기))
+**목적** — 모든 단계가 검사 기준으로 삼을 프로젝트 원칙을 정한다. (자세한 규칙: [GUIDE-claude-mac.md 2단계](GUIDE-claude-mac.md#2-단계-헌법constitution--프로젝트-원칙-정하기))
 
 **입력** — 🤖 Claude Code
 
@@ -272,7 +272,7 @@ claude
 
 # 4 단계: 명세 — `/speckit-specify`
 
-**목적** — 만들 기능을 "무엇을·왜" 로만 설명해 기능 명세를 만든다. (자세한 규칙: [GUIDE.md 3단계](GUIDE.md#3-단계-명세specify--무엇을-왜-만드는가))
+**목적** — 만들 기능을 "무엇을·왜" 로만 설명해 기능 명세를 만든다. (자세한 규칙: [GUIDE-claude-mac.md 3단계](GUIDE-claude-mac.md#3-단계-명세specify--무엇을-왜-만드는가))
 
 **입력** — 🤖 Claude Code (새 대화로 시작하면 깔끔하다)
 
@@ -309,7 +309,7 @@ specs/001-todo-list-app/        ← 이름은 Claude가 정하므로 조금 다�
 
 # 5 단계: 명확화 — `/speckit-clarify`
 
-**목적** — 계획 전에 명세의 빈틈을 Claude가 질문하고 답을 명세에 반영한다. (자세한 규칙: [GUIDE.md 4단계](GUIDE.md#4-단계-명확화clarify--모호함-없애기))
+**목적** — 계획 전에 명세의 빈틈을 Claude가 질문하고 답을 명세에 반영한다. (자세한 규칙: [GUIDE-claude-mac.md 4단계](GUIDE-claude-mac.md#4-단계-명확화clarify--모호함-없애기))
 
 **입력** — 🤖 Claude Code
 
@@ -337,7 +337,7 @@ specs/001-todo-list-app/        ← 이름은 Claude가 정하므로 조금 다�
 
 # 6 단계: 계획 — `/speckit-plan` (+ `/speckit-checklist`)
 
-**목적** — 기술 스택과 구조를 정하고, 헌법을 어기지 않는지 검사한다. (자세한 규칙: [GUIDE.md 5단계](GUIDE.md#5-단계-계획plan--어떻게-만들-것인가))
+**목적** — 기술 스택과 구조를 정하고, 헌법을 어기지 않는지 검사한다. (자세한 규칙: [GUIDE-claude-mac.md 5단계](GUIDE-claude-mac.md#5-단계-계획plan--어떻게-만들-것인가))
 
 **입력** — 🤖 Claude Code
 
@@ -370,7 +370,7 @@ specs/001-todo-list-app/        ← 이름은 Claude가 정하므로 조금 다�
 
 # 7 단계: 작업 분해와 일관성 점검 — `/speckit-tasks`, `/speckit-analyze`
 
-**목적** — 설계를 실행 가능한 작업 목록으로 쪼개고, 구현 전에 문서 간 모순을 점검한다. (자세한 규칙: [GUIDE.md 6단계](GUIDE.md#6-단계-작업-분해tasks와-일관성-점검analyze))
+**목적** — 설계를 실행 가능한 작업 목록으로 쪼개고, 구현 전에 문서 간 모순을 점검한다. (자세한 규칙: [GUIDE-claude-mac.md 6단계](GUIDE-claude-mac.md#6-단계-작업-분해tasks와-일관성-점검analyze))
 
 **입력** — 🤖 Claude Code
 
@@ -397,7 +397,7 @@ specs/001-todo-list-app/        ← 이름은 Claude가 정하므로 조금 다�
 
 # 8 단계: 구현과 수렴 — `/speckit-implement`, `/speckit-converge`
 
-**목적** — 작업 순서대로 코드를 만들고, 코드가 명세를 모두 만족하는지 검증한다. (자세한 규칙: [GUIDE.md 7단계](GUIDE.md#7-단계-구현implement과-수렴converge))
+**목적** — 작업 순서대로 코드를 만들고, 코드가 명세를 모두 만족하는지 검증한다. (자세한 규칙: [GUIDE-claude-mac.md 7단계](GUIDE-claude-mac.md#7-단계-구현implement과-수렴converge))
 
 **입력** — 🤖 Claude Code
 
@@ -475,7 +475,7 @@ my-todo\
 
 # 9 단계: (도전) 두 번째 기능 — 마감일
 
-**목적** — 변경도 명세에서 시작한다. 새 기능 폴더 `specs/002-…` 로 4~8단계를 반복한다. (자세한 규칙: [GUIDE.md 8단계](GUIDE.md#8-단계-도전-두-번째-기능-추가--명세부터-다시))
+**목적** — 변경도 명세에서 시작한다. 새 기능 폴더 `specs/002-…` 로 4~8단계를 반복한다. (자세한 규칙: [GUIDE-claude-mac.md 8단계](GUIDE-claude-mac.md#8-단계-도전-두-번째-기능-추가--명세부터-다시))
 
 **입력** — 🤖 Claude Code, 순서대로 (단계 사이에 `/clear` 해도 된다)
 
@@ -511,7 +511,7 @@ my-todo\
 
 # 부록 A. CLAUDE.md 규칙 조각
 
-프로젝트 루트의 `CLAUDE.md` 에 붙여 두면, Spec Kit 단계 밖에서 대화할 때도 SDD 흐름을 지킨다. (Windows 전용 줄 2개를 [GUIDE.md 부록 A](GUIDE.md#부록-a-claudemd-규칙-조각) 에 더했다)
+프로젝트 루트의 `CLAUDE.md` 에 붙여 두면, Spec Kit 단계 밖에서 대화할 때도 SDD 흐름을 지킨다. (Windows 전용 줄 2개를 [GUIDE-claude-mac.md 부록 A](GUIDE-claude-mac.md#부록-a-claudemd-규칙-조각) 에 더했다)
 
 ```markdown
 ## Spec-Driven Development 규칙 (Spec Kit)
@@ -572,4 +572,4 @@ my-todo\
 | `⌘ + ⌥ + J` (Console) | `Ctrl + Shift + J` |
 | `⌘ + Q` (브라우저 완전 종료) | 모든 창 닫기 (`Alt + F4`). Edge·Chrome이 백그라운드에서 계속 실행되지 않는지 작업 표시줄 트레이 확인 |
 | Safari 개발자 도구 안내 | 해당 없음 — Edge/Chrome 사용 |
-| GUIDE.md N단계 | 이 문서 N+1단계 |
+| GUIDE-claude-mac.md N단계 | 이 문서 N+1단계 |
