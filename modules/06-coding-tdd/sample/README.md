@@ -37,7 +37,7 @@ describe("할 일 생성", () => {
 });
 ```
 
-이 시점에 `todo.ts`가 없으므로 테스트는 **실패한다(Red)**. 먼저 이것을 확인한다.
+이 시점에는 `todo.ts`가 없어 파일을 불러오지 못하는 오류가 난다. 이것은 아직 유효한 Red가 아니다. 동작 없는 뼈대를 만들면 단언 실패로 바뀌고, 그것이 Red다. 실제 출력은 [단원 M01](../M01-red-green-refactor/GUIDE.md)에서 볼 수 있다.
 
 ## 3. 최소 구현 (Green)
 
@@ -57,7 +57,7 @@ export function createTodo(input: { title: string }): Todo {
 
 ```
 docs/acceptance/todo-create.feature 의 인수 조건을 Vitest 테스트로 1:1 변환해 todo.test.ts 에 작성하라.
-구현 파일은 만들지 말고, 테스트를 실행해 실패하는 것을 먼저 보여라.
+구현 파일은 동작 없는 뼈대만 만들고, 테스트를 실행해 단언 실패를 먼저 보여라.
 그다음 그 테스트를 통과하는 최소 구현만 todo.ts 에 작성하라.
 인수 조건에 없는 기능은 추가하지 마라.
 ```

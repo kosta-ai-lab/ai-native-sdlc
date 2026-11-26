@@ -119,8 +119,12 @@
           "title": "구현과 TDD",
           "summary": "테스트를 먼저 작성해 기대 동작을 고정한 뒤 AI에게 구현을 맡깁니다.",
           "items": [
+            "t01",
+            "t02",
+            "t03",
             "tdd"
-          ]
+          ],
+          "note": "단원 M01부터 순서대로 따라 합니다."
         },
         {
           "title": "CI",
@@ -590,6 +594,114 @@
       ]
     },
     {
+      "id": "t01",
+      "kind": "guide",
+      "title": "TDD 한 바퀴: Red, Green, Refactor",
+      "by": "윤성열",
+      "source": "modules/06-coding-tdd/M01-red-green-refactor/README.md",
+      "meta": "따라 하기 가이드, 실습 출발점",
+      "summary": "인수조건 두 개를 테스트 목록, 실패하는 테스트, 최소 구현, 다듬기 순서로 직접 구현합니다.",
+      "how": [
+        "README에서 목적과 준비물을 확인합니다.",
+        "실습 출발점 todo-app을 저장소 밖으로 복사합니다.",
+        "GUIDE.md를 위에서부터 그대로 따라 합니다."
+      ],
+      "links": [
+        {
+          "label": "가이드 읽기",
+          "path": "modules/06-coding-tdd/M01-red-green-refactor/GUIDE.md",
+          "kind": "file"
+        },
+        {
+          "label": "목적과 준비물",
+          "path": "modules/06-coding-tdd/M01-red-green-refactor/README.md",
+          "kind": "file"
+        },
+        {
+          "label": "명령과 프롬프트 요약",
+          "path": "modules/06-coding-tdd/M01-red-green-refactor/SAMPLE.md",
+          "kind": "file"
+        },
+        {
+          "label": "실습 출발점",
+          "path": "modules/06-coding-tdd/M01-red-green-refactor/todo-app",
+          "kind": "dir"
+        }
+      ]
+    },
+    {
+      "id": "t02",
+      "kind": "guide",
+      "title": "TDD 순서를 규칙으로 고정하기",
+      "by": "윤성열",
+      "source": "modules/06-coding-tdd/M02-tdd-rules/README.md",
+      "meta": "따라 하기 가이드, 실습 출발점",
+      "summary": "같은 요청을 규칙 파일 없이 한 번, 넣고 한 번 실행해 AI의 작업 순서와 보고가 어떻게 달라지는지 기록합니다.",
+      "how": [
+        "README에서 목적과 준비물을 확인합니다.",
+        "실습 출발점 todo-app을 저장소 밖으로 복사합니다.",
+        "GUIDE.md를 위에서부터 그대로 따라 하며 관찰 기록표를 채웁니다."
+      ],
+      "links": [
+        {
+          "label": "가이드 읽기",
+          "path": "modules/06-coding-tdd/M02-tdd-rules/GUIDE.md",
+          "kind": "file"
+        },
+        {
+          "label": "목적과 준비물",
+          "path": "modules/06-coding-tdd/M02-tdd-rules/README.md",
+          "kind": "file"
+        },
+        {
+          "label": "명령과 프롬프트 요약",
+          "path": "modules/06-coding-tdd/M02-tdd-rules/SAMPLE.md",
+          "kind": "file"
+        },
+        {
+          "label": "실습 출발점",
+          "path": "modules/06-coding-tdd/M02-tdd-rules/todo-app",
+          "kind": "dir"
+        }
+      ]
+    },
+    {
+      "id": "t03",
+      "kind": "guide",
+      "title": "스킬과 훅으로 TDD 절차 지키기",
+      "by": "윤성열",
+      "source": "modules/06-coding-tdd/M03-test-first-skill/README.md",
+      "meta": "따라 하기 가이드, 완성본",
+      "summary": "test-first 스킬과 구현 담당 서브에이전트를 만들고, 구현 담당이 테스트를 고치지 못하게 훅으로 막습니다.",
+      "how": [
+        "README에서 목적과 준비물을 확인합니다.",
+        "단원 M02의 실습 출발점 todo-app을 저장소 밖으로 복사합니다.",
+        "GUIDE.md를 위에서부터 그대로 따라 합니다. 막히면 완성본과 비교합니다."
+      ],
+      "links": [
+        {
+          "label": "가이드 읽기",
+          "path": "modules/06-coding-tdd/M03-test-first-skill/GUIDE.md",
+          "kind": "file"
+        },
+        {
+          "label": "목적과 준비물",
+          "path": "modules/06-coding-tdd/M03-test-first-skill/README.md",
+          "kind": "file"
+        },
+        {
+          "label": "명령과 프롬프트 요약",
+          "path": "modules/06-coding-tdd/M03-test-first-skill/SAMPLE.md",
+          "kind": "file"
+        },
+        {
+          "label": "완성본",
+          "path": "modules/06-coding-tdd/M03-test-first-skill/harness/.claude",
+          "kind": "dir"
+        }
+      ]
+    },
+    {
       "id": "tdd",
       "kind": "rule",
       "title": "코딩 + TDD: 테스트 먼저, 구현은 그다음",
@@ -897,7 +1009,7 @@
       "how": [
         "README에서 목적을 확인합니다.",
         "GUIDE.md를 위에서부터 그대로 따라 합니다.",
-        "GUIDE.md를 마친 뒤 SAMPLE.md의 프롬프트로 이어지는 과제를 해 봅니다."
+        "GUIDE.md를 마친 뒤 SAMPLE.md의 프롬프트로 다음 과제를 해 봅니다."
       ],
       "links": [
         {
@@ -928,7 +1040,7 @@
       "how": [
         "README에서 목적을 확인합니다.",
         "GUIDE.md를 위에서부터 그대로 따라 합니다.",
-        "GUIDE.md를 마친 뒤 SAMPLE.md의 프롬프트로 이어지는 과제를 해 봅니다."
+        "GUIDE.md를 마친 뒤 SAMPLE.md의 프롬프트로 다음 과제를 해 봅니다."
       ],
       "links": [
         {
@@ -959,7 +1071,7 @@
       "how": [
         "README에서 목적을 확인합니다.",
         "GUIDE.md를 위에서부터 그대로 따라 합니다.",
-        "GUIDE.md를 마친 뒤 SAMPLE.md의 프롬프트로 이어지는 과제를 해 봅니다."
+        "GUIDE.md를 마친 뒤 SAMPLE.md의 프롬프트로 다음 과제를 해 봅니다."
       ],
       "links": [
         {
@@ -1251,6 +1363,14 @@
             "vibe",
             "sddc",
             "design"
+          ]
+        },
+        {
+          "label": "TDD 가이드",
+          "items": [
+            "t01",
+            "t02",
+            "t03"
           ]
         },
         {
