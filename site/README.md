@@ -16,7 +16,7 @@ Node.js 18.17 이상이 필요하며 설치할 의존성은 없습니다. 자세
 
 - 로드맵·단계·자료의 내용: `data/roadmap.json`
 - 단원 한눈에 보기의 내용: `data/unit-<단원>.json`. 원본은 가이드 문서이고, 요청문·명령·출력이 가이드와 같은지 `scripts/unit-check.mjs`가 대조합니다
-- 영상 자료의 목록: `data/videos.json`. 영상은 유튜브 주소로만 연결합니다. 목록의 형식은 `scripts/check.mjs`가 보고, 주소가 열리는지는 `npm run check:videos`로 확인합니다(네트워크 필요)
+- 영상 자료의 목록: `data/videos.json`. 영상은 유튜브 주소로만 연결하고, 섬네일만 유튜브의 그림 서버에서 불러옵니다. 목록의 형식은 `scripts/check.mjs`가 보고, 주소와 섬네일이 있는지는 `npm run check:videos`로 확인합니다(네트워크 필요)
 - 자료 날짜와 NEW·업데이트 표시: 손으로 적지 않고 빌드가 git 이력에서 읽습니다(`dist/data/dates.json`)
 - 고정 문구·메타데이터·meta CSP: `src/index.html`
 - 화면: `src/app.css`(스타일), `src/core.js`(계산), `src/app.js`(화면 동작)

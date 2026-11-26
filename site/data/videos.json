@@ -2,8 +2,9 @@
   "schema": 1,
   "checked": "2026-11-26",
   "names": {
+    "박준성": "박준성 교수",
     "윤성열": "윤성열 대표",
-    "박준성": "박준성 교수"
+    "황상철": "황상철 대표"
   },
   "channels": {
     "talkit": {
@@ -12,26 +13,854 @@
     }
   },
   "kinds": {
-    "webinar": [
-      "웨비나",
-      "한 시간 남짓 이어지는 강의입니다."
-    ],
-    "talk": [
-      "세미나 토크",
-      "주제 하나를 십 분 안팎으로 이야기합니다."
-    ],
-    "short": [
-      "1분 영상",
-      "생각 하나를 1분 안에 말합니다."
-    ]
+    "webinar": {
+      "name": "웨비나",
+      "about": "한 시간 넘게 이어지는 강의입니다.",
+      "shape": "wide"
+    },
+    "talk": {
+      "name": "세미나 토크",
+      "about": "주제 하나를 10분 안팎으로 이야기합니다.",
+      "shape": "wide"
+    },
+    "interview": {
+      "name": "인터뷰",
+      "about": "진행자와 마주 앉아 이야기합니다.",
+      "shape": "wide"
+    },
+    "short": {
+      "name": "쇼츠",
+      "about": "생각 하나를 1분 안팎으로 말합니다.",
+      "shape": "tall"
+    }
   },
   "topics": {
-    "ai": "AI 활용과 에이전트",
-    "env": "개발 환경과 도구",
+    "ai": "AI와 에이전트",
     "method": "개발 방법과 절차",
-    "work": "개발자의 일"
+    "arch": "아키텍처와 클라우드",
+    "env": "개발 환경과 도구",
+    "industry": "SW 산업과 기업",
+    "work": "개발자의 일과 성장"
   },
   "videos": [
+    {
+      "id": "amLsnMhNdHg",
+      "title": "AI 데이터 공학, 왜 지금 필요한가?",
+      "yt": "AI 데이터 공학, 왜 지금 필요한가? [박준성 회장/한국소프트웨어기술진흥협회, 토크아이티 웨비나]",
+      "date": "2026-11-24",
+      "seconds": 4404,
+      "kind": "webinar",
+      "channel": "talkit",
+      "by": [
+        "박준성"
+      ],
+      "topic": "ai"
+    },
+    {
+      "id": "Y4xi8pecj8U",
+      "title": "폭포수 개발, 이럴때 딱이다!",
+      "yt": "폭포수 개발, 이럴때 딱이다! [박준성 회장/한국소프트웨어기술진흥협회, 1분테크892@토크아이티] #shorts",
+      "date": "2026-11-20",
+      "seconds": 45,
+      "kind": "short",
+      "series": "1분테크 892",
+      "channel": "talkit",
+      "by": [
+        "박준성"
+      ],
+      "topic": "method"
+    },
+    {
+      "id": "r9pp-3vMFss",
+      "title": "SW설계 왜 중요한가?",
+      "yt": "SW설계 왜 중요한가? [박준성 회장/한국소프트웨어기술진흥협회, 1분테크960@토크아이티] #shorts",
+      "date": "2026-11-15",
+      "seconds": 39,
+      "kind": "short",
+      "series": "1분테크 960",
+      "channel": "talkit",
+      "by": [
+        "박준성"
+      ],
+      "topic": "method"
+    },
+    {
+      "id": "V3oU9GvW16Q",
+      "title": "기업 AX, 어디부터 시작하면 좋을까?",
+      "yt": "기업 AX, 어디부터 시작하면 좋을까? [황상철 대표 / 에스프레소북, 1분테크901@토크아이티] #shorts",
+      "date": "2026-11-01",
+      "seconds": 41,
+      "kind": "short",
+      "series": "1분테크 901",
+      "channel": "talkit",
+      "by": [
+        "황상철"
+      ],
+      "topic": "ai"
+    },
+    {
+      "id": "uTk9NvYM3ps",
+      "title": "새로운 기술제도를 잘 정착시키려면?",
+      "yt": "새로운 기술제도를 잘 정착시키려면? [박준성 회장/한국소프트웨어기술진흥협회, 1분테크959@토크아이티] #shorts",
+      "date": "2026-10-28",
+      "seconds": 27,
+      "kind": "short",
+      "series": "1분테크 959",
+      "channel": "talkit",
+      "by": [
+        "박준성"
+      ],
+      "topic": "industry"
+    },
+    {
+      "id": "9zigwRwnepI",
+      "title": "천만 라인 소스코드를, 몇 개 서비스로 나눌 것인가?",
+      "yt": "천만 라인 소스코드를, 몇 개 서비스로 나눌 것인가? [박준성 회장/한국소프트웨어기술진흥협회, 1분테크943@토크아이티] #shorts",
+      "date": "2026-10-20",
+      "seconds": 18,
+      "kind": "short",
+      "series": "1분테크 943",
+      "channel": "talkit",
+      "by": [
+        "박준성"
+      ],
+      "topic": "arch"
+    },
+    {
+      "id": "SgkIOVBL9cs",
+      "title": "AI시대, 뾰족한 서비스가 살아 남는다.",
+      "yt": "AI시대, 뾰족한 서비스가 살아 남는다. [황상철 대표 / 에스프레소북, 1분테크904@토크아이티] #shorts",
+      "date": "2026-10-05",
+      "seconds": 21,
+      "kind": "short",
+      "series": "1분테크 904",
+      "channel": "talkit",
+      "by": [
+        "황상철"
+      ],
+      "topic": "industry"
+    },
+    {
+      "id": "Qdx4HSVD2G8",
+      "title": "90년대 개발 방식으로 AI 시대를 버틸 수 있을까?",
+      "yt": "90년대 개발 방식으로 AI 시대를 버틸 수 있을까? [박준성 회장/한국소프트웨어기술진흥협회, 토크아이티 웨비나]",
+      "date": "2026-09-26",
+      "seconds": 5953,
+      "kind": "webinar",
+      "channel": "talkit",
+      "by": [
+        "박준성"
+      ],
+      "topic": "ai"
+    },
+    {
+      "id": "2rt4qh14sR8",
+      "title": "SI사업, 앞에서 남고 뒤로 까지는 이유",
+      "yt": "SI사업, 앞에서 남고 뒤로 까지는 이유 [박준성 회장/한국소프트웨어기술진흥협회, 1분테크893@토크아이티] #shorts",
+      "date": "2026-09-25",
+      "seconds": 40,
+      "kind": "short",
+      "series": "1분테크 893",
+      "channel": "talkit",
+      "by": [
+        "박준성"
+      ],
+      "topic": "industry"
+    },
+    {
+      "id": "BfAUeGV8_cU",
+      "title": "AI 코딩할수록, SW공학 중요해지는 이유",
+      "yt": "AI 코딩할수록, SW공학 중요해지는 이유 [박준성 회장/한국소프트웨어기술진흥협회, 세미남 933@토크아이티]",
+      "date": "2026-09-25",
+      "seconds": 449,
+      "kind": "talk",
+      "series": "세미남 933",
+      "channel": "talkit",
+      "by": [
+        "박준성"
+      ],
+      "topic": "ai"
+    },
+    {
+      "id": "bn8JDrsONl0",
+      "title": "우리나라에서 MSA가 진짜 필요한가?",
+      "yt": "우리나라에서 MSA가 진짜 필요한가? [박준성 회장/한국소프트웨어기술진흥협회, 세미남 932@토크아이티]",
+      "date": "2026-09-21",
+      "seconds": 460,
+      "kind": "talk",
+      "series": "세미남 932",
+      "channel": "talkit",
+      "by": [
+        "박준성"
+      ],
+      "topic": "arch"
+    },
+    {
+      "id": "K1UrMObDPiI",
+      "title": "쿠버네티스, MSA 강박에서 벗어나라!",
+      "yt": "쿠버네티스, MSA 강박에서 벗어나라! [박준성 회장/한국소프트웨어기술진흥협회, 1분테크920@토크아이티] #shorts",
+      "date": "2026-09-18",
+      "seconds": 44,
+      "kind": "short",
+      "series": "1분테크 920",
+      "channel": "talkit",
+      "by": [
+        "박준성"
+      ],
+      "topic": "arch"
+    },
+    {
+      "id": "l9zc8kM2iPE",
+      "title": "이제는 AI때문에 안 불안해요!",
+      "yt": "이제는 AI때문에 안 불안해요! [황상철 대표 / 에스프레소북, 1분테크905@토크아이티] #shorts",
+      "date": "2026-09-16",
+      "seconds": 49,
+      "kind": "short",
+      "series": "1분테크 905",
+      "channel": "talkit",
+      "by": [
+        "황상철"
+      ],
+      "topic": "work"
+    },
+    {
+      "id": "HEictd7WoJE",
+      "title": "MSA보다 현실적인 모듈리스 아키텍처",
+      "yt": "MSA보다 현실적인 모듈리스 아키텍처 [박준성 회장/한국소프트웨어기술진흥협회, 1분테크918@토크아이티] #shorts",
+      "date": "2026-09-14",
+      "seconds": 30,
+      "kind": "short",
+      "series": "1분테크 918",
+      "channel": "talkit",
+      "by": [
+        "박준성"
+      ],
+      "topic": "arch"
+    },
+    {
+      "id": "7q1KHmBLJho",
+      "title": "AI시대, 이런 개발자는 꼭 잡아라!",
+      "yt": "AI시대, 이런 개발자는 꼭 잡아라! [황상철 대표 / 에스프레소북, 1분테크903@토크아이티] #shorts",
+      "date": "2026-09-09",
+      "seconds": 44,
+      "kind": "short",
+      "series": "1분테크 903",
+      "channel": "talkit",
+      "by": [
+        "황상철"
+      ],
+      "topic": "work"
+    },
+    {
+      "id": "v-NPUJRUIbo",
+      "title": "우리나라에서 MSA가 진짜 필요한가?",
+      "yt": "우리나라에서 MSA가 진짜 필요한가? [박준성 회장/한국소프트웨어기술진흥협회, 1분테크883@토크아이티] #shorts",
+      "date": "2026-09-09",
+      "seconds": 41,
+      "kind": "short",
+      "series": "1분테크 883",
+      "channel": "talkit",
+      "by": [
+        "박준성"
+      ],
+      "topic": "arch"
+    },
+    {
+      "id": "XT7gJSJ8B7Y",
+      "title": "AI와 페어 코드리뷰하면 생기는 일",
+      "yt": "AI와 페어 코드리뷰하면 생기는 일 [황상철 대표 / 에스프레소북, 1분테크900@토크아이티] #shorts",
+      "date": "2026-09-08",
+      "seconds": 38,
+      "kind": "short",
+      "series": "1분테크 900",
+      "channel": "talkit",
+      "by": [
+        "황상철"
+      ],
+      "topic": "ai"
+    },
+    {
+      "id": "cTPva4BBV-4",
+      "title": "AI시대, 뾰족한 서비스가 살아남는다",
+      "yt": "AI시대, 뾰족한 서비스가 살아남는다  [황상철 대표 / 에스프레소북,  세미남920@토크아이티]",
+      "date": "2026-09-06",
+      "seconds": 386,
+      "kind": "talk",
+      "series": "세미남 920",
+      "channel": "talkit",
+      "by": [
+        "황상철"
+      ],
+      "topic": "industry"
+    },
+    {
+      "id": "RkyQBBknHLI",
+      "title": "MSA의 “마이크로”의 기준은 도대체 무엇일까?",
+      "yt": "MSA의 “마이크로”의 기준은 도대체 무엇일까? [박준성 회장/한국소프트웨어기술진흥협회, 1분테크884@토크아이티] #shorts",
+      "date": "2026-09-02",
+      "seconds": 44,
+      "kind": "short",
+      "series": "1분테크 884",
+      "channel": "talkit",
+      "by": [
+        "박준성"
+      ],
+      "topic": "arch"
+    },
+    {
+      "id": "3QZCDL0GXrw",
+      "title": "SW공학을 위한 AI",
+      "yt": "SW공학을 위한 AI [박준성 회장/한국소프트웨어기술진흥협회] #shorts #1분테크857",
+      "date": "2026-09-01",
+      "seconds": 44,
+      "kind": "short",
+      "series": "1분테크 857",
+      "channel": "talkit",
+      "by": [
+        "박준성"
+      ],
+      "topic": "ai"
+    },
+    {
+      "id": "tXktwrkIndY",
+      "title": "클라우드 네이티브 본질, 한 마디로 얘기하면?",
+      "yt": "클라우드 네이티브 본질, 한 마디로 얘기하면? [박준성 회장/한국소프트웨어기술진흥협회, 1분테크882@토크아이티] #shorts",
+      "date": "2026-08-29",
+      "seconds": 30,
+      "kind": "short",
+      "series": "1분테크 882",
+      "channel": "talkit",
+      "by": [
+        "박준성"
+      ],
+      "topic": "arch"
+    },
+    {
+      "id": "eUvGzBi_x1o",
+      "title": "효율적인 것은 AI로 대체된다.",
+      "yt": "효율적인 것은 AI로 대체된다. [황상철 대표 / 에스프레소북, 1분테크870@토크아이티] #shorts",
+      "date": "2026-08-28",
+      "seconds": 30,
+      "kind": "short",
+      "series": "1분테크 870",
+      "channel": "talkit",
+      "by": [
+        "황상철"
+      ],
+      "topic": "work"
+    },
+    {
+      "id": "LGERHuBHDMo",
+      "title": "AI 시대, 어떤 개발자와 사업해야 할까?",
+      "yt": "AI 시대, 어떤 개발자와 사업해야 할까? [황상철 대표 / 에스프레소북,  세미남917@토크아이티]",
+      "date": "2026-08-25",
+      "seconds": 295,
+      "kind": "talk",
+      "series": "세미남 917",
+      "channel": "talkit",
+      "by": [
+        "황상철"
+      ],
+      "topic": "work"
+    },
+    {
+      "id": "xCOvFAPAR2w",
+      "title": "클라우드-네이티브 AI 에이전트 코딩",
+      "yt": "클라우드-네이티브 AI 에이전트 코딩 [박준성 회장/한국소프트웨어기술진흥협회, 토크아이티 웨비나]",
+      "date": "2026-08-24",
+      "seconds": 5716,
+      "kind": "webinar",
+      "channel": "talkit",
+      "by": [
+        "박준성"
+      ],
+      "topic": "ai"
+    },
+    {
+      "id": "PJBU7uNA758",
+      "title": "오픈클로에서 헤르메스로 옮긴 이유",
+      "yt": "오픈클로에서 헤르메스로 옮긴 이유 [황상철 대표 / 에스프레소북, 1분테크871@토크아이티] #shorts",
+      "date": "2026-08-19",
+      "seconds": 32,
+      "kind": "short",
+      "series": "1분테크 871",
+      "channel": "talkit",
+      "by": [
+        "황상철"
+      ],
+      "topic": "ai"
+    },
+    {
+      "id": "WAWnh0ovYp0",
+      "title": "AI시대, 경쟁자도 10배 늘어난다! 나만의 경쟁력은 어떻게?",
+      "yt": "AI시대, 경쟁자도10배 늘어난다! 나만의 경쟁력은 어떻게? [황상철 대표 / 에스프레소북,  세미남916@토크아이티]",
+      "date": "2026-08-18",
+      "seconds": 652,
+      "kind": "talk",
+      "series": "세미남 916",
+      "channel": "talkit",
+      "by": [
+        "황상철"
+      ],
+      "topic": "work"
+    },
+    {
+      "id": "UsIKw2Gf2PU",
+      "title": "AI 코딩으로 쌓이는 기술 부채",
+      "yt": "AI 코딩으로  쌓이는 기술 부채 [황상철 대표 / 에스프레소북, 1분테크873@토크아이티] #shorts",
+      "date": "2026-08-17",
+      "seconds": 46,
+      "kind": "short",
+      "series": "1분테크 873",
+      "channel": "talkit",
+      "by": [
+        "황상철"
+      ],
+      "topic": "ai"
+    },
+    {
+      "id": "2i8CDaqH3LA",
+      "title": "AI시대, 당신이 뚝딱 만들면 남들도 뚝딱 만든다..",
+      "yt": "AI시대,  당신이 뚝딱 만둘면 남들도 뚝딱만든다.. [황상철 대표 / 에스프레소북, 1분테크872@토크아이티] #shorts",
+      "date": "2026-08-15",
+      "seconds": 36,
+      "kind": "short",
+      "series": "1분테크 872",
+      "channel": "talkit",
+      "by": [
+        "황상철"
+      ],
+      "topic": "work"
+    },
+    {
+      "id": "qWJ5Nzf68Iw",
+      "title": "AI 이전 vs AI 이후, 개발자 사업가의 Real Story",
+      "yt": "AI 이전 vs AI 이후, 개발자 사업가의 Real Story [황상철 대표 / 에스프레소북,  세미남915@토크아이티]",
+      "date": "2026-08-15",
+      "seconds": 768,
+      "kind": "talk",
+      "series": "세미남 915",
+      "channel": "talkit",
+      "by": [
+        "황상철"
+      ],
+      "topic": "work"
+    },
+    {
+      "id": "u5IVy4EjCHA",
+      "title": "AI 코딩시대, 30년 개발자는 어떻게 사업자로 살아남나? Real Story",
+      "yt": "AI 코딩시대, 30년 개발자는 어떻게 사업자로 살아남나? Real Story [황상철 대표 / 에스프레소북, 토크아이티 웨비나]",
+      "date": "2026-08-12",
+      "seconds": 5585,
+      "kind": "webinar",
+      "channel": "talkit",
+      "by": [
+        "황상철"
+      ],
+      "topic": "work"
+    },
+    {
+      "id": "CrbplAQfY9k",
+      "title": "SW공학을 처음 만든 곳이 NATO?",
+      "yt": "SW공학을 처음 만든 곳이 NATO? [박준성 회장/한국소프트웨어기술진흥협회, 1분테크858@토크아이티] #shorts",
+      "date": "2026-07-31",
+      "seconds": 45,
+      "kind": "short",
+      "series": "1분테크 858",
+      "channel": "talkit",
+      "by": [
+        "박준성"
+      ],
+      "topic": "method"
+    },
+    {
+      "id": "NQgKw1oqZ54",
+      "title": "IT는 진화한다! 갑자기 새로운 게 나오는 게 아니다.",
+      "yt": "IT는 진화한다! 갑자기 새로운 게 나오는게 아니다. [박준성 회장/한국소프트웨어기술진흥협회, 1분테크859@토크아이티 ] #shorts",
+      "date": "2026-07-28",
+      "seconds": 32,
+      "kind": "short",
+      "series": "1분테크 859",
+      "channel": "talkit",
+      "by": [
+        "박준성"
+      ],
+      "topic": "arch"
+    },
+    {
+      "id": "qUW8aXFJVJw",
+      "title": "AI 코딩시대, SW공학이 필요한 이유",
+      "yt": "AI 코딩시대, SW공학이 필요한 이유 [박준성 회장/한국소프트웨어기술진흥협회] #shorts #1분테크856",
+      "date": "2026-07-22",
+      "seconds": 30,
+      "kind": "short",
+      "series": "1분테크 856",
+      "channel": "talkit",
+      "by": [
+        "박준성"
+      ],
+      "topic": "ai"
+    },
+    {
+      "id": "R9HBvy8v_hM",
+      "title": "SW 공학 기반의 AI 에이전트 코딩",
+      "yt": "SW 공학 기반의 AI 에이전트 코딩 [박준성 회장/한국소프트웨어기술진흥협회, 토크아이티 웨비나]",
+      "date": "2026-07-18",
+      "seconds": 5446,
+      "kind": "webinar",
+      "channel": "talkit",
+      "by": [
+        "박준성"
+      ],
+      "topic": "ai"
+    },
+    {
+      "id": "bqk3tvMhy50",
+      "title": "글로벌 IT서비스 vs 한국 IT서비스, 역량 교육이 차이를 만든다!",
+      "yt": "글로벌 IT서비스 vs 한국 IT서비스, 역량 교육이 차이를 만든다!  [박준성 회장 / 한국SW기술진흥협회, 세미남892@토크아이티]",
+      "date": "2026-07-14",
+      "seconds": 537,
+      "kind": "talk",
+      "series": "세미남 892",
+      "channel": "talkit",
+      "by": [
+        "박준성"
+      ],
+      "topic": "industry"
+    },
+    {
+      "id": "Lk8UF6SEaGg",
+      "title": "SOA(서비스지향 아키텍처)는 권력의 함수이다.",
+      "yt": "SOA(서비스지향 아키텍처)는 권력의 함수이다. [박준성 회장 / 한국SW기술진흥협회@토크아이티] #shorts #1분테크802",
+      "date": "2026-06-26",
+      "seconds": 25,
+      "kind": "short",
+      "series": "1분테크 802",
+      "channel": "talkit",
+      "by": [
+        "박준성"
+      ],
+      "topic": "arch"
+    },
+    {
+      "id": "T6aaIeX3TQ4",
+      "title": "직원 역량을 객관적으로 평가하는 방법은?",
+      "yt": "직원 역량을 객관적으로 평가하는 방법은? [박준성 회장 / 한국SW기술진흥협회@토크아이티] #shorts #1분테크799",
+      "date": "2026-06-19",
+      "seconds": 41,
+      "kind": "short",
+      "series": "1분테크 799",
+      "channel": "talkit",
+      "by": [
+        "박준성"
+      ],
+      "topic": "work"
+    },
+    {
+      "id": "rcB58DRSAlM",
+      "title": "AI가 도와주는 Inflow Learning, 기업은 무엇을 준비할까?",
+      "yt": "AI가 도와주는 Inflow Learning,  기업은 무엇을 준비할까? [박준성 회장 / 한국SW기술진흥협회, 세미남891@토크아이티]",
+      "date": "2026-06-18",
+      "seconds": 294,
+      "kind": "talk",
+      "series": "세미남 891",
+      "channel": "talkit",
+      "by": [
+        "박준성"
+      ],
+      "topic": "work"
+    },
+    {
+      "id": "leuoww7jrNg",
+      "title": "한국 정부의 CIO는 국무총리??",
+      "yt": "한국 정부의 CIO는 국무총리?? [박준성 회장 / 한국SW기술진흥협회@토크아이티] #shorts #1분테크798",
+      "date": "2026-06-16",
+      "seconds": 58,
+      "kind": "short",
+      "series": "1분테크 798",
+      "channel": "talkit",
+      "by": [
+        "박준성"
+      ],
+      "topic": "industry"
+    },
+    {
+      "id": "qW0atkRW1fM",
+      "title": "AI 시대 인재는 어떻게 설계되는가? AI 교육 커리큘럼 아키텍처",
+      "yt": "AI 시대 인재는 어떻게 설계되는가? AI 교육 커리큘럼 아키텍처 [박준성 회장/한국소프트웨어기술진흥협회, 토크아이티 웨비나]",
+      "date": "2026-06-10",
+      "seconds": 5302,
+      "kind": "webinar",
+      "channel": "talkit",
+      "by": [
+        "박준성"
+      ],
+      "topic": "work"
+    },
+    {
+      "id": "g-NRKddI2pI",
+      "title": "성장 SaaS 기업 지표: Rule of 40",
+      "yt": "성장 SaaS 기업 지표: Rule of 40 [1분테크725@토크아이티, 박준성 회장 / 한국SW기술진흥협회] #shorts",
+      "date": "2026-06-03",
+      "seconds": 39,
+      "kind": "short",
+      "series": "1분테크 725",
+      "channel": "talkit",
+      "by": [
+        "박준성"
+      ],
+      "topic": "industry"
+    },
+    {
+      "id": "zzqZN6qAra8",
+      "title": "AI는 SaaS 기업에 기회 또는 위기?",
+      "yt": "AI는 SaaS 기업에 기회 또는 위기? [1분테크726@토크아이티, 박준성 회장 / 한국SW기술진흥협회] #shorts",
+      "date": "2026-05-29",
+      "seconds": 77,
+      "kind": "short",
+      "series": "1분테크 726",
+      "channel": "talkit",
+      "by": [
+        "박준성"
+      ],
+      "topic": "industry"
+    },
+    {
+      "id": "LhUeZihilaU",
+      "title": "IT서비스 조직 변화: 피라미드 to 오벨리스크",
+      "yt": "IT서비스 조직 변화: 피라미드 to 오벨리스크 [1분테크728@토크아이티, 박준성 회장 / 한국SW기술진흥협회] #shorts",
+      "date": "2026-05-25",
+      "seconds": 46,
+      "kind": "short",
+      "series": "1분테크 728",
+      "channel": "talkit",
+      "by": [
+        "박준성"
+      ],
+      "topic": "industry"
+    },
+    {
+      "id": "oQtWl4usGFU",
+      "title": "AI-native SaaS, 과금방식이 바뀐다",
+      "yt": "AI-native SaaS, 과금방식이 바뀐다 [1분테크727@토크아이티, 박준성 회장 / 한국SW기술진흥협회] #shorts",
+      "date": "2026-05-22",
+      "seconds": 49,
+      "kind": "short",
+      "series": "1분테크 727",
+      "channel": "talkit",
+      "by": [
+        "박준성"
+      ],
+      "topic": "industry"
+    },
+    {
+      "id": "CXxdCbo9uog",
+      "title": "AI 시대 SW 산업 전망 및 정책 대응",
+      "yt": "AI 시대 SW 산업 전망 및 정책 대응 [박준성 회장 / 한국소프트웨어기술진흥협회, 토크아이티 웨비나]",
+      "date": "2026-04-20",
+      "seconds": 5728,
+      "kind": "webinar",
+      "channel": "talkit",
+      "by": [
+        "박준성"
+      ],
+      "topic": "industry"
+    },
+    {
+      "id": "uS1Eo_wA-Xc",
+      "title": "제조업의 IT와 OT 융합이 어려운 이유",
+      "yt": "제조업의 IT와 OT 융합이 어려운 이유 [박준성 회장 / 한국SW기술진흥협회, 1분테크@토크아이티 #270] #shorts",
+      "date": "2026-02-20",
+      "seconds": 54,
+      "kind": "short",
+      "series": "1분테크 270",
+      "channel": "talkit",
+      "by": [
+        "박준성"
+      ],
+      "topic": "industry"
+    },
+    {
+      "id": "I6ZRJXlVLJQ",
+      "title": "인도의 인포시스가 글로벌 IT서비스 리딩기업이 된 이유",
+      "yt": "인도의 인포시스가 글로벌 IT서비스 리딩기업이 된 이유  [1분테크326@토크아이티, 박준성 회장 / 한국SW기술진흥협회] #shorts",
+      "date": "2025-08-17",
+      "seconds": 42,
+      "kind": "short",
+      "series": "1분테크 326",
+      "channel": "talkit",
+      "by": [
+        "박준성"
+      ],
+      "topic": "industry"
+    },
+    {
+      "id": "Ir4Aojr0N_4",
+      "title": "IT서비스기업 액센추어가 80만명의 직원을 뽑는 방법",
+      "yt": "IT서비스기업 액센추어가 80만명의 직원을 뽑는 방법 [1분테크324@토크아이티, 박준성 회장 / 한국SW기술진흥협회] #shorts",
+      "date": "2025-08-14",
+      "seconds": 26,
+      "kind": "short",
+      "series": "1분테크 324",
+      "channel": "talkit",
+      "by": [
+        "박준성"
+      ],
+      "topic": "industry"
+    },
+    {
+      "id": "-WofFNjmhWU",
+      "title": "왜곡된 한국 IT서비스 산업? 제조업 마인드가 만든 현실!",
+      "yt": "왜곡된 한국 IT서비스 산업? 제조업 마인드가 만든 현실!  [세미남669@토크아이티, 박준성 회장 / 한국SW기술진흥협회]",
+      "date": "2025-08-02",
+      "seconds": 437,
+      "kind": "talk",
+      "series": "세미남 669",
+      "channel": "talkit",
+      "by": [
+        "박준성"
+      ],
+      "topic": "industry"
+    },
+    {
+      "id": "0yKik53OHaw",
+      "title": "IT 서비스가 수익을 내는 기본 원칙은?",
+      "yt": "IT 서비스가 수익을 내는 기본 원칙은? [1분테크325@토크아이티, 박준성 회장 / 한국SW기술진흥협회] #shorts",
+      "date": "2025-08-02",
+      "seconds": 45,
+      "kind": "short",
+      "series": "1분테크 325",
+      "channel": "talkit",
+      "by": [
+        "박준성"
+      ],
+      "topic": "industry"
+    },
+    {
+      "id": "Ckknj1JLSyI",
+      "title": "성공하는 IT서비스 기업? 조직 운영에 해답이 있다!",
+      "yt": "성공하는 IT서비스 기업? 조직 운영에 해답이 있다!  [세미남668@토크아이티, 박준성 회장 / 한국SW기술진흥협회]",
+      "date": "2025-07-30",
+      "seconds": 600,
+      "kind": "talk",
+      "series": "세미남 668",
+      "channel": "talkit",
+      "by": [
+        "박준성"
+      ],
+      "topic": "industry"
+    },
+    {
+      "id": "8KGHXSpEbas",
+      "title": "IT서비스기업 CEO는 차라리 의사가 낫다?",
+      "yt": "IT서비스기업 CEO는 차라리 의사가 낫다? [1분테크327@토크아이티, 박준성 회장 / 한국SW기술진흥협회] #shorts",
+      "date": "2025-07-24",
+      "seconds": 55,
+      "kind": "short",
+      "series": "1분테크 327",
+      "channel": "talkit",
+      "by": [
+        "박준성"
+      ],
+      "topic": "industry"
+    },
+    {
+      "id": "zSvieI1G0Ws",
+      "title": "외주 중심 IT서비스의 구조적 문제는? 고용 창출, 지적자산 재활용, 수익성",
+      "yt": "외주 중심 IT서비스의 구조적 문제는? 고용 창출, 지적자산 재활용, 수익성 [세미남667@토크아이티, 박준성 회장 / 한국SW기술진흥협회]",
+      "date": "2025-07-24",
+      "seconds": 722,
+      "kind": "talk",
+      "series": "세미남 667",
+      "channel": "talkit",
+      "by": [
+        "박준성"
+      ],
+      "topic": "industry"
+    },
+    {
+      "id": "C0ozkRRY0LY",
+      "title": "국내 #1 IT서비스 미스터리 2: 고용증가 없는 성장",
+      "yt": "국내 #1 IT서비스 미스테리2:: 고용중가 없는 성장 [1분테크322@토크아이티, 박준성 회장 / 한국SW기술진흥협회] #shorts",
+      "date": "2025-07-21",
+      "seconds": 48,
+      "kind": "short",
+      "series": "1분테크 322",
+      "channel": "talkit",
+      "by": [
+        "박준성"
+      ],
+      "topic": "industry"
+    },
+    {
+      "id": "mW4idpEN5_0",
+      "title": "국내 #1 IT서비스기업 미스터리: 인당매출액 12억인데, 이익률은 8%?",
+      "yt": "국내 #1 IT서비스기업 미스테리: 인당매출액 12억인데, 이익률은 8%? [1분테크321@토크아이티, 박준성 회장 / 한국SW기술진흥협회] #shorts",
+      "date": "2025-07-20",
+      "seconds": 42,
+      "kind": "short",
+      "series": "1분테크 321",
+      "channel": "talkit",
+      "by": [
+        "박준성"
+      ],
+      "topic": "industry"
+    },
+    {
+      "id": "-aIp-Naamg8",
+      "title": "국내 IT서비스 기업의 이상한 현상, 높은 인당 매출액과 낮은 이익률",
+      "yt": "국내  IT서비스 기업의 이상한 현상, 높은 인당 매출액과 낮은 이익률 [세미남666@토크아이티, 박준성 회장 / 한국SW기술진흥협회]",
+      "date": "2025-07-18",
+      "seconds": 662,
+      "kind": "talk",
+      "series": "세미남 666",
+      "channel": "talkit",
+      "by": [
+        "박준성"
+      ],
+      "topic": "industry"
+    },
+    {
+      "id": "hJK3rMDEBAA",
+      "title": "한국 IT 서비스 무엇이 문제인가? 글로벌 벤치마킹으로 본 해법",
+      "yt": "한국 IT 서비스 무엇이 문제인가? 글로벌 벤치마킹으로 본 해법  [토크아이티 웨비나. 박준성 회장/한국SW기술진흥협회]",
+      "date": "2025-07-05",
+      "seconds": 6089,
+      "kind": "webinar",
+      "channel": "talkit",
+      "by": [
+        "박준성"
+      ],
+      "topic": "industry"
+    },
+    {
+      "id": "ifN1Tg3y7c8",
+      "title": "타이어의 디지털혁신: 굿이어 사례",
+      "yt": "타이어의 디지털혁신: 굿이어 사례 [1분테크209@토크아이티, 박준성 회장 / 한국SW기술진흥협회] #shorts",
+      "date": "2025-07-05",
+      "seconds": 55,
+      "kind": "short",
+      "series": "1분테크 209",
+      "channel": "talkit",
+      "by": [
+        "박준성"
+      ],
+      "topic": "industry"
+    },
+    {
+      "id": "SPqlGEC7W9w",
+      "title": "중국 테크기업이 발전하는 이유",
+      "yt": "중국 테크기업이 발전하는 이유 [1분테크208@토크아이티, 박준성 회장 / 한국SW기술진흥협회] #shorts",
+      "date": "2025-06-28",
+      "seconds": 37,
+      "kind": "short",
+      "series": "1분테크 208",
+      "channel": "talkit",
+      "by": [
+        "박준성"
+      ],
+      "topic": "industry"
+    },
     {
       "id": "Nzvdqehpoeo",
       "title": "AI로 인한, 개발 아웃소싱 사업의 위기",
@@ -44,7 +873,7 @@
       "by": [
         "윤성열"
       ],
-      "topic": "work"
+      "topic": "industry"
     },
     {
       "id": "TgjgBnyOdJo",
@@ -103,6 +932,20 @@
       "topic": "env"
     },
     {
+      "id": "P9906z3nV3Y",
+      "title": "LLM서빙 프레임워크: Ollama, vLLM, SGLang",
+      "yt": "LLM서빙 프레임워크: Ollama, vLLM, SGLang [1분테크286@토크아이티, 윤성열 대표 / 드림플로우] #shorts",
+      "date": "2025-06-07",
+      "seconds": 54,
+      "kind": "short",
+      "series": "1분테크 286",
+      "channel": "talkit",
+      "by": [
+        "윤성열"
+      ],
+      "topic": "ai"
+    },
+    {
       "id": "-QOZE3EaNi0",
       "title": "AI는 Glue(접착제)이다.",
       "yt": "AI는 Glue(접착제)이다. [1분테크284@토크아이티, 윤성열 대표 / 드림플로우] #shorts",
@@ -131,6 +974,20 @@
       "topic": "ai"
     },
     {
+      "id": "irqSEwJpb80",
+      "title": "폐쇄망 환경에서 바이브 코딩! 무엇을 준비할 것인가?",
+      "yt": "폐쇄망 환경에서 바이브 코딩! 무엇을 준비할 것인가? [세미남641@토크아이티, 윤성열 대표 / 드림플로우]",
+      "date": "2025-06-04",
+      "seconds": 472,
+      "kind": "talk",
+      "series": "세미남 641",
+      "channel": "talkit",
+      "by": [
+        "윤성열"
+      ],
+      "topic": "ai"
+    },
+    {
       "id": "BO1iCzHJIbE",
       "title": "n8n 워크플로우와 MCP가 만난다면?",
       "yt": "n8n 워크플로우와 MCP가 만난다면?  [세미남640@토크아이티, 윤성열 대표 / 드림플로우]",
@@ -143,6 +1000,20 @@
         "윤성열"
       ],
       "topic": "ai"
+    },
+    {
+      "id": "ZOpLkQlIhCs",
+      "title": "EA(Enterprise Architecture) vs ISP",
+      "yt": "EA(Enterprise Architecture) vs ISP [1분테크278@토크아이티, 박준성 회장 / 한국SW기술진흥협회] #shorts",
+      "date": "2025-06-01",
+      "seconds": 55,
+      "kind": "short",
+      "series": "1분테크 278",
+      "channel": "talkit",
+      "by": [
+        "박준성"
+      ],
+      "topic": "arch"
     },
     {
       "id": "DHGDqCDGv2Y",
@@ -215,6 +1086,103 @@
       "topic": "ai"
     },
     {
+      "id": "4DHVWJzDGFQ",
+      "title": "전사 AI 아키텍처가 기업에 필요한 이유",
+      "yt": "전사 AI 아키텍처가 기업에 필요한 이유 [1분테크279@토크아이티, 박준성 회장 / 한국SW기술진흥협회] #shorts",
+      "date": "2025-05-17",
+      "seconds": 51,
+      "kind": "short",
+      "series": "1분테크 279",
+      "channel": "talkit",
+      "by": [
+        "박준성"
+      ],
+      "topic": "arch"
+    },
+    {
+      "id": "OdWNAAHydOQ",
+      "title": "벤치마킹을 위한 하버드 비즈니스 Case Studies 강추합니다!",
+      "yt": "벤치마킹을 위한 하버드 비즈니스 Case Studies 강추합니다!  [1분테크268@토크아이티, 박준성 회장 / 한국SW기술진흥협회] #shorts",
+      "date": "2025-05-15",
+      "seconds": 50,
+      "kind": "short",
+      "series": "1분테크 268",
+      "channel": "talkit",
+      "by": [
+        "박준성"
+      ],
+      "topic": "industry"
+    },
+    {
+      "id": "W-HkyX9DVEU",
+      "title": "코드의 리듬을 잡아라: 바이브 코딩부터 MCP 워크플로우까지",
+      "yt": "코드의 리듬을 잡아라 : 바이브 코딩부터 MCP 워크플로우까지 [토크아이티 웨비나, 윤성열 대표/드림플로우]",
+      "date": "2025-05-15",
+      "seconds": 4503,
+      "kind": "webinar",
+      "channel": "talkit",
+      "by": [
+        "윤성열"
+      ],
+      "topic": "ai"
+    },
+    {
+      "id": "I8W8EUrtNXo",
+      "title": "전사 AI 아키텍처, 왜 필요하고 어떻게 준비하는가?",
+      "yt": "전사 AI 아키텍처, 왜 필요하고 어떻게 준비하는가?  [세미남633@토크아이티, 박준성 회장 / 한국SW기술진흥협회]",
+      "date": "2025-05-14",
+      "seconds": 825,
+      "kind": "talk",
+      "series": "세미남 633",
+      "channel": "talkit",
+      "by": [
+        "박준성"
+      ],
+      "topic": "arch"
+    },
+    {
+      "id": "pbCj-Zy95xs",
+      "title": "공정 혁신 vs 제품 혁신",
+      "yt": "공정 혁신 vs 제품 혁신 [1분테크210@토크아이티, 박준성 회장 / 한국SW기술진흥협회] #shorts",
+      "date": "2025-05-13",
+      "seconds": 55,
+      "kind": "short",
+      "series": "1분테크 210",
+      "channel": "talkit",
+      "by": [
+        "박준성"
+      ],
+      "topic": "industry"
+    },
+    {
+      "id": "OuuqK3mlf6k",
+      "title": "글로벌은 EA(Enterprise Architecture)가 기본! 한국은 왜 ISP에서 멈췄을까?",
+      "yt": "글로벌은 EA(Enterprise Architecture)가 기본! 한국은 왜 ISP에서 멈췄을까? [세미남632@토크아이티,  박준성 회장 / 한국SW기술진흥협회]",
+      "date": "2025-05-12",
+      "seconds": 438,
+      "kind": "talk",
+      "series": "세미남 632",
+      "channel": "talkit",
+      "by": [
+        "박준성"
+      ],
+      "topic": "arch"
+    },
+    {
+      "id": "6ByR3Y2pK9k",
+      "title": "제조 혁신의 첫 걸음, IT OT 융합 왜 힘든가?",
+      "yt": "제조 혁신의 첫 걸음, IT OT 융합 왜 힘든가?  [세미남581@토크아이티, 박준성 회장 / 한국SW기술진흥협회]",
+      "date": "2025-05-09",
+      "seconds": 597,
+      "kind": "talk",
+      "series": "세미남 581",
+      "channel": "talkit",
+      "by": [
+        "박준성"
+      ],
+      "topic": "industry"
+    },
+    {
       "id": "RS2OHWEvwns",
       "title": "AI 기술, 시간이 답입니다!",
       "yt": "AI 기술, 시간이 답입니다! [1분테크206@토크아이티, 윤성열 대표 / 드림플로우]  #shorts",
@@ -222,6 +1190,48 @@
       "seconds": 26,
       "kind": "short",
       "series": "1분테크 206",
+      "channel": "talkit",
+      "by": [
+        "윤성열"
+      ],
+      "topic": "ai"
+    },
+    {
+      "id": "3qAcyWwLa7I",
+      "title": "전사 AI 아키텍처의 모든 것: 전략부터 설계까지",
+      "yt": "전사 AI 아키텍처의 모든 것: 전략부터 설계까지 [토크아이티 프리미엄 웨비나, 박준성 회장/한국SW기술진흥협회]",
+      "date": "2025-04-29",
+      "seconds": 4794,
+      "kind": "webinar",
+      "series": "프리미엄 웨비나",
+      "channel": "talkit",
+      "by": [
+        "박준성"
+      ],
+      "topic": "arch"
+    },
+    {
+      "id": "0N2ZeJYR23U",
+      "title": "IoT(사물인터넷)의 탄생",
+      "yt": "IoT(사물인터넷)의 탄생  [1분테크230@토크아이티, 박준성 회장 / 한국SW기술진흥협회] #shorts",
+      "date": "2025-04-16",
+      "seconds": 48,
+      "kind": "short",
+      "series": "1분테크 230",
+      "channel": "talkit",
+      "by": [
+        "박준성"
+      ],
+      "topic": "arch"
+    },
+    {
+      "id": "UITlTK1NWrE",
+      "title": "간단한 로컬RAG, AnythingLLM",
+      "yt": "간단한 로컬RAG, AnythingLLM [1분테크240@토크아이티, 윤성열 대표 / 드림플로우] #shorts",
+      "date": "2025-04-14",
+      "seconds": 50,
+      "kind": "short",
+      "series": "1분테크 240",
       "channel": "talkit",
       "by": [
         "윤성열"
@@ -243,6 +1253,20 @@
       "topic": "ai"
     },
     {
+      "id": "PbMEMs_Ib9g",
+      "title": "LM Studio for 로컬 LLM",
+      "yt": "LM Studio for 로컬 LLM [1분테크238@토크아이티, 윤성열 대표 / 드림플로우] #shorts",
+      "date": "2025-04-11",
+      "seconds": 49,
+      "kind": "short",
+      "series": "1분테크 238",
+      "channel": "talkit",
+      "by": [
+        "윤성열"
+      ],
+      "topic": "ai"
+    },
+    {
       "id": "TSoievx9YdY",
       "title": "LLM, AI 툴에 바인딩 되지 마라!",
       "yt": "LLM, AI 툴에 바인딩 되지 마라! [1분테크222@토크아이티, 윤성열 대표 / 드림플로우] #shorts",
@@ -250,6 +1274,34 @@
       "seconds": 36,
       "kind": "short",
       "series": "1분테크 222",
+      "channel": "talkit",
+      "by": [
+        "윤성열"
+      ],
+      "topic": "ai"
+    },
+    {
+      "id": "NEIdpjTkIPw",
+      "title": "점점 보편화될 AI기술, 너무 조급하지 마라!",
+      "yt": "점점 보편화될 AI기술, 너무 조급하지 마라!  [1분테크180@토크아이티, 박준성 회장 / 한국SW기술진흥협회]  #shorts",
+      "date": "2025-04-06",
+      "seconds": 52,
+      "kind": "short",
+      "series": "1분테크 180",
+      "channel": "talkit",
+      "by": [
+        "박준성"
+      ],
+      "topic": "ai"
+    },
+    {
+      "id": "aCZgSjm4A_E",
+      "title": "내 PC에서 로컬LLM 돌리기! LM Studio vs AnythingLLM vs NotebookLM",
+      "yt": "내 PC에서 로컬LLM 돌리기! LMStudio vs AnythingLLM vs NotebookLM  [세미남590@토크아이티, 윤성열 대표 / 드림플로우]",
+      "date": "2025-04-04",
+      "seconds": 557,
+      "kind": "talk",
+      "series": "세미남 590",
       "channel": "talkit",
       "by": [
         "윤성열"
@@ -271,6 +1323,34 @@
       "topic": "work"
     },
     {
+      "id": "BwiEU881JXM",
+      "title": "LLM모델에 필요한 GPU사양 쉽게 알아보기",
+      "yt": "LLM모델에 필요한 GPU사양 쉽게 알아보기  [1분테크223@토크아이티, 윤성열 대표 / 드림플로우] #shorts",
+      "date": "2025-03-30",
+      "seconds": 42,
+      "kind": "short",
+      "series": "1분테크 223",
+      "channel": "talkit",
+      "by": [
+        "윤성열"
+      ],
+      "topic": "env"
+    },
+    {
+      "id": "UK4QwKJDf-Q",
+      "title": "LLM 서빙 프레임워크로 프라이빗 AI구축하기 feat. Ollama, vLLM, SGLang",
+      "yt": "LLM 서빙 프레임워크로 프라이빗 AI구축하기  feat. Ollama, vLLM, SGLang [세미남589@토크아이티, 윤성열 대표 / 드림플로우]",
+      "date": "2025-03-28",
+      "seconds": 491,
+      "kind": "talk",
+      "series": "세미남 589",
+      "channel": "talkit",
+      "by": [
+        "윤성열"
+      ],
+      "topic": "ai"
+    },
+    {
       "id": "8kvD4f7b5Pk",
       "title": "엔비디아 GPU사양 선택 기준",
       "yt": "엔비디아 GPU사양 선택 기준 [1분테크220@토크아이티, 윤성열 대표 / 드림플로우] #shorts",
@@ -278,6 +1358,34 @@
       "seconds": 51,
       "kind": "short",
       "series": "1분테크 220",
+      "channel": "talkit",
+      "by": [
+        "윤성열"
+      ],
+      "topic": "env"
+    },
+    {
+      "id": "PWmt9l8JwSw",
+      "title": "채팅중심 LLM, LM Studio vs AnythingLLM",
+      "yt": "채팅중심 LLM, LM Studio vs AnythingLLM [1분테크224@토크아이티, 윤성열 대표 / 드림플로우] #shorts",
+      "date": "2025-03-25",
+      "seconds": 44,
+      "kind": "short",
+      "series": "1분테크 224",
+      "channel": "talkit",
+      "by": [
+        "윤성열"
+      ],
+      "topic": "ai"
+    },
+    {
+      "id": "AgF1h3E7wAQ",
+      "title": "PostgreSQL을 Vector DB로 활용",
+      "yt": "PostgreSQL를 Vector DB로 활용 [1분테크193@토크아이티, 윤성열 대표 / 드림플로우] #shorts",
+      "date": "2025-03-23",
+      "seconds": 47,
+      "kind": "short",
+      "series": "1분테크 193",
       "channel": "talkit",
       "by": [
         "윤성열"
@@ -299,6 +1407,118 @@
       "topic": "env"
     },
     {
+      "id": "U7hq9zJvDx4",
+      "title": "경량화 LLM을 위한 양자화(Quantization)",
+      "yt": "경량화 LLM을 위한 양자화(Quantization) [1분테크219@토크아이티, 윤성열 대표 / 드림플로우] #shorts",
+      "date": "2025-03-19",
+      "seconds": 60,
+      "kind": "short",
+      "series": "1분테크 219",
+      "channel": "talkit",
+      "by": [
+        "윤성열"
+      ],
+      "topic": "ai"
+    },
+    {
+      "id": "GnQ7uIPuRFM",
+      "title": "프라이빗 AI를 위한 오픈소스 LLM: 증류모델과 양자화는 필수!",
+      "yt": "프라이빗 AI를 위한 오픈소스 LLM: 증류모델과 양자화는 필수!  [세미남588@토크아이티, 윤성열 대표 / 드림플로우]",
+      "date": "2025-03-17",
+      "seconds": 953,
+      "kind": "talk",
+      "series": "세미남 588",
+      "channel": "talkit",
+      "by": [
+        "윤성열"
+      ],
+      "topic": "ai"
+    },
+    {
+      "id": "hkF1A6a8T24",
+      "title": "추론 LLM vs 일반 LLM",
+      "yt": "추론 LLM vs 일반 LLM [1분테크218@토크아이티, 윤성열 대표 / 드림플로우] #shorts",
+      "date": "2025-03-17",
+      "seconds": 59,
+      "kind": "short",
+      "series": "1분테크 218",
+      "channel": "talkit",
+      "by": [
+        "윤성열"
+      ],
+      "topic": "ai"
+    },
+    {
+      "id": "fA_Ea-vACck",
+      "title": "증류 LLM모델이란 무엇인가?",
+      "yt": "증류 LLM모델이란 무엇인가? [1분테크217@토크아이티, 윤성열 대표 / 드림플로우] #shorts",
+      "date": "2025-03-16",
+      "seconds": 46,
+      "kind": "short",
+      "series": "1분테크 217",
+      "channel": "talkit",
+      "by": [
+        "윤성열"
+      ],
+      "topic": "ai"
+    },
+    {
+      "id": "xO-8eqFiaNQ",
+      "title": "개발 유지보수 지옥탈출! Cursor AI Composer",
+      "yt": "개발 유지보수 지옥탈출! Cursor AI Composer  [세미남575@토크아이티, 윤성열 대표 / 드림플로우]",
+      "date": "2025-03-10",
+      "seconds": 658,
+      "kind": "talk",
+      "series": "세미남 575",
+      "channel": "talkit",
+      "by": [
+        "윤성열"
+      ],
+      "topic": "ai"
+    },
+    {
+      "id": "T8jLuGJsVhs",
+      "title": "IaaS 클라우드의 탄생",
+      "yt": "IaaS 클라우드의 탄생 [1분테크214@토크아이티, 박준성 회장 / 한국SW기술진흥협회] #shorts",
+      "date": "2025-03-09",
+      "seconds": 52,
+      "kind": "short",
+      "series": "1분테크 214",
+      "channel": "talkit",
+      "by": [
+        "박준성"
+      ],
+      "topic": "arch"
+    },
+    {
+      "id": "wxmZeCbEYes",
+      "title": "연결 관점으로 본 60년 인터넷 역사 10분요약",
+      "yt": "연결 관점으로 본 60년 인터넷 역사 10분요약 [세미남579@토크아이티, 박준성 회장 / 한국SW기술진흥협회]",
+      "date": "2025-03-07",
+      "seconds": 570,
+      "kind": "talk",
+      "series": "세미남 579",
+      "channel": "talkit",
+      "by": [
+        "박준성"
+      ],
+      "topic": "arch"
+    },
+    {
+      "id": "IWKQPnr89Bs",
+      "title": "백엔드 as a Service: Firebase vs Supabase",
+      "yt": "백엔드 as a Service: Firebase vs Supabase [1분테크189@토크아이티, 윤성열 대표 / 드림플로우] #shorts",
+      "date": "2025-03-06",
+      "seconds": 48,
+      "kind": "short",
+      "series": "1분테크 189",
+      "channel": "talkit",
+      "by": [
+        "윤성열"
+      ],
+      "topic": "env"
+    },
+    {
       "id": "TboCS0Yt-cU",
       "title": "프라이빗 AI기반 SI/서비스개발 환경 구축 전략 feat. AI 개발툴",
       "yt": "프라이빗 AI기반 SI/서비스개발 환경 구축 전략feat. AI 개발툴 [토크아이티 프리미엄 웨비나, 윤성열 대표 /드림플로우]",
@@ -306,6 +1526,90 @@
       "seconds": 4409,
       "kind": "webinar",
       "series": "프리미엄 웨비나",
+      "channel": "talkit",
+      "by": [
+        "윤성열"
+      ],
+      "topic": "ai"
+    },
+    {
+      "id": "6U80kFhAFbc",
+      "title": "RAG기반 챗봇, n8n 워크플로우 자동화로 쉽게 구현하기",
+      "yt": "RAG기반 챗봇, n8n 워크플로우 자동화로 쉽게 구현하기  [세미남576@토크아이티, 윤성열 대표 / 드림플로우]",
+      "date": "2025-03-03",
+      "seconds": 503,
+      "kind": "talk",
+      "series": "세미남 576",
+      "channel": "talkit",
+      "by": [
+        "윤성열"
+      ],
+      "topic": "ai"
+    },
+    {
+      "id": "09g0Ak_dRug",
+      "title": "Bolt.new vs Copilot vs Cursor IDE",
+      "yt": "Bolt.new vs Copilot vs Cursor IDE [1분테크212@토크아이티, 윤성열 대표 / 드림플로우] #shorts",
+      "date": "2025-03-02",
+      "seconds": 53,
+      "kind": "short",
+      "series": "1분테크 212",
+      "channel": "talkit",
+      "by": [
+        "윤성열"
+      ],
+      "topic": "ai"
+    },
+    {
+      "id": "W2g_0pJ69Cw",
+      "title": "제조DX는 공정 혁신에서 제품 혁신으로! Fast Follower에서 First Mover로!",
+      "yt": "제조DX는 공정 혁신에서 제품 혁신으로! Fast Follower에서 First Mover로!  [세미남580@토크아이티, 박준성 회장 / 한국SW기술진흥협회]",
+      "date": "2025-03-01",
+      "seconds": 657,
+      "kind": "talk",
+      "series": "세미남 580",
+      "channel": "talkit",
+      "by": [
+        "박준성"
+      ],
+      "topic": "industry"
+    },
+    {
+      "id": "_J0V39wAwk0",
+      "title": "IT, OT 융합은 정부에서부터!",
+      "yt": "IT, OT 융합은 정부에서부터!  [1분테크211@토크아이티, 박준성 회장 / 한국SW기술진흥협회]  #shorts",
+      "date": "2025-02-28",
+      "seconds": 32,
+      "kind": "short",
+      "series": "1분테크 211",
+      "channel": "talkit",
+      "by": [
+        "박준성"
+      ],
+      "topic": "industry"
+    },
+    {
+      "id": "leOYaxsoBec",
+      "title": "생성형 AI 다음에 올 AI의 새 물결 “물리적 AI” - 한국 제조업에 기회인가? 위험인가?",
+      "yt": "생성형 AI 다음에 올 AI의 새 물결 “물리적 AI”- 한국 제조업에 기회인가? 위험인가? [토크아이티 프리미엄웨비나, 박준성 회장/한국SW기술진흥협회]",
+      "date": "2025-02-27",
+      "seconds": 4209,
+      "kind": "webinar",
+      "series": "프리미엄 웨비나",
+      "channel": "talkit",
+      "by": [
+        "박준성"
+      ],
+      "topic": "industry"
+    },
+    {
+      "id": "ugqa-6ntLwU",
+      "title": "AI가 웹 개발을 바꾼다! bolt.new",
+      "yt": "AI가 웹 개발을 바꾼다! bolt.new  [세미남571@토크아이티, 윤성열 대표 / 드림플로우]",
+      "date": "2025-02-25",
+      "seconds": 555,
+      "kind": "talk",
+      "series": "세미남 571",
       "channel": "talkit",
       "by": [
         "윤성열"
@@ -327,6 +1631,20 @@
       "topic": "work"
     },
     {
+      "id": "g8R_bCmXtJY",
+      "title": "PostgreSQL 인기비결! AI 시대에도 강력한 이유는? feat. 벡터DB, 하이브리드 DB",
+      "yt": "PostgreSQL 인기비결! AI 시대에도 강력한 이유는?feat. 벡터DB, 하이브리드 DB [세미남570@토크아이티, 윤성열 대표 / 드림플로우]",
+      "date": "2025-02-12",
+      "seconds": 393,
+      "kind": "talk",
+      "series": "세미남 570",
+      "channel": "talkit",
+      "by": [
+        "윤성열"
+      ],
+      "topic": "env"
+    },
+    {
       "id": "AOSb78Qq3_w",
       "title": "백엔드 엔지니어의 직무는 어떻게 변할까?",
       "yt": "백엔드 엔지니어의 직무는 어떻게 변할까? [1분테크190@토크아이티, 윤성열 대표 / 드림플로우] #shorts",
@@ -339,6 +1657,20 @@
         "윤성열"
       ],
       "topic": "work"
+    },
+    {
+      "id": "m6dG_YVeWKA",
+      "title": "마이크로 SaaS, SaaS시장의 기회 또는 위기?",
+      "yt": "마이크로 SaaS, SaaS시장의 기회 또는 위기?  [1분테크 179@토크아이티,  박준성 회장 / 한국SW기술진흥협회] #shorts",
+      "date": "2025-02-08",
+      "seconds": 40,
+      "kind": "short",
+      "series": "1분테크 179",
+      "channel": "talkit",
+      "by": [
+        "박준성"
+      ],
+      "topic": "industry"
     },
     {
       "id": "bbvIjm8jSWU",
@@ -369,6 +1701,62 @@
       "topic": "ai"
     },
     {
+      "id": "m_9y6Wzdm08",
+      "title": "AI 에이전트의 3요소: 자율성, 상호작용, 다양성 feat. Cursor IDE",
+      "yt": "AI 에이전트의 3요소: 자율성, 상호작용, 다양성  feat. Cursor IDE  [세미남568@토크아이티, 윤성열 대표 / 드림플로우]",
+      "date": "2025-02-03",
+      "seconds": 700,
+      "kind": "talk",
+      "series": "세미남 568",
+      "channel": "talkit",
+      "by": [
+        "윤성열"
+      ],
+      "topic": "ai"
+    },
+    {
+      "id": "FONwqtWwZa8",
+      "title": "DORA 데브옵스 4대 성공지표",
+      "yt": "DORA 데브옵스 4대 성공지표 [세미남515@토크아이티, 박준성 회장 / 한국SW기술진흥협회]",
+      "date": "2025-01-31",
+      "seconds": 463,
+      "kind": "talk",
+      "series": "세미남 515",
+      "channel": "talkit",
+      "by": [
+        "박준성"
+      ],
+      "topic": "method"
+    },
+    {
+      "id": "eimi7CQoWAs",
+      "title": "애자일한 70대 회장님!",
+      "yt": "애자일한 70대 회장님!  [1분테크178@토크아이티, 박준성 회장 / 한국SW기술진흥협회] #shorts",
+      "date": "2025-01-31",
+      "seconds": 44,
+      "kind": "short",
+      "series": "1분테크 178",
+      "channel": "talkit",
+      "by": [
+        "박준성"
+      ],
+      "topic": "work"
+    },
+    {
+      "id": "nEBMXufWs8I",
+      "title": "노코드 플랫폼으로 서비스를 만들려고 하나요? 기획, 개발, 운영 Tips!",
+      "yt": "노코드 플랫폼으로 서비스를 만들려고 하나요? 기획, 개발, 운영 Tips!  [세미남566@토크아이티, 박준성 회장 / 한국SW기술진흥협회]",
+      "date": "2025-01-28",
+      "seconds": 717,
+      "kind": "talk",
+      "series": "세미남 566",
+      "channel": "talkit",
+      "by": [
+        "박준성"
+      ],
+      "topic": "env"
+    },
+    {
       "id": "-wXT7nVR1pQ",
       "title": "디지털 시대의 문제 해결: AI, 로우코드, 서버리스의 조화",
       "yt": "디지털 시대의 문제 해결:AI, 로우코드, 서버리스의 조화 [토크아이티 프리미엄웨비나, 윤성열 대표 /드림플로우 ]",
@@ -381,6 +1769,62 @@
         "윤성열"
       ],
       "topic": "ai"
+    },
+    {
+      "id": "lUy1eUWgFqs",
+      "title": "나는 왜 SW 온라인 교육 사이트를 만들었는가?",
+      "yt": "나는 왜 SW 온라인 교육 사이트를 만들었는가? [세미남565@토크아이티,  박준성 회장 / 한국SW기술진흥협회]",
+      "date": "2025-01-19",
+      "seconds": 859,
+      "kind": "talk",
+      "series": "세미남 565",
+      "channel": "talkit",
+      "by": [
+        "박준성"
+      ],
+      "topic": "work"
+    },
+    {
+      "id": "nXGr_Rd6eu4",
+      "title": "가트너가 예측하는 SW개발 형태! 개발자는 어디로?",
+      "yt": "가트너가 예측하는 SW개발 형태! 개발자는 어디로? [1분테크181@토크아이티, 박준성 회장 / 한국SW기술진흥협회] #shorts",
+      "date": "2025-01-19",
+      "seconds": 45,
+      "kind": "short",
+      "series": "1분테크 181",
+      "channel": "talkit",
+      "by": [
+        "박준성"
+      ],
+      "topic": "work"
+    },
+    {
+      "id": "nzfBQnE9dvM",
+      "title": "SaaS의 가장 큰 위험은 마이크로 SaaS 이다.",
+      "yt": "SaaS의 가장 큰 위험은 마이크로 SaaS 이다. [세미남564@토크아이티, 박준성 회장 / 한국SW기술진흥협회]",
+      "date": "2025-01-13",
+      "seconds": 473,
+      "kind": "talk",
+      "series": "세미남 564",
+      "channel": "talkit",
+      "by": [
+        "박준성"
+      ],
+      "topic": "industry"
+    },
+    {
+      "id": "Uo_LMggS53Q",
+      "title": "데브옵스 바이블, DevOps Handbook이 제시하는 3원칙",
+      "yt": "데브옵스 바이블, DevOps Handbook이 제시하는 3원칙 [세미남514@토크아이티,박준성 회장 / 한국SW기술진흥협회]",
+      "date": "2025-01-09",
+      "seconds": 319,
+      "kind": "talk",
+      "series": "세미남 514",
+      "channel": "talkit",
+      "by": [
+        "박준성"
+      ],
+      "topic": "method"
     },
     {
       "id": "yXJfx1Egw4Y",
@@ -397,6 +1841,34 @@
       "topic": "ai"
     },
     {
+      "id": "8S8JeiQdskc",
+      "title": "No Code로 만든 혁신: 70대 SW 전문가 혼자서 온라인 교육서비스 만들기",
+      "yt": "No Code로 만든 혁신: 70대 SW 전문가 혼자서 온라인 교육서비스 만들기 [토크아이티 프리미엄 웨비나,  박준성 회장/한국SW기술진흥협회]",
+      "date": "2024-12-31",
+      "seconds": 4765,
+      "kind": "webinar",
+      "series": "프리미엄 웨비나",
+      "channel": "talkit",
+      "by": [
+        "박준성"
+      ],
+      "topic": "env"
+    },
+    {
+      "id": "A_7UkrUMHlw",
+      "title": "DevOps 역할별 프로세스: 분석, 아키텍트, 개발, 시스템관리",
+      "yt": "DevOps 역할별 프로세스: 분석, 아키텍트, 개발, 시스템관리  [세미남513@토크아이티, 박준성 회장 / 한국SW기술진흥협회]",
+      "date": "2024-12-22",
+      "seconds": 696,
+      "kind": "talk",
+      "series": "세미남 513",
+      "channel": "talkit",
+      "by": [
+        "박준성"
+      ],
+      "topic": "method"
+    },
+    {
       "id": "Kf7Y044SOVw",
       "title": "N8N AI 워크플로우 자동화 왜 인기가 있는가?",
       "yt": "N8N AI 워크플로우 자동화 왜 인기가 있는가?   [세미남542@토크아이티, 윤성열 대표 / 드림플로우]",
@@ -409,6 +1881,34 @@
         "윤성열"
       ],
       "topic": "ai"
+    },
+    {
+      "id": "vAZIjfZuzTA",
+      "title": "업무 자동화의 변화! AI 워크플로우 vs 노코드 vs RPA",
+      "yt": "업무 자동화의 변화! AI 워크플로우 vs 노코드 vs RPA  [세미남541@토크아이티,  윤성열 대표 / 드림플로우]",
+      "date": "2024-12-10",
+      "seconds": 549,
+      "kind": "talk",
+      "series": "세미남 541",
+      "channel": "talkit",
+      "by": [
+        "윤성열"
+      ],
+      "topic": "ai"
+    },
+    {
+      "id": "n3Nb555ZHds",
+      "title": "DevOps를 위한 역량은?",
+      "yt": "DevOps를 위한 역량은?  [세미남512@토크아이티, 박준성 회장 / 한국SW기술진흥협회]",
+      "date": "2024-12-05",
+      "seconds": 281,
+      "kind": "talk",
+      "series": "세미남 512",
+      "channel": "talkit",
+      "by": [
+        "박준성"
+      ],
+      "topic": "method"
     },
     {
       "id": "c_VFVOFPXa4",
@@ -439,6 +1939,132 @@
       "topic": "ai"
     },
     {
+      "id": "0vj-d0owahg",
+      "title": "한국 ITOps vs 해외 ITOps",
+      "yt": "한국 ITOps vs 해외 iTOps  [세미남509@토크아이티, 박준성 회장 / 한국SW기술진흥협회]",
+      "date": "2024-11-03",
+      "seconds": 278,
+      "kind": "talk",
+      "series": "세미남 509",
+      "channel": "talkit",
+      "by": [
+        "박준성"
+      ],
+      "topic": "method"
+    },
+    {
+      "id": "LcV64PzxalU",
+      "title": "DevOps 조직? 조직보다 프로세스를 잡아라!",
+      "yt": "DevOps 조직? 조직보다 프로세스를 잡아라!  [세미남511@토크아이티, 박준성 회장 / 한국SW기술진흥협회]",
+      "date": "2024-10-30",
+      "seconds": 301,
+      "kind": "talk",
+      "series": "세미남 511",
+      "channel": "talkit",
+      "by": [
+        "박준성"
+      ],
+      "topic": "method"
+    },
+    {
+      "id": "BBMipXu-76Q",
+      "title": "데브옵스 이것만은 준비하자! 기술, 프로세스, 역량",
+      "yt": "데브옵스 이것만은 준비하자! 기술,프로세스,역량 [세미남510@토크아이티, 박준성 회장 / 한국SW기술진흥협회]",
+      "date": "2024-10-27",
+      "seconds": 463,
+      "kind": "talk",
+      "series": "세미남 510",
+      "channel": "talkit",
+      "by": [
+        "박준성"
+      ],
+      "topic": "method"
+    },
+    {
+      "id": "yfdBcYiC-8Y",
+      "title": "MSA(마이크로서비스 아키텍처) 원조는?",
+      "yt": "MSA(마이크로서비스 아키텍처) 원조는? [세미남508@토크아이티, 박준성 회장 / 한국SW기술진흥협회]",
+      "date": "2024-10-26",
+      "seconds": 362,
+      "kind": "talk",
+      "series": "세미남 508",
+      "channel": "talkit",
+      "by": [
+        "박준성"
+      ],
+      "topic": "arch"
+    },
+    {
+      "id": "JXwiCPhMaas",
+      "title": "프로그래머와 개발자의 차이",
+      "yt": "프로그래머와 개발자의 차이 [1분테크139@토크아이티, 박준성 회장 / 한국SW기술진흥협회] #shorts",
+      "date": "2024-10-24",
+      "seconds": 40,
+      "kind": "short",
+      "series": "1분테크 139",
+      "channel": "talkit",
+      "by": [
+        "박준성"
+      ],
+      "topic": "work"
+    },
+    {
+      "id": "n4Er9D-bDkE",
+      "title": "DevOps 속도보다 품질이다! 배포실패율이 중요한 이유.",
+      "yt": "DevOps 속도보다 품질이다!  배포실패율이 중요한 이유. [세미남507@토크아이티, 박준성 회장 / 한국SW기술진흥협회]",
+      "date": "2024-10-22",
+      "seconds": 375,
+      "kind": "talk",
+      "series": "세미남 507",
+      "channel": "talkit",
+      "by": [
+        "박준성"
+      ],
+      "topic": "method"
+    },
+    {
+      "id": "oBy7UJzdVfQ",
+      "title": "Full Stack, Full Cycle 데브옵스 엔지니어",
+      "yt": "Full Stack, Full  Cycled  데브옵스 엔지니어 [1분테크138@토크아이티, 박준성 회장 / 한국SW기술진흥협회] #shorts",
+      "date": "2024-10-19",
+      "seconds": 43,
+      "kind": "short",
+      "series": "1분테크 138",
+      "channel": "talkit",
+      "by": [
+        "박준성"
+      ],
+      "topic": "method"
+    },
+    {
+      "id": "arXk3skR9kQ",
+      "title": "DevOps 탄생의 역사: Dev 관점, Ops 관점",
+      "yt": "DevOps 탄생의 역사:  Dev 관점, Ops 관점  [세미남506@토크아이티, 박준성 회장 / 한국SW기술진흥협회]",
+      "date": "2024-10-18",
+      "seconds": 740,
+      "kind": "talk",
+      "series": "세미남 506",
+      "channel": "talkit",
+      "by": [
+        "박준성"
+      ],
+      "topic": "method"
+    },
+    {
+      "id": "OGiBDC8P6-4",
+      "title": "클라우드 네이티브 컴퓨팅의 3요소",
+      "yt": "클라우드 네이티브 컴퓨팅의 3요소 [1분테크137@토크아이티, 박준성 회장 / 한국SW기술진흥협회] #shorts",
+      "date": "2024-10-17",
+      "seconds": 26,
+      "kind": "short",
+      "series": "1분테크 137",
+      "channel": "talkit",
+      "by": [
+        "박준성"
+      ],
+      "topic": "arch"
+    },
+    {
       "id": "ipct4gzjSuI",
       "title": "릴리스 노트 자동화 feat. 시맨틱 버저닝",
       "yt": "릴리스 노트 자동화 feat. 시맨틱 버저닝  [세미남488@토크아이티, 윤성열 대표 / 드림플로우]",
@@ -451,6 +2077,118 @@
         "윤성열"
       ],
       "topic": "method"
+    },
+    {
+      "id": "d3wxErAcFeE",
+      "title": "CI/CD가 Continuous Error로?",
+      "yt": "CI/CD가 Continuous Error로? [1분테크136@토크아이티, 박준성회장/한국SW기술진흥협회]  #shorts",
+      "date": "2024-10-15",
+      "seconds": 39,
+      "kind": "short",
+      "series": "1분테크 136",
+      "channel": "talkit",
+      "by": [
+        "박준성"
+      ],
+      "topic": "method"
+    },
+    {
+      "id": "MEXBu83RzLA",
+      "title": "국내 기업의 DevOps 성공 목표와 방안, 배포실패율 어떻게 낮출 것인가?",
+      "yt": "국내 기업의 DevOps 성공 목표와 방안, 배포실패율 어떻게 낮출 것인가? [토크아이티 프리미엄웨비나, 박준성회장/한국SW기술진흥협회]",
+      "date": "2024-10-14",
+      "seconds": 5717,
+      "kind": "webinar",
+      "series": "프리미엄 웨비나",
+      "channel": "talkit",
+      "by": [
+        "박준성"
+      ],
+      "topic": "method"
+    },
+    {
+      "id": "3I9GmLy6LR8",
+      "title": "AI 시대 SW개발 사이클의 변화",
+      "yt": "AI 시대  SW개발 사이클의 변화  [세미남500@토크아이티, 박준성 회장 / 한국SW기술진흥협회]",
+      "date": "2024-10-13",
+      "seconds": 382,
+      "kind": "talk",
+      "series": "세미남 500",
+      "channel": "talkit",
+      "by": [
+        "박준성"
+      ],
+      "topic": "ai"
+    },
+    {
+      "id": "cJbTgezbSb0",
+      "title": "데이터 엔지니어링 무엇이고 왜 필요한가?",
+      "yt": "데이터 엔지니어링 무엇이고 왜 필요한가?   [세미남499@토크아이티, 박준성 회장 / 한국SW기술진흥협회]",
+      "date": "2024-10-07",
+      "seconds": 261,
+      "kind": "talk",
+      "series": "세미남 499",
+      "channel": "talkit",
+      "by": [
+        "박준성"
+      ],
+      "topic": "arch"
+    },
+    {
+      "id": "8DK-YW9eMO4",
+      "title": "Pull Request가 코드 리뷰에 좋은 이유",
+      "yt": "Pull Request가 코드 리뷰에 좋은 이유  [세미남487@토크아이티, 윤성열 대표 / 드림플로우]",
+      "date": "2024-10-06",
+      "seconds": 289,
+      "kind": "talk",
+      "series": "세미남 487",
+      "channel": "talkit",
+      "by": [
+        "윤성열"
+      ],
+      "topic": "method"
+    },
+    {
+      "id": "LPxbEUUiWhI",
+      "title": "다양한 AI 모델 6분 요약",
+      "yt": "다양한 AI 모델  6분 요약 [세미남498@토크아이티, 박준성 회장 / 한국SW기술진흥협회]",
+      "date": "2024-10-01",
+      "seconds": 383,
+      "kind": "talk",
+      "series": "세미남 498",
+      "channel": "talkit",
+      "by": [
+        "박준성"
+      ],
+      "topic": "ai"
+    },
+    {
+      "id": "GLtwksoHDuk",
+      "title": "비즈니스가 AI를 이끌게 하라!",
+      "yt": "비즈니스가 AI를 이끌게 하라!  [1분테크133@토크아이티, 박준성회장/한국SW기술진흥협회]",
+      "date": "2024-09-24",
+      "seconds": 48,
+      "kind": "short",
+      "series": "1분테크 133",
+      "channel": "talkit",
+      "by": [
+        "박준성"
+      ],
+      "topic": "ai"
+    },
+    {
+      "id": "W4yacWiqu-c",
+      "title": "AI 캐즘 어떻게 넘을 것인가? feat. AI-Powered 앱 개발방법론",
+      "yt": "AI 캐즘 어떻게 넘을 것인가? feat. AI-Powered 앱 개발방법론 [세미남497@토크아이티, 박준성 회장 / 한국SW기술진흥협회]",
+      "date": "2024-09-23",
+      "seconds": 656,
+      "kind": "talk",
+      "series": "세미남 497",
+      "channel": "talkit",
+      "by": [
+        "박준성"
+      ],
+      "topic": "ai"
     },
     {
       "id": "wKpFwWZ6mpg",
@@ -523,6 +2261,20 @@
       "topic": "env"
     },
     {
+      "id": "6VSYjy5N7eM",
+      "title": "IT 리더를 위한 AI와 정보시스템 통합 전략",
+      "yt": "IT 리더를 위한 AI와 정보시스템 통합 전략 [토크아이티 프리미엄 웨비나, 박준성 회장/한국SW기술진흥협회 ]",
+      "date": "2024-09-02",
+      "seconds": 4322,
+      "kind": "webinar",
+      "series": "프리미엄 웨비나",
+      "channel": "talkit",
+      "by": [
+        "박준성"
+      ],
+      "topic": "arch"
+    },
+    {
       "id": "Eff_atnph14",
       "title": "AI기반 IDE, Cursor IDE",
       "yt": "AI기반 IDE, Cursor IDE  [세미남482@토크아이티, 윤성열 대표 / 드림플로우]",
@@ -579,6 +2331,20 @@
       "topic": "env"
     },
     {
+      "id": "FZvrSPCXwOI",
+      "title": "AI 개발자가 맥북을 좋아하는 이유",
+      "yt": "AI 개발자가 맥북을 좋아하는 이유   [1분테크119@토크아이티, 윤성열대표/드림플로우] #shorts  #개발자  #맥북",
+      "date": "2024-08-27",
+      "seconds": 42,
+      "kind": "short",
+      "series": "1분테크 119",
+      "channel": "talkit",
+      "by": [
+        "윤성열"
+      ],
+      "topic": "env"
+    },
+    {
       "id": "zNcaXy7IVno",
       "title": "왜 개발환경이 좋은 회사에 입사해야 되나?",
       "yt": "왜 개발환경이 좋은 회사에 입사해야 되나?  [1분테크119@토크아이티, 윤성열대표/드림플로우] #shorts",
@@ -591,6 +2357,20 @@
         "윤성열"
       ],
       "topic": "work"
+    },
+    {
+      "id": "pULX0lERzhU",
+      "title": "깃(Git)은 누가 왜 만들었나?",
+      "yt": "깃(Git)은 누가 왜 만들었나? [1분테크119@토크아이티, 윤성열대표/드림플로우] #shorts  #git #github",
+      "date": "2024-08-20",
+      "seconds": 51,
+      "kind": "short",
+      "series": "1분테크 119",
+      "channel": "talkit",
+      "by": [
+        "윤성열"
+      ],
+      "topic": "env"
     },
     {
       "id": "yxBgsCMxD5k",
@@ -606,6 +2386,34 @@
         "박준성"
       ],
       "topic": "method"
+    },
+    {
+      "id": "gIHx5dp_SGc",
+      "title": "마이크로서비스 아키텍처의 현실적 대안, 미니서비스 아키텍처",
+      "yt": "마이크로서비스 아키텍처의 현실적 대안, 미니서비스 아키텍처  [세미남460@토크아이티, 박준성 회장 / 한국SW기술진흥협회]",
+      "date": "2024-08-11",
+      "seconds": 726,
+      "kind": "talk",
+      "series": "세미남 460",
+      "channel": "talkit",
+      "by": [
+        "박준성"
+      ],
+      "topic": "arch"
+    },
+    {
+      "id": "QCzu3jsjivM",
+      "title": "과거에 MSA아키텍처를 쓸 수 없었던 이유",
+      "yt": "과거에 MSA아키텍처를 쓸 수 없었던 이유  [1분테크116@토크아이티, 박준성 회장/힌국SW기술진흥협회 ] #shorts",
+      "date": "2024-08-03",
+      "seconds": 44,
+      "kind": "short",
+      "series": "1분테크 116",
+      "channel": "talkit",
+      "by": [
+        "박준성"
+      ],
+      "topic": "arch"
     },
     {
       "id": "GFCXMVKv-K4",
@@ -637,6 +2445,119 @@
       "topic": "method"
     },
     {
+      "id": "xVzNH44cBM8",
+      "title": "마이크로서비스 아키텍처는 데브옵스에 적합한 SOA이다!",
+      "yt": "마이크로서비스 아키텍처는 데브옵스에 적합한 SOA이다!  [세미남459@토크아이티, 박준성 회장 / 한국SW기술진흥협회]",
+      "date": "2024-07-28",
+      "seconds": 614,
+      "kind": "talk",
+      "series": "세미남 459",
+      "channel": "talkit",
+      "by": [
+        "박준성"
+      ],
+      "topic": "arch"
+    },
+    {
+      "id": "9Tj6x6Aw_XY",
+      "title": "MSA(마이크로서비스 아키텍처) 탄생까지의 10년 역사, 10분 요약",
+      "yt": "MSA(마이크로서비스 아키텍처) 탄생까지의 10년 역사, 10분 요약 [세미남458@토크아이티, 박준성 회장 / 한국SW기술진흥협회]",
+      "date": "2024-07-20",
+      "seconds": 595,
+      "kind": "talk",
+      "series": "세미남 458",
+      "channel": "talkit",
+      "by": [
+        "박준성"
+      ],
+      "topic": "arch"
+    },
+    {
+      "id": "ulcJdS7DBE0",
+      "title": "스크럼 개발 성공하려면? 요건정의가 필수!",
+      "yt": "스크럼 개발 성공하려면? 요건정의가 필수!  [세미남444@토크아이티, 박준성 회장 / 한국SW기술진흥협회]",
+      "date": "2024-07-15",
+      "seconds": 329,
+      "kind": "talk",
+      "series": "세미남 444",
+      "channel": "talkit",
+      "by": [
+        "박준성"
+      ],
+      "topic": "method"
+    },
+    {
+      "id": "t_2KUsBol70",
+      "title": "AWS(Amazon Web Services) 회사 이름의 심오한 유래",
+      "yt": "AWS(Amazon Web Services) 회사 이름의 심오한 유래  [1분테크115@토크아이티, 박준성 회장/한국SW기술진흥협회] #shorts",
+      "date": "2024-07-10",
+      "seconds": 53,
+      "kind": "short",
+      "series": "1분테크 115",
+      "channel": "talkit",
+      "by": [
+        "박준성"
+      ],
+      "topic": "arch"
+    },
+    {
+      "id": "QL_Oa47mF0I",
+      "title": "SW 탄생에서 SOA, MSA(마이크로서비스 아키텍처)까지, 70년 역사",
+      "yt": "SW 탄생에서 SOA, MSA (마이크로서비스 아키텍처)까지, 70년 역사 [구해줘 SW, 토크아이티 프리미엄 웨비나, 박준성 회장 (한국SW기술진흥협회)]",
+      "date": "2024-07-02",
+      "seconds": 4231,
+      "kind": "webinar",
+      "series": "프리미엄 웨비나",
+      "channel": "talkit",
+      "by": [
+        "박준성"
+      ],
+      "topic": "arch"
+    },
+    {
+      "id": "bRhVW8304zg",
+      "title": "애자일 개발을 위한 TDD & BDD",
+      "yt": "애자일 개발을 위한 TDD & BDD   [세미남442@토크아이티,  박준성 회장 / 한국SW기술진흥협회, 윤성열 대표 / 드림플로우]",
+      "date": "2024-06-27",
+      "seconds": 366,
+      "kind": "talk",
+      "series": "세미남 442",
+      "channel": "talkit",
+      "by": [
+        "박준성",
+        "윤성열"
+      ],
+      "topic": "method"
+    },
+    {
+      "id": "Ua-qJc7QpJk",
+      "title": "애자일 개발을 위한 XP와 Scrum, 가장 쉬운 설명",
+      "yt": "애자일 개발을 위한 XP와 Scrum, 가장 쉬운 설명 [세미남439@토크아이티, 박준성 회장 / 한국SW기술진흥협회]",
+      "date": "2024-06-23",
+      "seconds": 296,
+      "kind": "talk",
+      "series": "세미남 439",
+      "channel": "talkit",
+      "by": [
+        "박준성"
+      ],
+      "topic": "method"
+    },
+    {
+      "id": "aNA23GabVHo",
+      "title": "DevOps 한국에서 정말 힘든 이유",
+      "yt": "DevOps 한국에서 정말 힘든 이유 [세미남438@토크아이티, 박준성 회장 / 한국SW기술진흥협회]",
+      "date": "2024-06-13",
+      "seconds": 233,
+      "kind": "talk",
+      "series": "세미남 438",
+      "channel": "talkit",
+      "by": [
+        "박준성"
+      ],
+      "topic": "method"
+    },
+    {
       "id": "yDqnTBPyKhs",
       "title": "마이크로서비스 아키텍처(MSA) 오해와 진실!",
       "yt": "마이크로서비스 아키텍처(MSA) 오해와 진실!  [세미남437@토크아이티, 박준성 회장 / 한국SW기술진흥협회, 윤성열 대표 / 드림플로우]",
@@ -648,6 +2569,34 @@
       "by": [
         "박준성",
         "윤성열"
+      ],
+      "topic": "arch"
+    },
+    {
+      "id": "gGK85llPg3M",
+      "title": "스크럼방식 개발을 하려면, 이것만은 꼭!",
+      "yt": "스크럼방식 개발을 하려면, 이것만은 꼭! [1분테크104@토크아이티, 박준성 회장/한국SW기술진흥협회]",
+      "date": "2024-06-09",
+      "seconds": 33,
+      "kind": "short",
+      "series": "1분테크 104",
+      "channel": "talkit",
+      "by": [
+        "박준성"
+      ],
+      "topic": "method"
+    },
+    {
+      "id": "IkbHDzYbfqI",
+      "title": "애자일 개발이 한국에서 정말 힘든 이유",
+      "yt": "애자일 개발이 한국에서 정말 힘든 이유  [1분테크103@토크아이티, 박준성 회장/한국SW기술진흥협회] #shorts",
+      "date": "2024-06-06",
+      "seconds": 44,
+      "kind": "short",
+      "series": "1분테크 103",
+      "channel": "talkit",
+      "by": [
+        "박준성"
       ],
       "topic": "method"
     },
@@ -665,6 +2614,188 @@
         "윤성열"
       ],
       "topic": "method"
+    },
+    {
+      "id": "8xzcz9TTHpo",
+      "title": "클라우드 네이티브 애플리케이션 무엇이고 왜 필요한가?",
+      "yt": "클라우드 네이티브 애플리케이션 무엇이고 왜 필요한가? [세미남432@토크아이티, 박준성 회장 / 한국SW기술진흥협회]",
+      "date": "2024-06-01",
+      "seconds": 412,
+      "kind": "talk",
+      "series": "세미남 432",
+      "channel": "talkit",
+      "by": [
+        "박준성"
+      ],
+      "topic": "arch"
+    },
+    {
+      "id": "yIEyjE-vA6o",
+      "title": "IT분야의 망치와 못이란?",
+      "yt": "IT분야의 망치와 못이란? [1분테크102@토크아이티, 박준성 회장/한국SW기술진흥협회] #shorts",
+      "date": "2024-05-30",
+      "seconds": 32,
+      "kind": "short",
+      "series": "1분테크 102",
+      "channel": "talkit",
+      "by": [
+        "박준성"
+      ],
+      "topic": "method"
+    },
+    {
+      "id": "IlqnUebaUrA",
+      "title": "클라우드 네이티브 애플리케이션? 쉬운 설명!",
+      "yt": "클라우드 네이티브 애플리케이션? 쉬운 설명! [1분테크101@토크아이티, 박준성 회장/한국SW기술진흥협회] #shorts",
+      "date": "2024-05-28",
+      "seconds": 44,
+      "kind": "short",
+      "series": "1분테크 101",
+      "channel": "talkit",
+      "by": [
+        "박준성"
+      ],
+      "topic": "arch"
+    },
+    {
+      "id": "R9Kr4_0GXBQ",
+      "title": "왜 글로벌한 한국 SW기업이 적은가? 테스트자동화가 SW경쟁력!",
+      "yt": "왜 글로벌한 한국 SW기업이 적은가? 테스트자동화가 SW경쟁력! [세미남430@토크아이티, 박준성 회장 / 한국SW기술진흥협회]",
+      "date": "2024-05-27",
+      "seconds": 366,
+      "kind": "talk",
+      "series": "세미남 430",
+      "channel": "talkit",
+      "by": [
+        "박준성"
+      ],
+      "topic": "industry"
+    },
+    {
+      "id": "CuMirRXYNEI",
+      "title": "생성형 AI로 테스트 자동화를!",
+      "yt": "생성형 AI로 테스트 자동화를!  [세미남427@토크아이티, 윤성열 대표 / 드림플로우]",
+      "date": "2024-05-23",
+      "seconds": 392,
+      "kind": "talk",
+      "series": "세미남 427",
+      "channel": "talkit",
+      "by": [
+        "윤성열"
+      ],
+      "topic": "ai"
+    },
+    {
+      "id": "uXjTZXDDcOk",
+      "title": "SW공학 vs 프로그래밍",
+      "yt": "SW공학 vs 프로그래밍  [세미남426@토크아이티, 박준성 회장 / 한국SW기술진흥협회]",
+      "date": "2024-05-21",
+      "seconds": 338,
+      "kind": "talk",
+      "series": "세미남 426",
+      "channel": "talkit",
+      "by": [
+        "박준성"
+      ],
+      "topic": "method"
+    },
+    {
+      "id": "gz9xSWKVVg8",
+      "title": "한국 SI산업이 외주 위주로 왜곡된 이유는?",
+      "yt": "한국 SI산업이 외주 위주로 왜곡된 이유는?  [1분TECH75@토크아이티,  박준성 회장 / 한국SW기술진흥협회] #shorts",
+      "date": "2024-04-17",
+      "seconds": 47,
+      "kind": "short",
+      "series": "1분테크 75",
+      "channel": "talkit",
+      "by": [
+        "박준성"
+      ],
+      "topic": "industry"
+    },
+    {
+      "id": "UjeyDbwu3SY",
+      "title": "무엇을 하며 살 것인가? 마피아가 될 뻔한, 소프트웨어공학 대가의 인생 진로 찾는 법",
+      "yt": "무엇을 하며 살 것인가? 마피아가 될 뻔한, 소프트웨어공학 대가의 인생 진로 찾는 법 [토크아이티 고우성의 잇터뷰34, 박준성 회장/한국SW기술진흥협회]",
+      "date": "2023-03-03",
+      "seconds": 336,
+      "kind": "interview",
+      "series": "고우성의 잇터뷰 34",
+      "channel": "talkit",
+      "by": [
+        "박준성"
+      ],
+      "topic": "work"
+    },
+    {
+      "id": "ti662PpNEAs",
+      "title": "IT시장을 주도하는, IT서비스 누가 왜 처음 만들었나?",
+      "yt": "IT시장을 주도하는, IT서비스 누가 왜 처음 만들었나? [토크아이티 고우성의 잇터뷰33, 박준성회장/한국SW기술진흥협회]",
+      "date": "2023-03-01",
+      "seconds": 268,
+      "kind": "interview",
+      "series": "고우성의 잇터뷰 33",
+      "channel": "talkit",
+      "by": [
+        "박준성"
+      ],
+      "topic": "industry"
+    },
+    {
+      "id": "2Zx9zshMdYw",
+      "title": "물류직원도 억대연봉 개발자로 전직? 파격적인 아마존 SW개발자 사내 양성 프로그램",
+      "yt": "물류직원도 억대연봉 개발자로 전직? 파격적인 아마존 SW개발자 사내 양성 프로그램  [토크아이티 1분Tech31, 박준성 회장] #shorts",
+      "date": "2023-02-25",
+      "seconds": 60,
+      "kind": "short",
+      "series": "1분테크 31",
+      "channel": "talkit",
+      "by": [
+        "박준성"
+      ],
+      "topic": "work"
+    },
+    {
+      "id": "Rrpuyo_mxQg",
+      "title": "대한민국 IT서비스(SI사업) 무엇이 문제인가?",
+      "yt": "대한민국 IT서비스(SI사업) 무엇이 문제인가? [토크아이티 고우성의 잇터뷰32. 박준성회장/한국SW기술진흥협회]",
+      "date": "2023-02-23",
+      "seconds": 1142,
+      "kind": "interview",
+      "series": "고우성의 잇터뷰 32",
+      "channel": "talkit",
+      "by": [
+        "박준성"
+      ],
+      "topic": "industry"
+    },
+    {
+      "id": "HfRae9SI7SE",
+      "title": "클라우드 트랜스포메이션을 위한 관점, 프로세스, Tools",
+      "yt": "클라우드 트랜스포메이션을 위한 관점, 프로세스, Tools [토크아이티 세미남#153, 박준성 회장/한국SW기술진흥협회]",
+      "date": "2022-05-06",
+      "seconds": 935,
+      "kind": "talk",
+      "series": "세미남 153",
+      "channel": "talkit",
+      "by": [
+        "박준성"
+      ],
+      "topic": "arch"
+    },
+    {
+      "id": "S5nDADUtz_M",
+      "title": "박준성의 SaaS 글로벌트렌드",
+      "yt": "박준성의 SaaS 글로벌트렌드 [고우성의 테크리뷰, 박준성]",
+      "date": "2018-10-18",
+      "seconds": 1905,
+      "kind": "interview",
+      "series": "고우성의 테크리뷰",
+      "channel": "talkit",
+      "by": [
+        "박준성"
+      ],
+      "topic": "industry"
     }
   ]
 }

@@ -7,7 +7,7 @@ import http from 'node:http';
 import os from 'node:os';
 import path from 'node:path';
 import { REPO_ROOT, SITE_DIR, BASE_PATH, MARKER, DATES_FILE, build, collectDates, distAllowlist, listFiles, readHistory, readJSON, resolveOutDir, watchedPaths } from './lib.mjs';
-import { collectProblems, parseCsp, visibleStrings, REQUIRED_CSP, COLUMNS } from './check.mjs';
+import { collectProblems, parseCsp, visibleStrings, REQUIRED_CSP, VIDEOS_CSP, COLUMNS } from './check.mjs';
 import { createSiteServer, normalizeBase } from './serve.mjs';
 import { checkUnits, unitProblems, unitStrings, verbatimLines } from './unit-check.mjs';
 import { checkLive, videoProblems, videoStrings } from './videos-check.mjs';
@@ -306,20 +306,31 @@ test('영상 자료: 틀린 영상 번호, 겹친 영상, 없는 묶음·주제�
   caught(withVideos((d) => { d.videos[0].date = '2025-02-30'; }), /date는 올라온 날/);
   caught(withVideos((d) => { d.videos[0].seconds = 0; }), /seconds는 길이/);
   caught(withVideos((d) => { d.names['윤성열'] = '윤성열 이사'; }), /로드맵\(roadmap\.json\)과 다름/);
+  assert.ok(!videoProblems(videosData, { names: data.names }).some((p) => /황상철/.test(p)), '로드맵에 없는 사람은 표기를 대조하지 않는다');
   caught(withVideos((d) => { d.topics.etc = '그 밖'; }), /topics\.etc: 쓰는 영상이 없음/);
   caught(withVideos((d) => { d.checked = '어제'; }), /checked는/);
+  caught(withVideos((d) => { d.kinds.short.shape = 'round'; }), /kinds\.short는/);
 });
-test('영상 자료 화면: 같은 CSP와 스크립트 규칙을 지키고, 영상을 끼워 넣으면 check가 잡아낸다', () => {
+test('영상 자료 화면: 섬네일 서버 하나만 더 허용하고, 영상을 끼워 넣거나 리퍼러를 보내면 check가 잡아낸다', () => {
   const m = /<meta http-equiv="Content-Security-Policy" content="([^"]*)">/.exec(videosHtmlSrc);
   assert.ok(m);
-  assert.deepEqual(parseCsp(m[1]), REQUIRED_CSP);
+  assert.deepEqual(parseCsp(m[1]), VIDEOS_CSP);
+  assert.deepEqual(VIDEOS_CSP['img-src'], ["'self'", 'data:', 'https://i.ytimg.com']);
+  caught(withVideosHtml((h) => h.replace('https://i.ytimg.com;', 'https://i.ytimg.com https://example.org;')), /CSP: img-src/);
+  caught(withHtml((h) => h.replace("img-src 'self' data:", "img-src 'self' data: https://i.ytimg.com")), /CSP: img-src/);
+  caught(withVideosJs((s) => s.replace("referrerpolicy: 'no-referrer'", "loading: 'eager'")), /리퍼러 없이/);
+  caught(withVideosHtml((h) => h.replace('content="no-referrer"', 'content="strict-origin-when-cross-origin"')), /videos\.html: 리퍼러를 보내지 않음/);
+  caught(withVideosHtml((h) => h.replace('id="view"', 'id="order"')), /videos\.html: 스크립트가 쓰는 id="view" 없음/);
+  caught(withApp((s) => s + "\nconst t = 'https://i.ytimg.com/vi/';\n"), /app\.js: 유튜브 주소는 영상 자료 화면/);
   caught(withVideosHtml((h) => h.replace('</body>', '<iframe src="https://www.youtube.com/embed/abZ7NXZO42k"></iframe></body>')), /videos\.html: iframe/);
   caught(withVideosHtml((h) => h.replace('id="pick"', 'id="chips"')), /videos\.html: 스크립트가 쓰는 id="pick" 없음/);
+  caught(withVideosHtml((h) => h.replace('id="q"', 'id="search"')), /videos\.html: 스크립트가 쓰는 id="q" 없음/);
   caught(withVideosHtml((h) => h.replace('href="index.html">학습', 'href="https://www.youtube.com/">학습')), /videos\.html: 허용하지 않은 외부 링크/);
   caught(withVideosJs((s) => s.replace("'https://www.youtube.com/watch?v='", "'https://example.org/watch?v='")), /videos\.js: 허용하지 않은 주소/);
   caught(withVideosJs((s) => s + "\nfetch(new URL('data/roadmap.json', document.baseURI));\n"), /videos\.js: fetch는 영상 목록을 읽는 한 번만/);
-  caught(withVideosJs((s) => s.replace('WATCH + v.id', "'https://www.youtube.com/embed/' + v.id")), /영상을 끼워 넣거나/);
+  caught(withVideosJs((s) => s.replace('WATCH + v.id', "'https://www.youtube.com/embed/' + v.id")), /영상을 끼워 넣지 않음/);
   caught(withApp((s) => s + "\nconst y = 'https://www.youtube.com/watch?v=';\n"), /app\.js: 허용하지 않은 주소/);
+  caught(withUnitJs((s) => s + "\nconst y = 'https://www.youtube.com/watch?v=';\n"), /unit\.js: 유튜브 주소는 영상 자료 화면/);
   caught(collectProblems({ overrides: { videos: null } }).problems, /videos\.json: JSON으로 읽을 수 없음/);
 });
 test('영상 자료: 유튜브 확인은 열리지 않는 영상을 가려낸다(네트워크 없이 시험)', async () => {
@@ -331,7 +342,7 @@ test('영상 자료: 유튜브 확인은 열리지 않는 영상을 가려낸다
 });
 test('영상 자료: 화면에 나오는 글이 모두 모아지고, 영상 제목은 따로 뺄 수 있다', () => {
   const all = videoStrings(videosData), own = videoStrings(videosData, { titles: false });
-  for (const s of ['세미나 토크', 'AI 활용과 에이전트', '윤성열 대표', '토크아이티(Talk IT)', videosData.videos[0].title]) assert.ok(all.includes(s), s);
+  for (const s of ['세미나 토크', '한 시간 넘게 이어지는 강의입니다.', 'AI와 에이전트', '박준성 교수', '윤성열 대표', '황상철 대표', '토크아이티(Talk IT)', videosData.videos[0].title]) assert.ok(all.includes(s), s);
   assert.ok(!own.includes(videosData.videos[0].title));
   assert.ok(!all.includes(videosData.videos[0].id), '영상 번호는 화면 글이 아님');
 });

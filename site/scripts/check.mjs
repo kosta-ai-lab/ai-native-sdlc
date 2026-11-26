@@ -49,10 +49,12 @@ const SCRIPT_ORDER = /<script src="core\.js" defer><\/script>\s*<script src="app
 const UNIT_IDS = ['top', 'title', 'lead', 'where', 'doc', 'lap', 'key', 'play', 'track', 'step', 'kinds', 'sections', 'env'];
 const UNIT_SCRIPT_ORDER = /<script src="core\.js" defer><\/script>\s*<script src="unit\.js" defer><\/script>/;
 // 영상 자료 화면(videos.html)
-const VIDEO_PAGE_IDS = ['top', 'title', 'pick', 'count', 'list', 'source'];
+const VIDEO_PAGE_IDS = ['top', 'title', 'view', 'who', 'pick', 'q', 'count', 'jump', 'list', 'empty', 'reset', 'source'];
+// 영상 자료 화면만 섬네일을 유튜브의 그림 서버에서 불러온다(ADR 0008). 다른 화면은 REQUIRED_CSP 그대로다.
+export const VIDEOS_CSP = { ...REQUIRED_CSP, 'img-src': ["'self'", 'data:', 'https://i.ytimg.com'] };
 const VIDEO_SCRIPT_ORDER = /<script src="core\.js" defer><\/script>\s*<script src="videos\.js" defer><\/script>/;
 // 화면 스크립트가 만드는 바깥 주소의 머리. 영상 화면만 유튜브의 영상 주소와 채널 주소를 만든다.
-const JS_URL_HEADS = { 'videos.js': ['https://www.youtube.com/watch?v=', 'https://www.youtube.com/channel/'] };
+const JS_URL_HEADS = { 'videos.js': ['https://www.youtube.com/watch?v=', 'https://www.youtube.com/channel/', 'https://i.ytimg.com/vi/'] };
 // 단원 내용에는 실습의 로컬 주소가 나올 수 있어, 개인·내부 주소 가운데 이 둘은 보지 않는다
 const LOCAL_OK = [/127\.0\.0\.1/, /localhost/];
 // 터미널 출력에 나오는 기호. 원본 글꼴에 없어 시스템 글꼴로 보인다
@@ -305,7 +307,7 @@ export function collectProblems({ dist = null, repoRoot = REPO_ROOT, siteDir = S
 
   // 6) 메타데이터, meta CSP, 자산 경로 (화면마다 같은 규칙)
   const srcPath = (v) => { const p = v.split(/[?#]/)[0]; return p.startsWith('data/') ? path.join(siteDir, p) : path.join(srcDir, p); };
-  const checkPage = (name, html, { ids, order, orderHint }) => {
+  const checkPage = (name, html, { ids, order, orderHint, csp: cspWant = REQUIRED_CSP }) => {
     const head = (/<head>([\s\S]*?)<\/head>/.exec(html) || [])[1] || '';
     if (!/^<!doctype html>\s*<html lang="ko"[ >]/i.test(html)) bad(name + ': <html lang="ko"> 필요');
     const title = (/<title>([^<]*)<\/title>/.exec(head) || [])[1];
@@ -325,7 +327,7 @@ export function collectProblems({ dist = null, repoRoot = REPO_ROOT, siteDir = S
       const firstRes = head.search(/<(link|script|style)\b/i);
       if (firstRes >= 0 && firstRes < at) bad(name + ': meta CSP가 link/script보다 먼저 와야 함');
       const csp = parseCsp(cspTags[0][1]);
-      for (const [dir, want] of Object.entries(REQUIRED_CSP)) {
+      for (const [dir, want] of Object.entries(cspWant)) {
         const have = (csp[dir] || []).slice().sort().join(' ');
         if (have !== want.slice().sort().join(' ')) bad(`CSP: ${dir}는 '${want.join(' ')}' 이어야 함 (현재 '${(csp[dir] || []).join(' ')}')`);
       }
@@ -360,7 +362,7 @@ export function collectProblems({ dist = null, repoRoot = REPO_ROOT, siteDir = S
   };
   checkPage('index.html', html, { ids: REQUIRED_IDS, order: SCRIPT_ORDER, orderHint: 'core.js → app.js' });
   checkPage('unit.html', unitHtml, { ids: UNIT_IDS, order: UNIT_SCRIPT_ORDER, orderHint: 'core.js → unit.js' });
-  checkPage('videos.html', videosHtml, { ids: VIDEO_PAGE_IDS, order: VIDEO_SCRIPT_ORDER, orderHint: 'core.js → videos.js' });
+  checkPage('videos.html', videosHtml, { ids: VIDEO_PAGE_IDS, order: VIDEO_SCRIPT_ORDER, orderHint: 'core.js → videos.js', csp: VIDEOS_CSP });
   const allCss = Object.values(css).join('\n');
   const allJs = Object.values(js).join('\n');
   if (/@import|url\(\s*['"]?(https?:)?\/\//i.test(allCss)) bad('CSS: 외부 import/url 금지');
@@ -389,8 +391,11 @@ export function collectProblems({ dist = null, repoRoot = REPO_ROOT, siteDir = S
   if (!/fetch\(new URL\('data\/videos\.json', document\.baseURI\)\)/.test(js['videos.js'])) bad("videos.js: 영상 목록은 fetch(new URL('data/videos.json', document.baseURI))로 읽어야 함");
   if ((js['videos.js'].match(/\bfetch\(/g) || []).length !== 1) bad('videos.js: fetch는 영상 목록을 읽는 한 번만');
   if (/localStorage/.test(js['videos.js'])) bad('videos.js: 저장 API를 쓰지 않음');
-  // 영상은 주소로만 연결한다. 끼워 넣는 주소와 미리보기 그림 주소를 만들지 않는다.
-  if (/youtube\.com\/embed|youtube-nocookie|ytimg|youtu\.be/i.test(js['videos.js'] + videosHtml)) bad('영상 화면: 영상을 끼워 넣거나 미리보기 그림을 불러오지 않음(영상 주소로만 연결)');
+  // 영상은 주소로만 연결한다. 끼워 넣는 주소를 만들지 않는다. 섬네일은 리퍼러 없이 불러온다.
+  if (/youtube\.com\/embed|youtube-nocookie|youtu\.be/i.test(js['videos.js'] + videosHtml)) bad('영상 화면: 영상을 끼워 넣지 않음(영상 주소로만 연결)');
+  if (!/<meta name="referrer" content="no-referrer">/.test(videosHtml)) bad('videos.html: 리퍼러를 보내지 않음(<meta name="referrer" content="no-referrer">)');
+  if (/ytimg/.test(js['videos.js']) && !/referrerpolicy:\s*'no-referrer'/.test(js['videos.js'])) bad("videos.js: 섬네일은 리퍼러 없이 불러와야 함(referrerpolicy: 'no-referrer')");
+  for (const [name, text] of Object.entries(js)) if (name !== 'videos.js' && /ytimg|youtube\.com|youtu\.be/i.test(text)) bad(`${name}: 유튜브 주소는 영상 자료 화면(videos.js)에서만 만든다`);
 
   // 8) 글꼴: 선언한 파일이 있고, 화면 글자가 글꼴에 들어 있다
   const fontDir = path.join(srcDir, 'fonts');
