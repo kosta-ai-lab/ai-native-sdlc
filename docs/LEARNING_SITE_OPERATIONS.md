@@ -11,7 +11,7 @@ site/
   data/roadmap.json    로드맵·단계·자료·강사별 묶음. 사이트의 내용은 모두 여기에 있다
   src/index.html       고정 문구, 메타데이터, meta CSP
   src/app.css          화면 스타일
-  src/core.js          계산(단계 상태, 마친 자료 수, 저장소 주소). 화면과 시험이 함께 쓴다
+  src/core.js          계산(단계 상태, 마친 자료 수, 새로움, 저장소 주소). 화면과 시험이 함께 쓴다
   src/app.js           화면 동작. 데이터를 읽어 DOM API로 화면을 만든다
   src/favicon.svg      사이트 표식
   src/fonts.css        글꼴 선언(생성 파일)
@@ -19,6 +19,7 @@ site/
   fonts/               글꼴에 든 글자 목록(생성 파일, 배포하지 않음)
   scripts/             build · check · test · serve · lib, 글꼴 도구 fonts.py
   dist/                빌드 산출물(.gitignore의 dist/ 규칙으로 추적하지 않음)
+  dist/data/dates.json 자료 날짜. 빌드가 git 이력에서 만든다(원본 site/data에는 두지 않는다)
 .github/workflows/learning-site.yml
 ```
 
@@ -30,10 +31,11 @@ site/
 
 | 명령 | 하는 일 |
 |---|---|
-| `node scripts/build.mjs` | 화면 파일, 글꼴, `data/*.json`만 `site/dist`로 바이트 그대로 복사하고 `.nojekyll`과 빌드 표식 `.site-build`를 쓴다 |
+| `node scripts/build.mjs` | 화면 파일, 글꼴, `data/*.json`만 `site/dist`로 바이트 그대로 복사하고 `.nojekyll`과 빌드 표식 `.site-build`를 쓴다. 자료 날짜 `data/dates.json`은 git 이력에서 만들어 쓴다 |
+| `node scripts/build.mjs --require-history` | git 이력이 온전하지 않으면(얕은 복제) 아무것도 쓰지 않고 실패한다. 배포 워크플로가 이 명령을 쓴다 |
 | `node scripts/build.mjs --out <저장소 밖 폴더>` | 빈 폴더이거나 이전 빌드 표식이 있는 폴더에만 빌드한다 |
 | `node scripts/check.mjs --dist` | 정적 검사와 산출물 검사(5절) |
-| `node scripts/test.mjs` | 계산, 검사의 변조 검출, 빌드 재현성, 미리보기 서버 시험 |
+| `node scripts/test.mjs` | 계산, 자료 날짜, 검사의 변조 검출, 빌드 재현성, 미리보기 서버 시험 |
 | `node scripts/serve.mjs --port 0` | `site/dist`만 `http://127.0.0.1:<빈 포트>/ai-native-sdlc/`로 제공한다. `--base /`는 루트로, `--host <주소>`는 다른 기기에서 열 수 있게 제공한다 |
 | `npm run verify` | build → check --dist → test |
 
@@ -65,6 +67,17 @@ site/
 - **약속하지 않는다.** 무료, 보장 같은 표현은 원문에 있어도 요약에 옮기지 않는다.
 - **한국어 문장은 배포 전에 모두 검사한다.** 화면에 나오는 글은 `index.html`, `app.js`의 문구, `roadmap.json`의 글 항목이다.
 
+### 자료 날짜와 NEW·업데이트 표시
+
+날짜는 손으로 적지 않는다. 빌드가 git 이력에서 읽어 `dist/data/dates.json`에 쓰고, 화면이 그 파일을 읽는다.
+
+- **무엇의 날짜인가:** 자료의 안내 문서(`source`)와 '자료 열기'에 연결한 파일·폴더(`links`)의 이력이다. 준비 중 자료에는 날짜가 없다.
+- **공개한 날:** 그 경로가 처음 들어온 날. 파일을 옮겼으면 옛 경로까지 따라가서 찾는다.
+- **업데이트한 날:** 내용이 마지막으로 바뀐 날. 내용이 그대로인 이동은 세지 않는다. 한 번도 바뀌지 않았으면 화면에 공개한 날만 나온다.
+- **기준:** main의 첫 부모 이력만 따라가므로(`git log --first-parent`) PR로 들어온 자료는 병합한 날로 잡힌다. 날짜는 한국 시간이다.
+- **표시:** 공개한 날을 포함해 14일 동안 NEW, 그 뒤에 내용이 바뀌면 바뀐 날을 포함해 14일 동안 업데이트가 붙는다. 날수는 `src/app.js`의 `FRESH_DAYS`다. 방문자가 여는 날을 기준으로 계산하므로 다시 배포하지 않아도 기간이 지나면 표시가 사라진다.
+- **알아 둘 것:** 오타 수정 같은 작은 변경도 업데이트로 잡힌다. 연결하지 않은 파일의 변경은 잡히지 않는다. 얕은 복제에서 빌드하면 틀린 날짜를 내지 않으려고 날짜를 넣지 않는다(`git fetch --unshallow` 뒤에 다시 빌드한다).
+
 ## 4. 글꼴 다시 만들기
 
 화면 글꼴은 IBM Plex Sans KR과 IBM Plex Mono의 부분집합이다(SIL OFL 1.1). Sans KR은 두 묶음으로 나눈다.
@@ -93,10 +106,10 @@ uv run --with fonttools --with brotli python site/scripts/fonts.py
 - **화면 글:** `index.html`과 `roadmap.json`에 제작 단계 용어(시안·초안 등)와 근거 없이 약속하는 표현이 없는지, 모든 원본에 개인·내부 주소가 없는지. `app.js`의 문구는 사람이 검사한다
 - **메타데이터·CSP:** title·description과 같은 og 값, favicon, canonical·og:url·og:image·noindex·CNAME 없음. meta CSP 1개가 link/script보다 먼저 있고 정책이 정확히 일치하는지
 - **화면 원본:** inline script·inline style·이벤트 속성·iframe·form 없음, 스크립트 순서, 스크립트가 쓰는 id, `noscript` 안내, 상대 경로, 외부 링크 허용 목록과 링크 경로의 git 추적 여부, 외부 글꼴·CDN 없음
-- **화면 스크립트:** 문자열을 HTML로 넣는 API 없음, 추적·외부 전송 API 없음, 데이터는 문서 기준 상대 경로로 한 번만 읽기, `localStorage`는 마친 자료 표시 한 항목만
+- **화면 스크립트:** 문자열을 HTML로 넣는 API 없음, 추적·외부 전송 API 없음, 읽는 파일은 문서 기준 상대 경로의 로드맵 데이터와 자료 날짜 둘뿐, `localStorage`는 마친 자료 표시 한 항목만
 - **글꼴:** 선언한 파일이 있는지, 선언에 없는 woff2가 없는지, `OFL.txt`가 있는지, 화면 글자가 글꼴 두 묶음 안에 있는지
-- **워크플로:** 권한 범위, main 전용 배포 조건, configure/deploy는 deploy job에만, `github-pages` environment와 `needs: build`, build job의 build·check·test, action major(6절)
-- **`--dist`:** 허용 목록과의 정확한 일치, 원본과 바이트 동일(재현성), 원본 교재·스크립트·CNAME 미포함, 빌드 표식에 로컬 경로 없음, `/ai-native-sdlc/`와 `/` 양쪽 해석
+- **워크플로:** 권한 범위, main 전용 배포 조건, configure/deploy는 deploy job에만, `github-pages` environment와 `needs: build`, build job의 build·check·test, 이력 전체 받기(`fetch-depth: 0`)와 `--require-history`, action major(6절)
+- **`--dist`:** 허용 목록과의 정확한 일치, 원본과 바이트 동일(재현성), 원본 교재·스크립트·CNAME 미포함, 빌드 표식에 로컬 경로 없음, `/ai-native-sdlc/`와 `/` 양쪽 해석, 자료 날짜 파일의 형식과 지금 이력에서 다시 읽은 값과의 일치
 
 ## 6. GitHub Actions 워크플로
 
@@ -104,7 +117,7 @@ uv run --with fonttools --with brotli python site/scripts/fonts.py
 
 | 이벤트 | build job | Pages artifact | deploy job |
 |---|---|---|---|
-| `pull_request` (site/ 또는 워크플로 변경) | build · check --dist · test | 만들지 않음 | 실행하지 않음 |
+| `pull_request` (site/, 자료 폴더 modules/·courses/·samples/, 워크플로 변경) | build · check --dist · test | 만들지 않음 | 실행하지 않음 |
 | `main`에 `push` (같은 경로) | 실행 | `site/dist` 업로드 | 실행 |
 | `main`에서 `workflow_dispatch` | 실행 | 업로드 | 실행 |
 | 다른 브랜치에서 `workflow_dispatch` | 실행 | 만들지 않음 | 실행하지 않음 |
@@ -112,6 +125,8 @@ uv run --with fonttools --with brotli python site/scripts/fonts.py
 - 권한: 최상위 `contents: read`. `pages: write`·`id-token: write`는 deploy job에만 있다.
 - 배포 조건: `github.event_name != 'pull_request' && github.ref == 'refs/heads/main' && github.repository == 'kosta-ai-lab/ai-native-sdlc'`.
 - 동시 실행: PR은 같은 ref의 이전 실행을 취소하고, 배포는 `pages` 그룹에서 취소 없이 실행한다. `actions/checkout`은 `persist-credentials: false`다.
+- 이력: 자료 날짜를 git 이력에서 읽으므로 `fetch-depth: 0`으로 이력 전체를 받고, `build.mjs --require-history`로 이력이 온전한지 확인한다.
+- 경로 조건: 자료가 놓인 최상위 폴더가 push의 `paths`에 있어야 한다. 자료를 새 최상위 폴더에 두고 로드맵에 연결하면 검사가 그 폴더를 `paths`에 넣으라고 알려 준다.
 - Node.js: `ubuntu-latest` 기본 Node를 쓰고 로그에 버전을 남긴다.
 
 ### Action 버전 근거 (2026-11-11 확인)
@@ -121,8 +136,8 @@ uv run --with fonttools --with brotli python site/scripts/fonts.py
 ## 7. 배포 절차
 
 1. PR에서 `Learning site / Build and check (site only)` 통과를 확인한다.
-2. main에 병합한다. `site/`가 바뀌었으면 배포가 자동으로 실행된다. 바뀐 파일이 경로 조건(`site/**`, 워크플로 파일)에 해당하지 않으면 `Learning site`를 main에서 수동 실행한다.
-3. 공개 주소 https://kosta-ai-lab.github.io/ai-native-sdlc/ 에서 확인한다: 노선도, 로드맵 바꾸기, 자료 고르기와 원본 링크, 마친 자료 표시, `#dev/sddc` 주소로 새로 고침, 좁은 화면, 콘솔의 CSP 위반 없음.
+2. main에 병합한다. `site/`나 자료 폴더(`modules/`, `courses/`, `samples/`)가 바뀌었으면 배포가 자동으로 실행된다. 자료 본문만 고쳐도 다시 배포해야 화면의 업데이트한 날이 바뀌기 때문이다. 바뀐 파일이 경로 조건에 해당하지 않으면 `Learning site`를 main에서 수동 실행한다.
+3. 공개 주소 https://kosta-ai-lab.github.io/ai-native-sdlc/ 에서 확인한다: 노선도, 로드맵 바꾸기, 자료 고르기와 원본 링크, 자료 날짜와 NEW·업데이트 표시, 강사별 자료, 마친 자료 표시, `#dev/sddc` 주소로 새로 고침, 좁은 화면, 콘솔의 CSP 위반 없음.
 4. 문제가 있으면 직전 성공 실행을 재실행하거나 되돌리는 PR을 올린다.
 
 ## 8. 편집 메모 (공개 화면에 싣지 않음)

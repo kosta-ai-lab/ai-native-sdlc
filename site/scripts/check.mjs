@@ -6,11 +6,12 @@
 //  - 화면 원본(src)의 메타데이터, meta CSP, 상대 경로, 안전하지 않은 DOM API, 외부 자원, 글꼴 파일을 확인한다.
 //  - Pages 워크플로의 권한과 배포 조건을 확인한다.
 //  - --dist: 빌드 산출물이 허용 목록과 같고, 원본과 바이트가 같으며, /ai-native-sdlc/ 와 / 양쪽에서 해석되는지 확인한다.
+//    빌드가 만든 자료 날짜(data/dates.json)는 형식과, 지금 저장소 이력에서 다시 읽은 값과 같은지를 확인한다.
 import fs from 'node:fs';
 import path from 'node:path';
 import {
-  REPO_ROOT, SITE_DIR, DEFAULT_OUT, BASE_PATH, MARKER, REPO_URL, ORG_URL, SRC_FILES,
-  readJSON, gitTrackedFiles, assetRefs, anchorRefs, listFiles, distAllowlist, fontFiles, isMain
+  REPO_ROOT, SITE_DIR, DEFAULT_OUT, BASE_PATH, MARKER, DATES_FILE, REPO_URL, ORG_URL, SRC_FILES,
+  readJSON, gitTrackedFiles, assetRefs, anchorRefs, listFiles, distAllowlist, fontFiles, collectDates, watchedPaths, isMain
 } from './lib.mjs';
 import '../src/core.js';
 
@@ -83,7 +84,7 @@ export function visibleStrings(data) {
 
 /**
  * 문제 목록을 모은다. overrides로 데이터·화면 원본을 바꿔 넣을 수 있다(시험에서 변조 검출 확인용).
- * overrides: { data, html, css: {이름: 내용}, js: {이름: 내용} }
+ * overrides: { data, html, css: {이름: 내용}, js: {이름: 내용}, workflow }
  */
 export function collectProblems({ dist = null, repoRoot = REPO_ROOT, siteDir = SITE_DIR, overrides = {} } = {}) {
   const problems = [];
@@ -104,6 +105,7 @@ export function collectProblems({ dist = null, repoRoot = REPO_ROOT, siteDir = S
   const js = { 'core.js': readSrc('core.js'), 'app.js': readSrc('app.js'), ...(overrides.js || {}) };
 
   // 1) 데이터 구조
+  if (fs.existsSync(path.join(siteDir, DATES_FILE))) bad(`site/${DATES_FILE}은 두지 않음(자료 날짜는 빌드가 git 이력에서 만든다)`);
   if (data.schema !== 1) bad('roadmap.json: schema는 1');
   if (data.repository !== REPO_URL.replace('https://github.com/', '')) bad('roadmap.json: repository는 ' + REPO_URL.replace('https://github.com/', ''));
   if (data.ref !== 'main') bad('roadmap.json: ref는 main');
@@ -292,7 +294,8 @@ export function collectProblems({ dist = null, repoRoot = REPO_ROOT, siteDir = S
     if (/(?:href|src)\s*[=:]\s*['"]\.\.\//.test(text)) bad(`${name}: 상위 폴더 경로 금지`);
   }
   if (!/fetch\(new URL\('data\/roadmap\.json', document\.baseURI\)\)/.test(js['app.js'])) bad("app.js: 데이터는 fetch(new URL('data/roadmap.json', document.baseURI))로 읽어야 함");
-  if ((js['app.js'].match(/\bfetch\(/g) || []).length !== 1) bad('app.js: fetch는 로드맵 데이터를 읽는 한 번만');
+  if (!/fetch\(new URL\('data\/dates\.json', document\.baseURI\)\)/.test(js['app.js'])) bad("app.js: 날짜는 fetch(new URL('data/dates.json', document.baseURI))로 읽어야 함");
+  if ((js['app.js'].match(/\bfetch\(/g) || []).length !== 2) bad('app.js: fetch는 로드맵 데이터와 자료 날짜를 읽는 두 번만');
   const storage = js['app.js'].match(/localStorage\.\w+\([^)]*\)?/g) || [];
   if (storage.length !== 2 || !storage.every((s) => /^localStorage\.(getItem|setItem)\(DONE_KEY/.test(s))) bad('app.js: localStorage는 마친 자료 표시(DONE_KEY)를 읽고 쓰는 두 곳에서만');
   if (/localStorage|document\.|window\./.test(js['core.js'])) bad('core.js: 화면·저장 API를 쓰지 않는 계산만');
@@ -324,7 +327,7 @@ export function collectProblems({ dist = null, repoRoot = REPO_ROOT, siteDir = S
   const wfPath = path.join(repoRoot, '.github/workflows/learning-site.yml');
   if (!fs.existsSync(wfPath)) bad('워크플로 없음: .github/workflows/learning-site.yml');
   else {
-    const wf = fs.readFileSync(wfPath, 'utf8');
+    const wf = overrides.workflow != null ? overrides.workflow : fs.readFileSync(wfPath, 'utf8');
     const deployAt = wf.search(/^ {2}deploy:\s*$/m);
     const top = deployAt >= 0 ? wf.slice(0, deployAt) : wf;
     const deploy = deployAt >= 0 ? wf.slice(deployAt) : '';
@@ -345,7 +348,12 @@ export function collectProblems({ dist = null, repoRoot = REPO_ROOT, siteDir = S
     const uploadCond = /- name: Upload Pages artifact\s*\n\s+if:\s*(.+)/.exec(wf);
     if (!uploadCond || !/refs\/heads\/main/.test(uploadCond[1]) || !/pull_request/.test(uploadCond[1])) bad('워크플로: Pages artifact 업로드는 main 배포 조건에서만');
     if (/configure-pages|deploy-pages/.test(noComment(top))) bad('워크플로: configure-pages/deploy-pages는 deploy job에만');
-    for (const cmd of ['node scripts/build.mjs', 'node scripts/check.mjs --dist', 'node scripts/test.mjs']) if (!top.includes('run: ' + cmd)) bad(`워크플로: build job에서 ${cmd} 실행 필요`);
+    for (const cmd of ['node scripts/build.mjs --require-history', 'node scripts/check.mjs --dist', 'node scripts/test.mjs']) if (!top.includes('run: ' + cmd)) bad(`워크플로: build job에서 ${cmd} 실행 필요`);
+    if (!/^\s+fetch-depth:\s*0\s*$/m.test(noComment(top))) bad('워크플로: build job의 checkout은 fetch-depth: 0 (자료 날짜를 git 이력에서 읽는다)');
+    // 자료가 바뀌면 날짜도 바뀐다. 자료가 있는 경로에 push가 오면 다시 빌드해 배포해야 한다.
+    const pushBlock = (/^ {2}push:\s*\n([\s\S]*?)(?=^ {2}\S)/m.exec(wf) || [])[1] || '';
+    const watchedTops = new Set(watchedPaths(data).flatMap((w) => [...w.files, ...w.dirs]).map((p) => (p.includes('/') ? p.split('/')[0] + '/**' : p)));
+    for (const t of [...watchedTops].sort()) if (!pushBlock.includes(`"${t}"`)) bad(`워크플로: main push의 paths에 "${t}" 필요(자료가 바뀌면 날짜를 다시 읽어 배포한다)`);
     for (const [act, major] of Object.entries(ACTION_MAJORS)) {
       const used = [...wf.matchAll(new RegExp(`uses:\\s*${act.replace('/', '\\/')}@(\\S+)`, 'g'))].map((m) => m[1]);
       if (!used.length) bad(`워크플로: ${act} 사용 필요`);
@@ -367,10 +375,27 @@ export function collectProblems({ dist = null, repoRoot = REPO_ROOT, siteDir = S
       if (files.some((f) => /\.(pdf|pptx|docx|md|ts|feature|mjs|py|log)$/i.test(f) || (/\.txt$/i.test(f) && f !== 'fonts/OFL.txt'))) bad('dist: 원본 교재·문서·스크립트·로그 복사 금지');
       if (files.includes('CNAME')) bad('dist: CNAME 금지(도메인 미정)');
       for (const f of files) {
-        if (f === MARKER || f === '.nojekyll') continue;
+        if (f === MARKER || f === '.nojekyll' || f === DATES_FILE) continue;
         const srcFile = f.startsWith('data/') ? path.join(siteDir, f) : path.join(srcDir, f);
         if (!fs.existsSync(srcFile)) bad(`dist: 원본 없는 파일 ${f}`);
         else if (!fs.readFileSync(srcFile).equals(fs.readFileSync(path.join(dist, f)))) bad(`dist: 원본과 다른 파일 ${f} (다시 build)`);
+      }
+      if (files.includes(DATES_FILE)) {
+        let dated = null;
+        try { dated = JSON.parse(fs.readFileSync(path.join(dist, DATES_FILE), 'utf8')); } catch { bad(`dist: ${DATES_FILE}을 읽을 수 없음`); }
+        const DAY = /^\d{4}-\d\d-\d\d$/;
+        const keys = (o) => Object.keys(o).sort().join();
+        if (dated && (typeof dated.complete !== 'boolean' || !dated.items || typeof dated.items !== 'object' || Array.isArray(dated.items) || keys(dated) !== 'complete,items')) bad(`dist: ${DATES_FILE}은 { complete, items } 형식`);
+        else if (dated) {
+          for (const [id, e] of Object.entries(dated.items)) {
+            if (!R.isOpen(items.get(id))) bad(`dist: ${DATES_FILE}에 공개 자료가 아닌 id ${id}`);
+            if (!e || typeof e !== 'object' || keys(e) !== 'added,updated' || !DAY.test(e.added) || !DAY.test(e.updated) || e.added > e.updated) bad(`dist: ${DATES_FILE}의 ${id}는 { added, updated } 날짜(YYYY-MM-DD)이고 added가 updated보다 늦지 않아야 함`);
+          }
+          if (JSON.stringify(collectDates({ repoRoot, data })) !== JSON.stringify(dated)) bad(`dist: ${DATES_FILE}이 지금 저장소 이력과 다름 (다시 build)`);
+          const dateless = [...items.values()].filter((i) => R.isOpen(i) && !dated.items[i.id]).map((i) => i.id);
+          notes.push(!dated.complete ? '날짜: git 이력이 온전하지 않아 넣지 않음(얕은 복제). 화면에 날짜와 NEW 표시가 나오지 않는다'
+            : `날짜: 공개 자료 ${Object.keys(dated.items).length}개` + (dateless.length ? ` · 아직 커밋하지 않아 날짜가 없는 자료 ${dateless.join(', ')}` : ''));
+        }
       }
       if (files.includes(MARKER)) {
         const marker = fs.readFileSync(path.join(dist, MARKER), 'utf8');
