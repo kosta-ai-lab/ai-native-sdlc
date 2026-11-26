@@ -172,7 +172,7 @@
           fact('공개한 날', d.added), fact('업데이트한 날', d.updated !== d.added ? d.updated : null)),
         m.learn ? [h('h3', { text: '배우는 것' }), h('ul', { class: 'pts' }, m.learn.map(t => h('li', { text: t })))] : null,
         h('h3', { text: '이용 순서' }), h('ol', { class: 'steps' }, m.how.map(t => h('li', { text: t }))),
-        h('h3', { text: '자료 열기' }), h('div', { class: 'opens' }, m.links.map(k => open(k.label, R.repoUrl(data, k), 'GitHub에서 열기'))),
+        h('h3', { text: '자료 열기' }), h('div', { class: 'opens' }, m.visual ? open('한눈에 보기', 'unit.html?u=' + m.visual, '이 사이트에서 열기') : null, m.links.map(k => open(k.label, R.repoUrl(data, k), 'GitHub에서 열기'))),
         h('button', { class: 'done', type: 'button', 'aria-pressed': String(marked), on: { click: () => toggleDone(m.id) } }, check(), h('span', { text: marked ? '마친 자료로 표시됨' : '마친 자료로 표시' }))];
     }
     const here = h('div', { class: 'sign__here' }, h('span', { class: 'sign__no', text: no(si) }), h('span', { class: 'sign__name', text: R.shortTitle(s) }));

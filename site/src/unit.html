@@ -1,0 +1,82 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self' data:; font-src 'self'; connect-src 'self'; object-src 'none'; base-uri 'self'; form-action 'none'">
+  <meta name="referrer" content="strict-origin-when-cross-origin">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>단원 한눈에 보기 | kosta-ai-lab 학습 로드맵</title>
+  <meta name="description" content="따라 하기 단원의 단계를 한 화면으로 봅니다. 단계마다 AI에게 맡기는 것, 직접 확인하는 것, 사람이 정하는 것, 다음 단계로 넘기는 것을 나눠 보여 줍니다.">
+  <meta name="color-scheme" content="light">
+  <meta name="theme-color" content="#f3f1ec">
+  <meta property="og:type" content="website">
+  <meta property="og:locale" content="ko_KR">
+  <meta property="og:site_name" content="kosta-ai-lab">
+  <meta property="og:title" content="단원 한눈에 보기 | kosta-ai-lab 학습 로드맵">
+  <meta property="og:description" content="따라 하기 단원의 단계를 한 화면으로 봅니다. 단계마다 AI에게 맡기는 것, 직접 확인하는 것, 사람이 정하는 것, 다음 단계로 넘기는 것을 나눠 보여 줍니다.">
+  <meta name="twitter:card" content="summary">
+  <link rel="icon" href="favicon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="fonts.css">
+  <link rel="stylesheet" href="unit.css">
+  <script src="core.js" defer></script>
+  <script src="unit.js" defer></script>
+</head>
+<body>
+  <a class="skip" href="#lap">단계로 건너뛰기</a>
+
+  <header class="top">
+    <div class="wrap top__in">
+      <a class="brand" href="index.html" aria-label="kosta-ai-lab 학습 로드맵으로"><svg class="brand__mark" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><circle cx="6" cy="7" r="3.2"/><rect x="13" y="3.8" width="6.4" height="6.4"/><path d="M6 13.5l5.6 6.5H.4z"/><path d="M16.2 13.2l4 4-4 4-4-4z"/></svg><span>kosta-ai-lab</span></a>
+      <span class="top__where" id="where"></span>
+      <a class="top__doc" id="doc" href="https://github.com/kosta-ai-lab/ai-native-sdlc/tree/main/modules">가이드 문서 열기</a>
+    </div>
+  </header>
+
+  <main id="top">
+    <section class="hero" aria-labelledby="title">
+      <div class="wrap">
+        <h1 class="hero__h" id="title">단원 한눈에 보기</h1>
+        <p class="hero__p" id="lead"></p>
+        <noscript><p class="notice">이 화면은 JavaScript로 단원을 그립니다. JavaScript를 켤 수 없다면 <a href="https://github.com/kosta-ai-lab/ai-native-sdlc/tree/main/modules">GitHub 저장소의 모듈 폴더</a>에서 가이드 문서를 볼 수 있습니다.</p></noscript>
+      </div>
+    </section>
+
+    <section class="lap" id="lap" aria-label="단계">
+      <div class="wrap">
+        <div class="lap__tools">
+          <ul class="key" id="key" aria-label="표시 읽는 법"></ul>
+          <button class="play" id="play" type="button" aria-pressed="false">처음부터 차례로 보기</button>
+        </div>
+        <p class="lap__hint">단계를 누르면 그 단계에서 하는 일이 아래에 순서대로 나옵니다. 좌우 화살표 키로도 단계를 넘길 수 있습니다.</p>
+        <div class="track" id="track" role="tablist" aria-label="단계"></div>
+        <div class="step" id="step"></div>
+        <dl class="kinds" id="kinds"></dl>
+      </div>
+    </section>
+
+    <section class="sec" id="principles" aria-labelledby="principles-title" hidden>
+      <div class="wrap">
+        <h2 class="sec__h" id="principles-title">네 원칙이 이 단원에서 뜻하는 것</h2>
+        <ol class="prs" id="prs"></ol>
+      </div>
+    </section>
+
+    <div id="sections"></div>
+
+    <section class="sec" id="review" aria-labelledby="review-title" hidden>
+      <div class="wrap">
+        <h2 class="sec__h" id="review-title">돌아보기: 네 원칙을 어디서 썼나</h2>
+        <p class="sec__p">단계마다 주로 연습하는 원칙을 한 표에 모았습니다. 숫자를 누르면 그 단계로 갑니다.</p>
+        <div class="grid" id="grid"></div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="foot">
+    <div class="wrap">
+      <p>이 화면은 단원의 가이드 문서를 옮긴 것입니다. 요청문, 명령, 출력은 문서와 같고, 설명 문장은 문서에서 줄여 옮겼습니다.</p>
+      <p id="env"></p>
+    </div>
+  </footer>
+</body>
+</html>

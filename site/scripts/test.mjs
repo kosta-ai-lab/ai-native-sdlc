@@ -9,6 +9,7 @@ import path from 'node:path';
 import { REPO_ROOT, SITE_DIR, BASE_PATH, MARKER, DATES_FILE, build, collectDates, distAllowlist, listFiles, readHistory, readJSON, resolveOutDir, watchedPaths } from './lib.mjs';
 import { collectProblems, parseCsp, visibleStrings, REQUIRED_CSP, COLUMNS } from './check.mjs';
 import { createSiteServer, normalizeBase } from './serve.mjs';
+import { checkUnits, unitProblems, unitStrings, verbatimLines } from './unit-check.mjs';
 import '../src/core.js';
 
 const R = globalThis.KostaRoadmap;
@@ -16,6 +17,11 @@ const data = readJSON(path.join(SITE_DIR, 'data', 'roadmap.json'));
 const html = fs.readFileSync(path.join(SITE_DIR, 'src', 'index.html'), 'utf8');
 const appJs = fs.readFileSync(path.join(SITE_DIR, 'src', 'app.js'), 'utf8');
 const { items, lines } = R.index(data);
+// 단원 한눈에 보기: 화면 원본과, 변조 시험에 쓰는 단원 하나(모듈 06 단원 M01)
+const unitHtmlSrc = fs.readFileSync(path.join(SITE_DIR, 'src', 'unit.html'), 'utf8');
+const unitJs = fs.readFileSync(path.join(SITE_DIR, 'src', 'unit.js'), 'utf8');
+const unit0601 = readJSON(path.join(SITE_DIR, 'data', 'unit-06-m01.json'));
+const guide0601 = fs.readFileSync(path.join(REPO_ROOT, unit0601.guide), 'utf8');
 const clone = (v) => JSON.parse(JSON.stringify(v));
 
 const tests = [];
@@ -28,6 +34,10 @@ const withData = (mutate) => { const d = clone(data); mutate(d); return collectP
 const withHtml = (mutate) => collectProblems({ overrides: { html: mutate(html) } }).problems;
 const withApp = (mutate) => collectProblems({ overrides: { js: { 'app.js': mutate(appJs) } } }).problems;
 const item = (d, id) => d.items.find((i) => i.id === id);
+/** 단원 내용을 고친 사본으로 단원 검사를 돌린다. */
+const withUnit = (mutate) => { const u = clone(unit0601); mutate(u); return unitProblems(u, { name: 'unit-06-m01.json', guide: guide0601 }); };
+const withUnitHtml = (mutate) => collectProblems({ overrides: { unitHtml: mutate(unitHtmlSrc) } }).problems;
+const withUnitJs = (mutate) => collectProblems({ overrides: { js: { 'unit.js': mutate(unitJs) } } }).problems;
 const caught = (problems, re) => assert.ok(problems.some((p) => re.test(p)), '검사가 잡아야 함: ' + re + '\n  실제: ' + (problems.join(' | ') || '(문제 없음)'));
 
 function request(port, rawPath, method = 'GET') {
@@ -217,6 +227,57 @@ test('meta CSP 정책: 같은 출처의 스크립트·스타일·글꼴·데이�
   assert.ok(html.indexOf(m[0]) < html.search(/<(link|script)\b/));
 });
 
+// ── 단원 한눈에 보기 ──
+test('단원 한눈에 보기: 내용이 모두 형식에 맞고, 프롬프트·명령·출력이 가이드 문서와 같다', () => {
+  const { problems, units } = checkUnits();
+  assert.deepEqual(problems, []);
+  assert.ok(units.some((x) => x.id === '06-m01'));
+  for (const x of units) assert.ok(verbatimLines(x.data).length > 10, x.name + ': 대조할 줄이 너무 적음');
+  for (const x of units) assert.equal(items.get(x.data.item).visual, x.id, x.name);
+});
+test('단원 한눈에 보기: 가이드와 다른 줄, 없는 마디, 뜻을 적지 않은 표시를 잡아낸다', () => {
+  caught(withUnit((u) => { u.steps[4].lanes[0].blocks[1].prompt += ' 테스트도 고쳐줘.'; }), /가이드에 없는 줄/);
+  caught(withUnit((u) => { u.steps[4].lanes[1].blocks[1].term.out[7][1] = '      Tests  3 failed (3)'; }), /가이드에 없는 줄 — Tests {2}3 failed/);
+  caught(withUnit((u) => { u.steps[1].lanes[0].blocks[1].cmd += '\nrm -rf ~/work'; }), /가이드에 없는 줄 — rm -rf/);
+  caught(withUnit((u) => { u.steps[4].title = '뼈대로 유효한 Red 만들기'; }), /가이드의 단계 제목과 다름/);
+  caught(withUnit((u) => { u.steps[2].lanes[0].kind = 'ask'; }), /kind가 kinds에 없음/);
+  caught(withUnit((u) => { delete u.marks.warn; }), /marks\.warn 필요/);
+  caught(withUnit((u) => { u.steps[3].principles = [5]; }), /원칙 번호 목록/);
+  caught(withUnit((u) => { u.steps[0].lanes[0].blocks.push({ html: '<b>x</b>' }); }), /조각은 /);
+  caught(withUnit((u) => { u.sections[1].rows[0].pop(); }), /chain은 /);
+  caught(withUnit((u) => { u.start = 9; }), /start는/);
+  caught(unitProblems(unit0601, { name: 'unit-06-m02.json', guide: guide0601 }), /id는 파일 이름/);
+  caught(unitProblems(unit0601, { name: 'unit-06-m01.json', guide: null }), /가이드 문서를 읽을 수 없음/);
+});
+test('단원 한눈에 보기: 로드맵 자료와 짝이 맞지 않으면 check가 잡아낸다', () => {
+  caught(withData((d) => { delete item(d, 't01').visual; }), /로드맵 자료 t01의 visual이 이 단원/);
+  caught(withData((d) => { item(d, 'tdd').visual = '99-m01'; }), /visual이 가리키는 단원 내용이 없음/);
+  const withUnits = (mutate) => { const u = clone(unit0601); mutate(u); return collectProblems({ overrides: { units: { '06-m01': u } } }).problems; };
+  caught(withUnits((u) => { u.item = 's09'; }), /item이 공개 자료가 아님/);
+  caught(withUnits((u) => { u.guide = 'modules/06-coding-tdd/M02-tdd-rules/GUIDE.md'; }), /guide는 자료 t01의 링크에 있는 문서여야 함/);
+  caught(withUnits((u) => { u.lead += ' 미리보기는 http://studio:4173 에 있습니다.'; }), /개인·내부 주소/);
+});
+test('단원 한눈에 보기 화면: 같은 CSP와 스크립트 규칙을 지키고, 어기면 check가 잡아낸다', () => {
+  const m = /<meta http-equiv="Content-Security-Policy" content="([^"]*)">/.exec(unitHtmlSrc);
+  assert.ok(m);
+  assert.deepEqual(parseCsp(m[1]), REQUIRED_CSP);
+  caught(withUnitHtml((h) => h.replace('</body>', '<script>alert(1)</script></body>')), /unit\.html: inline script 금지/);
+  caught(withUnitHtml((h) => h.replace('<p class="hero__p" id="lead">', '<p class="hero__p" id="lead" style="color:red">')), /unit\.html: inline style 금지/);
+  caught(withUnitHtml((h) => h.replace('id="grid"', 'id="table"')), /unit\.html: 스크립트가 쓰는 id="grid" 없음/);
+  caught(withUnitHtml((h) => h.replace('src="unit.js" defer', 'src="app.js" defer')), /core\.js → unit\.js/);
+  caught(withUnitHtml((h) => h.replace('단계로 건너뛰기', '단계로 건너뛰기 (시안)')), /unit\.html: 제작 단계 용어/);
+  caught(withUnitHtml((h) => h.replace('href="index.html"', 'href="nowhere.html"')), /unit\.html: 없는 내부 링크/);
+  caught(withUnitJs((s) => s.replace('e.textContent = v;', 'e.innerHTML = v;')), /unit\.js: 문자열을 HTML이나 코드로 실행하는 API/);
+  caught(withUnitJs((s) => s + "\nfetch(new URL('data/roadmap.json', document.baseURI));\n"), /unit\.js: fetch는 단원 내용을 읽는 한 번만/);
+  caught(withUnitJs((s) => s + '\nlocalStorage.setItem("a", "b");\n'), /unit\.js: 저장 API/);
+  caught(withUnitJs((s) => s.replace("'data/unit-' + id + '.json'", "'data/' + id")), /unit\.js: 내용은 fetch/);
+});
+test('단원 한눈에 보기: 화면에 나오는 글이 모두 모아진다(글꼴 확인과 한국어 점검의 대상)', () => {
+  const shown = unitStrings(unit0601);
+  for (const s of ['맡긴다', '오류와 유효한 Red', '기준이 넘어가는 길', '이것이 유효한 Red입니다', 'pnpm test', '인수조건 두 개', '네모 하나가 테스트 하나']) assert.ok(shown.includes(s), s);
+  assert.ok(!shown.includes(unit0601.guide) && !shown.includes(unit0601.item), '경로와 id는 화면 글이 아님');
+});
+
 // ── 자료 날짜 ──
 test('자료 날짜: 처음 올라온 날과 마지막으로 내용이 바뀐 날을 읽고, 옮긴 파일은 옛 경로까지 따라간다', () => {
   const log = [
@@ -332,6 +393,10 @@ test('서버: 하위 경로와 루트 양쪽에서 화면·데이터·글꼴을 
     assert.match(page.headers['content-type'], /text\/html/);
     assert.ok(page.body.toString('utf8').includes('<title>'));
     assert.equal((await request(port, BASE_PATH + 'data/roadmap.json')).status, 200);
+    const unitPage = await request(port, BASE_PATH + 'unit.html?u=06-m01');
+    assert.equal(unitPage.status, 200);
+    assert.match(unitPage.headers['content-type'], /text\/html/);
+    assert.equal((await request(port, BASE_PATH + 'data/unit-06-m01.json')).status, 200);
     const font = await request(port, BASE_PATH + 'fonts/roadmap-sans-400-core.woff2');
     assert.equal(font.status, 200);
     assert.equal(font.headers['content-type'], 'font/woff2');

@@ -3,6 +3,7 @@
 // 사용: node scripts/check.mjs [--dist [폴더]]
 //  - 로드맵 데이터(data/roadmap.json)의 구조와 참조를 확인하고, 연결한 경로를 git ls-files와 대조한다.
 //  - 상태의 근거를 원문에서 확인한다. 준비 중으로 표시한 모듈은 README에 "(작성 예정)"이 있어야 하고, 공개 자료는 없어야 한다.
+//  - 단원 한눈에 보기 내용(data/unit-*.json)의 형식을 확인하고, 프롬프트·명령·출력이 가이드 문서와 같은지 대조한다(scripts/unit-check.mjs).
 //  - 화면 원본(src)의 메타데이터, meta CSP, 상대 경로, 안전하지 않은 DOM API, 외부 자원, 글꼴 파일을 확인한다.
 //  - Pages 워크플로의 권한과 배포 조건을 확인한다.
 //  - --dist: 빌드 산출물이 허용 목록과 같고, 원본과 바이트가 같으며, /ai-native-sdlc/ 와 / 양쪽에서 해석되는지 확인한다.
@@ -13,6 +14,7 @@ import {
   REPO_ROOT, SITE_DIR, DEFAULT_OUT, BASE_PATH, MARKER, DATES_FILE, REPO_URL, ORG_URL, SRC_FILES,
   readJSON, gitTrackedFiles, assetRefs, anchorRefs, listFiles, distAllowlist, fontFiles, collectDates, watchedPaths, isMain
 } from './lib.mjs';
+import { unitFiles, unitProblems, unitStrings, UNIT_FILE } from './unit-check.mjs';
 import '../src/core.js';
 
 const R = globalThis.KostaRoadmap;
@@ -41,6 +43,13 @@ const SHAPES = ['circle', 'square', 'diamond'];
 const KINDS = ['course', 'guide', 'sample', 'rule', 'soon'];
 const REQUIRED_IDS = ['top', 'net', 'route', 'tabs', 'prog', 'route-head', 'rail', 'sign', 'people', 'people-grid', 'guide', 'about', 'scrim'];
 const SCRIPT_ORDER = /<script src="core\.js" defer><\/script>\s*<script src="app\.js" defer><\/script>/;
+// 단원 한눈에 보기 화면(unit.html)
+const UNIT_IDS = ['top', 'title', 'lead', 'where', 'doc', 'lap', 'key', 'play', 'track', 'step', 'kinds', 'principles', 'prs', 'sections', 'review', 'grid', 'env'];
+const UNIT_SCRIPT_ORDER = /<script src="core\.js" defer><\/script>\s*<script src="unit\.js" defer><\/script>/;
+// 단원 내용에는 실습의 로컬 주소가 나올 수 있어, 개인·내부 주소 가운데 이 둘은 보지 않는다
+const LOCAL_OK = [/127\.0\.0\.1/, /localhost/];
+// 터미널 출력에 나오는 기호. 원본 글꼴에 없어 시스템 글꼴로 보인다
+const SYSTEM_GLYPHS = '❯✓';
 // 공개 화면에 내보내지 않는 제작 단계 용어, 개인·내부 주소, 근거 없이 약속하는 표현
 const INTERNAL_TERMS = [/시안/, /검수/, /초안/, /내부\s*메모/, /TODO/, /미확정/, /preview/i];
 const PRIVATE_MARKERS = [/\/Users\//, /\/home\/[a-z]/, /\.hermes/, /ts\.net/, /tail[0-9a-f]{5,}/, /127\.0\.0\.1/, /localhost/, /\bstudio:\d/];
@@ -101,8 +110,13 @@ export function collectProblems({ dist = null, repoRoot = REPO_ROOT, siteDir = S
 
   const data = overrides.data || readJSON(path.join(dataDir, 'roadmap.json'));
   const html = overrides.html != null ? overrides.html : readSrc('index.html');
-  const css = { 'app.css': readSrc('app.css'), 'fonts.css': readSrc('fonts.css'), ...(overrides.css || {}) };
-  const js = { 'core.js': readSrc('core.js'), 'app.js': readSrc('app.js'), ...(overrides.js || {}) };
+  const unitHtml = overrides.unitHtml != null ? overrides.unitHtml : readSrc('unit.html');
+  const css = { 'app.css': readSrc('app.css'), 'unit.css': readSrc('unit.css'), 'fonts.css': readSrc('fonts.css'), ...(overrides.css || {}) };
+  const js = { 'core.js': readSrc('core.js'), 'app.js': readSrc('app.js'), 'unit.js': readSrc('unit.js'), ...(overrides.js || {}) };
+  // 단원 한눈에 보기 내용: data/unit-<id>.json. overrides.units로 바꿔 넣을 수 있다({ id: 내용 }).
+  const units = overrides.units
+    ? Object.entries(overrides.units).map(([id, u]) => ({ id, name: 'unit-' + id + '.json', data: u }))
+    : unitFiles(siteDir).map((name) => { let u = null; try { u = readJSON(path.join(dataDir, name)); } catch { u = null; } return { id: UNIT_FILE.exec(name)[1], name, data: u }; });
 
   // 1) 데이터 구조
   if (fs.existsSync(path.join(siteDir, DATES_FILE))) bad(`site/${DATES_FILE}은 두지 않음(자료 날짜는 빌드가 git 이력에서 만든다)`);
@@ -233,66 +247,96 @@ export function collectProblems({ dist = null, repoRoot = REPO_ROOT, siteDir = S
     for (const s of shown) if (re.test(s)) bad(`roadmap.json: 제작 단계 용어 ${re} — ${s}`);
   }
   for (const s of [...shown, htmlText]) if (PROMISES.test(s)) bad(`근거 없이 약속하는 표현 — ${s.trim().slice(0, 60)}`);
-  const allSrc = { 'index.html': html, 'roadmap.json': JSON.stringify(data), ...css, ...js };
+  const unitText = unitHtml.replace(/<script[\s\S]*?<\/script>/gi, ' ').replace(/<[^>]+>/g, ' ');
+  for (const re of INTERNAL_TERMS) if (re.test(unitText)) bad(`unit.html: 제작 단계 용어 ${re}`);
+  if (PROMISES.test(unitText)) bad('unit.html: 근거 없이 약속하는 표현');
+  const allSrc = { 'index.html': html, 'unit.html': unitHtml, 'roadmap.json': JSON.stringify(data), ...css, ...js };
   for (const [name, text] of Object.entries(allSrc)) for (const re of PRIVATE_MARKERS) if (re.test(text)) bad(`${name}: 개인·내부 주소 ${re}`);
 
-  // 6) 메타데이터, meta CSP, 자산 경로
-  const head = (/<head>([\s\S]*?)<\/head>/.exec(html) || [])[1] || '';
-  if (!/^<!doctype html>\s*<html lang="ko"[ >]/i.test(html)) bad('index.html: <html lang="ko"> 필요');
-  const title = (/<title>([^<]*)<\/title>/.exec(head) || [])[1];
-  const metaContent = (attr, name) => (new RegExp(`<meta\\s+${attr}="${name.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}"\\s+content="([^"]*)"`, 'i').exec(head) || [])[1];
-  const desc = metaContent('name', 'description');
-  if (!isText(title) || !isText(desc)) bad('index.html: title과 description 필요');
-  if (metaContent('property', 'og:title') !== title) bad('index.html: og:title은 title과 같아야 함');
-  if (metaContent('property', 'og:description') !== desc) bad('index.html: og:description은 description과 같아야 함');
-  if (!/<link rel="icon" href="favicon\.svg" type="image\/svg\+xml">/.test(head)) bad('index.html: favicon.svg 링크 필요');
-  // 도메인이 정해지지 않았으므로 절대 주소 메타(canonical·og:url·og:image)와 검색 차단(noindex)을 두지 않는다.
-  if (/rel="canonical"|property="og:url"|property="og:image"|name="twitter:image"/i.test(head)) bad('index.html: canonical/og:url/og:image는 두지 않음(도메인 미정)');
-  if (/noindex/i.test(head)) bad('index.html: noindex가 남아 있음');
-  const cspTags = [...head.matchAll(/<meta\s+http-equiv="Content-Security-Policy"\s+content="([^"]*)">/gi)];
-  if (cspTags.length !== 1) bad(`index.html: meta CSP는 정확히 1개 (현재 ${cspTags.length})`);
-  else {
-    const at = head.indexOf(cspTags[0][0]);
-    const firstRes = head.search(/<(link|script|style)\b/i);
-    if (firstRes >= 0 && firstRes < at) bad('index.html: meta CSP가 link/script보다 먼저 와야 함');
-    const csp = parseCsp(cspTags[0][1]);
-    for (const [dir, want] of Object.entries(REQUIRED_CSP)) {
-      const have = (csp[dir] || []).slice().sort().join(' ');
-      if (have !== want.slice().sort().join(' ')) bad(`CSP: ${dir}는 '${want.join(' ')}' 이어야 함 (현재 '${(csp[dir] || []).join(' ')}')`);
+  // 5-1) 단원 한눈에 보기 내용: 형식, 가이드 대조, 로드맵 자료와의 짝
+  const unitShown = [];
+  const unitIds = new Set(units.map((x) => x.id));
+  for (const x of units) {
+    const u = x.data;
+    if (!u) { bad(`${x.name}: JSON으로 읽을 수 없음`); continue; }
+    const guide = isText(u.guide) && trackedSet.has(u.guide) ? readRepo(u.guide) : null;
+    for (const p of unitProblems(u, { name: x.name, guide })) bad(p);
+    const it = items.get(u.item);
+    if (!it || !R.isOpen(it)) bad(`${x.name}: item이 공개 자료가 아님 — ${u.item}`);
+    else {
+      if (it.visual !== x.id) bad(`${x.name}: 로드맵 자료 ${it.id}의 visual이 이 단원(${x.id})을 가리켜야 함`);
+      if (!(it.links || []).some((k) => k.kind === 'file' && k.path === u.guide)) bad(`${x.name}: guide는 자료 ${it.id}의 링크에 있는 문서여야 함 — ${u.guide}`);
     }
-    for (const dir of META_IGNORED_CSP) if (dir in csp) bad(`CSP: ${dir}는 meta에서 무시된다`);
-    for (const dir of Object.keys(csp)) if (!(dir in REQUIRED_CSP)) bad(`CSP: 검토하지 않은 지시어 ${dir}`);
+    const text = JSON.stringify(u);
+    for (const re of PRIVATE_MARKERS) if (!LOCAL_OK.some((ok) => String(ok) === String(re)) && re.test(text)) bad(`${x.name}: 개인·내부 주소 ${re}`);
+    unitShown.push(...unitStrings(u));
   }
-  const bare = html.replace(/<!--[\s\S]*?-->/g, '');
-  if (/<script(?![^>]*\bsrc=)[^>]*>/i.test(bare)) bad('index.html: inline script 금지(CSP script-src self)');
-  if (/<style\b/i.test(bare) || /\sstyle\s*=/i.test(bare)) bad('index.html: inline style 금지(CSP style-src self)');
-  if (/\son[a-z]+\s*=/i.test(bare) || /javascript:/i.test(bare)) bad('index.html: 이벤트 속성·javascript: 금지');
-  if (/<iframe|<object|<embed|<base\b|<form\b/i.test(bare)) bad('index.html: iframe/object/embed/base/form 금지');
-  if (!SCRIPT_ORDER.test(head)) bad('index.html: 스크립트는 core.js → app.js 순서의 defer 상대 경로');
-  if (!/<noscript>/.test(html)) bad('index.html: JavaScript를 끈 방문자를 위한 안내(noscript) 필요');
-  for (const id of REQUIRED_IDS) if (!html.includes(`id="${id}"`)) bad(`index.html: 스크립트가 쓰는 id="${id}" 없음`);
-  const srcPath = (v) => (v.startsWith('data/') ? path.join(siteDir, v) : path.join(srcDir, v));
-  for (const r of assetRefs(html)) {
-    if (!isRelativeRef(r.value)) bad(`index.html: 상대 경로가 아닌 자산 참조 — ${r.value}`);
-    else if (!fs.existsSync(srcPath(r.value))) bad(`index.html: 없는 자산 ${r.value}`);
+  for (const it of items.values()) {
+    if (it.visual === undefined) continue;
+    if (!isText(it.visual) || !unitIds.has(it.visual)) bad(`자료 ${it.id}: visual이 가리키는 단원 내용이 없음 — data/unit-${it.visual}.json`);
   }
-  for (const href of anchorRefs(html)) {
-    if (href.startsWith('#')) {
-      if (href.length > 1 && !html.includes(`id="${href.slice(1)}"`)) bad(`index.html: 없는 구역 ${href}`);
-    } else if (href.startsWith('https://')) {
-      if (!allowedExternal(href)) bad(`index.html: 허용하지 않은 외부 링크 — ${href}`);
-      const m = /\/(?:blob|tree)\/main\/(.+)$/.exec(href);
-      if (m) {
-        const p = decodeURIComponent(m[1]);
-        if (!trackedSet.has(p) && !isTrackedDir(p)) bad(`index.html: git이 추적하지 않는 경로 — ${p}`);
+
+  // 6) 메타데이터, meta CSP, 자산 경로 (화면마다 같은 규칙)
+  const srcPath = (v) => { const p = v.split(/[?#]/)[0]; return p.startsWith('data/') ? path.join(siteDir, p) : path.join(srcDir, p); };
+  const checkPage = (name, html, { ids, order, orderHint }) => {
+    const head = (/<head>([\s\S]*?)<\/head>/.exec(html) || [])[1] || '';
+    if (!/^<!doctype html>\s*<html lang="ko"[ >]/i.test(html)) bad(name + ': <html lang="ko"> 필요');
+    const title = (/<title>([^<]*)<\/title>/.exec(head) || [])[1];
+    const metaContent = (attr, name) => (new RegExp(`<meta\\s+${attr}="${name.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}"\\s+content="([^"]*)"`, 'i').exec(head) || [])[1];
+    const desc = metaContent('name', 'description');
+    if (!isText(title) || !isText(desc)) bad(name + ': title과 description 필요');
+    if (metaContent('property', 'og:title') !== title) bad(name + ': og:title은 title과 같아야 함');
+    if (metaContent('property', 'og:description') !== desc) bad(name + ': og:description은 description과 같아야 함');
+    if (!/<link rel="icon" href="favicon\.svg" type="image\/svg\+xml">/.test(head)) bad(name + ': favicon.svg 링크 필요');
+    // 도메인이 정해지지 않았으므로 절대 주소 메타(canonical·og:url·og:image)와 검색 차단(noindex)을 두지 않는다.
+    if (/rel="canonical"|property="og:url"|property="og:image"|name="twitter:image"/i.test(head)) bad(name + ': canonical/og:url/og:image는 두지 않음(도메인 미정)');
+    if (/noindex/i.test(head)) bad(name + ': noindex가 남아 있음');
+    const cspTags = [...head.matchAll(/<meta\s+http-equiv="Content-Security-Policy"\s+content="([^"]*)">/gi)];
+    if (cspTags.length !== 1) bad(`${name}: meta CSP는 정확히 1개 (현재 ${cspTags.length})`);
+    else {
+      const at = head.indexOf(cspTags[0][0]);
+      const firstRes = head.search(/<(link|script|style)\b/i);
+      if (firstRes >= 0 && firstRes < at) bad(name + ': meta CSP가 link/script보다 먼저 와야 함');
+      const csp = parseCsp(cspTags[0][1]);
+      for (const [dir, want] of Object.entries(REQUIRED_CSP)) {
+        const have = (csp[dir] || []).slice().sort().join(' ');
+        if (have !== want.slice().sort().join(' ')) bad(`CSP: ${dir}는 '${want.join(' ')}' 이어야 함 (현재 '${(csp[dir] || []).join(' ')}')`);
       }
-    } else if (!isRelativeRef(href)) bad(`index.html: 허용하지 않는 링크 — ${href}`);
-    else if (!fs.existsSync(srcPath(href))) bad(`index.html: 없는 내부 링크 ${href}`);
-  }
+      for (const dir of META_IGNORED_CSP) if (dir in csp) bad(`CSP: ${dir}는 meta에서 무시된다`);
+      for (const dir of Object.keys(csp)) if (!(dir in REQUIRED_CSP)) bad(`CSP: 검토하지 않은 지시어 ${dir}`);
+    }
+    const bare = html.replace(/<!--[\s\S]*?-->/g, '');
+    if (/<script(?![^>]*\bsrc=)[^>]*>/i.test(bare)) bad(name + ': inline script 금지(CSP script-src self)');
+    if (/<style\b/i.test(bare) || /\sstyle\s*=/i.test(bare)) bad(name + ': inline style 금지(CSP style-src self)');
+    if (/\son[a-z]+\s*=/i.test(bare) || /javascript:/i.test(bare)) bad(name + ': 이벤트 속성·javascript: 금지');
+    if (/<iframe|<object|<embed|<base\b|<form\b/i.test(bare)) bad(name + ': iframe/object/embed/base/form 금지');
+    if (!order.test(head)) bad(name + ': 스크립트는 ' + orderHint + ' 순서의 defer 상대 경로');
+    if (!/<noscript>/.test(html)) bad(name + ': JavaScript를 끈 방문자를 위한 안내(noscript) 필요');
+    for (const id of ids) if (!html.includes(`id="${id}"`)) bad(`${name}: 스크립트가 쓰는 id="${id}" 없음`);
+    for (const r of assetRefs(html)) {
+      if (!isRelativeRef(r.value)) bad(`${name}: 상대 경로가 아닌 자산 참조 — ${r.value}`);
+      else if (!fs.existsSync(srcPath(r.value))) bad(`${name}: 없는 자산 ${r.value}`);
+    }
+    for (const href of anchorRefs(html)) {
+      if (href.startsWith('#')) {
+        if (href.length > 1 && !html.includes(`id="${href.slice(1)}"`)) bad(`${name}: 없는 구역 ${href}`);
+      } else if (href.startsWith('https://')) {
+        if (!allowedExternal(href)) bad(`${name}: 허용하지 않은 외부 링크 — ${href}`);
+        const m = /\/(?:blob|tree)\/main\/(.+)$/.exec(href);
+        if (m) {
+          const p = decodeURIComponent(m[1]);
+          if (!trackedSet.has(p) && !isTrackedDir(p)) bad(`${name}: git이 추적하지 않는 경로 — ${p}`);
+        }
+      } else if (!isRelativeRef(href)) bad(`${name}: 허용하지 않는 링크 — ${href}`);
+      else if (!fs.existsSync(srcPath(href))) bad(`${name}: 없는 내부 링크 ${href}`);
+    }
+  };
+  checkPage('index.html', html, { ids: REQUIRED_IDS, order: SCRIPT_ORDER, orderHint: 'core.js → app.js' });
+  checkPage('unit.html', unitHtml, { ids: UNIT_IDS, order: UNIT_SCRIPT_ORDER, orderHint: 'core.js → unit.js' });
   const allCss = Object.values(css).join('\n');
   const allJs = Object.values(js).join('\n');
   if (/@import|url\(\s*['"]?(https?:)?\/\//i.test(allCss)) bad('CSS: 외부 import/url 금지');
-  if (/fonts\.googleapis|fonts\.gstatic|cdn\.|unpkg|jsdelivr/i.test(html + allCss + allJs)) bad('외부 글꼴·CDN 참조 금지');
+  if (/fonts\.googleapis|fonts\.gstatic|cdn\.|unpkg|jsdelivr/i.test(html + unitHtml + allCss + allJs)) bad('외부 글꼴·CDN 참조 금지');
   for (const p of [path.join(repoRoot, 'CNAME'), path.join(siteDir, 'CNAME'), path.join(srcDir, 'CNAME')]) if (fs.existsSync(p)) bad(`CNAME은 두지 않음(도메인 미정): ${path.relative(repoRoot, p)}`);
 
   // 7) 화면 스크립트: 안전한 DOM API만, 추적·외부 전송 없음, 데이터는 문서 기준 상대 경로, 저장은 마친 자료 표시 하나뿐
@@ -310,6 +354,10 @@ export function collectProblems({ dist = null, repoRoot = REPO_ROOT, siteDir = S
   const storage = js['app.js'].match(/localStorage\.\w+\([^)]*\)?/g) || [];
   if (storage.length !== 2 || !storage.every((s) => /^localStorage\.(getItem|setItem)\(DONE_KEY/.test(s))) bad('app.js: localStorage는 마친 자료 표시(DONE_KEY)를 읽고 쓰는 두 곳에서만');
   if (/localStorage|document\.|window\./.test(js['core.js'])) bad('core.js: 화면·저장 API를 쓰지 않는 계산만');
+  if (!/fetch\(new URL\('data\/unit-' \+ id \+ '\.json', document\.baseURI\)\)/.test(js['unit.js'])) bad("unit.js: 내용은 fetch(new URL('data/unit-' + id + '.json', document.baseURI))로 읽어야 함");
+  if ((js['unit.js'].match(/\bfetch\(/g) || []).length !== 1) bad('unit.js: fetch는 단원 내용을 읽는 한 번만');
+  if (/localStorage/.test(js['unit.js'])) bad('unit.js: 저장 API를 쓰지 않음');
+  if (!/\^\[a-z0-9\]\+\(\?:-\[a-z0-9\]\+\)\*\$/.test(js['unit.js'])) bad('unit.js: 주소의 단원 id는 소문자·숫자·붙임표만 받아야 함');
 
   // 8) 글꼴: 선언한 파일이 있고, 화면 글자가 글꼴에 들어 있다
   const fontDir = path.join(srcDir, 'fonts');
@@ -327,7 +375,7 @@ export function collectProblems({ dist = null, repoRoot = REPO_ROOT, siteDir = S
   else {
     const core = new Set(fs.readFileSync(charsetFile('charset-core.txt'), 'utf8'));
     const rest = new Set(fs.readFileSync(charsetFile('charset-rest.txt'), 'utf8'));
-    const used = new Set([...(htmlText + shown.join('') + js['app.js'])].filter((c) => c.codePointAt(0) > 0x7e && !/\s/.test(c)));
+    const used = new Set([...(htmlText + unitText + shown.join('') + unitShown.join('') + js['app.js'] + js['unit.js'])].filter((c) => c.codePointAt(0) > 0x7e && !/\s/.test(c) && !SYSTEM_GLYPHS.includes(c)));
     const outside = [...used].filter((c) => !core.has(c) && !rest.has(c));
     const late = [...used].filter((c) => !core.has(c) && rest.has(c));
     if (outside.length) bad(`fonts: 글꼴에 없는 글자 ${outside.join('')} — scripts/fonts.py로 다시 만든다`);
@@ -412,7 +460,7 @@ export function collectProblems({ dist = null, repoRoot = REPO_ROOT, siteDir = S
         const marker = fs.readFileSync(path.join(dist, MARKER), 'utf8');
         if (/\/Users\/|\/home\/|[A-Z]:\\|\d{4}-\d\d-\d\dT/.test(marker)) bad('dist: 빌드 표식에 로컬 경로·시각 금지');
       }
-      const distHtml = fs.existsSync(path.join(dist, 'index.html')) ? fs.readFileSync(path.join(dist, 'index.html'), 'utf8') : '';
+      const distHtml = ['index.html', 'unit.html'].map((n) => (fs.existsSync(path.join(dist, n)) ? fs.readFileSync(path.join(dist, n), 'utf8') : '')).join('\n');
       const loaded = files.filter((f) => f.startsWith('data/') || /^fonts\/.+\.woff2$/.test(f));
       for (const base of SERVE_BASES) {
         const page = new URL(base, 'https://example.invalid');
@@ -420,7 +468,7 @@ export function collectProblems({ dist = null, repoRoot = REPO_ROOT, siteDir = S
         for (const v of refs) {
           const resolved = new URL(v, page);
           if (resolved.origin !== page.origin || !resolved.pathname.startsWith(base)) bad(`dist(${base}): base 밖으로 해석되는 참조 ${v}`);
-          else if (!files.includes(decodeURIComponent(resolved.pathname.slice(base.length)))) bad(`dist(${base}): 없는 자산 ${v}`);
+          else if (!files.includes(decodeURIComponent(resolved.pathname.slice(base.length)) || 'index.html')) bad(`dist(${base}): 없는 자산 ${v}`);
         }
       }
       notes.push(`dist: ${files.length}개 파일`);
@@ -428,6 +476,7 @@ export function collectProblems({ dist = null, repoRoot = REPO_ROOT, siteDir = S
   }
 
   const open = [...items.values()].filter((i) => R.isOpen(i)).length;
+  notes.push(`단원 한눈에 보기 ${units.length}개`);
   notes.unshift(`로드맵 ${data.lines.length}개 · 단계 ${data.lines.reduce((n, l) => n + (l.stages || []).length, 0)}개 · 공개 자료 ${open}개 · 준비 중 ${items.size - open}개 · git 추적 파일 ${tracked.length}개와 대조`);
   return { problems, notes };
 }
