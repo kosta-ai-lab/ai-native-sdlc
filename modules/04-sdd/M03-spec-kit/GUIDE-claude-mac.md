@@ -1,4 +1,4 @@
-> 🪟 **Windows PC** 라면 [GUIDE-windows.md](GUIDE-windows.md) 를, **Codex** 를 쓴다면 [GUIDE-codex.md](GUIDE-codex.md) (Windows: [GUIDE-codex-windows.md](GUIDE-codex-windows.md)) 를 따른다.
+> 🪟 **Windows PC** 라면 [GUIDE-claude-windows.md](GUIDE-claude-windows.md) 를, **Codex** 를 쓴다면 [GUIDE-codex-mac.md](GUIDE-codex-mac.md) (Windows: [GUIDE-codex-windows.md](GUIDE-codex-windows.md)) 를 따른다.
 
 # 개념
 

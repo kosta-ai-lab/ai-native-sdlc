@@ -1,9 +1,9 @@
 # 예제 실행 및 확인 — 할 일 관리 앱(my-todo) 사용 가이드
 
 > 이 문서는 Spec Kit으로 **완성한 할 일 관리 앱을 실행하고, 직접 써 보고, 명세대로 동작하는지 확인하는 방법**을 안내한다.
-> 앱을 만드는 과정(설치 → constitution → specify → … → implement → converge)은 [GUIDE.md](GUIDE.md) 를 따른다.
+> 앱을 만드는 과정(설치 → constitution → specify → … → implement → converge)은 [GUIDE-claude-mac.md](GUIDE-claude-mac.md) 를 따른다.
 
-**시작 조건**: [GUIDE.md](GUIDE.md) 7단계(`/speckit-implement`)까지 마쳐서 `my-todo` 폴더에 앱 코드가 생긴 상태
+**시작 조건**: [GUIDE-claude-mac.md](GUIDE-claude-mac.md) 7단계(`/speckit-implement`)까지 마쳐서 `my-todo` 폴더에 앱 코드가 생긴 상태
 
 | 표시 | 하는 곳 |
 | --- | --- |
@@ -11,7 +11,7 @@
 | 🌐 **브라우저** | Chrome / Safari 등 |
 | 🤖 **Claude Code** | 문제가 있을 때 수정 요청 |
 
-> 💡 [GUIDE-codex.md](GUIDE-codex.md) 로 **Codex** 를 써서 만들었다면, 폴더 이름을 `my-todo-codex` 로 바꿔 읽고, 🤖 **Claude Code** 대신 Codex에서 `/speckit-…` 를 **`$speckit-…`** 로 입력한다. (`/clear` → `/new`)
+> 💡 [GUIDE-codex-mac.md](GUIDE-codex-mac.md) 로 **Codex** 를 써서 만들었다면, 폴더 이름을 `my-todo-codex` 로 바꿔 읽고, 🤖 **Claude Code** 대신 Codex에서 `/speckit-…` 를 **`$speckit-…`** 로 입력한다. (`/clear` → `/new`)
 
 > 📝 이 문서의 화면 문구·메시지·테스트 개수는 실제로 Spec Kit으로 만든 `my-todo` 앱에서 확인한 값이다. AI가 만드는 코드는 실행할 때마다 조금씩 달라지므로, **문구가 달라도 같은 기능이 동작하면 통과**로 본다.
 
@@ -306,7 +306,7 @@ localStorage.removeItem('my-todo:todos'); location.reload();
 | 상황 | 기준 | 할 일 |
 | --- | --- | --- |
 | 명세(spec.md)는 맞는데 앱이 다르게 동작 | **명세** | 코드 수정 요청 → `/speckit-converge` 로 재검증 |
-| 앱 동작이 오히려 맞거나, 새로 정할 것이 생김 | **새 결정** | 명세부터 수정 → plan/tasks 갱신 → implement ([GUIDE.md 7단계 규칙](GUIDE.md#7-단계-구현implement과-수렴converge)) |
+| 앱 동작이 오히려 맞거나, 새로 정할 것이 생김 | **새 결정** | 명세부터 수정 → plan/tasks 갱신 → implement ([GUIDE-claude-mac.md 7단계 규칙](GUIDE-claude-mac.md#7-단계-구현implement과-수렴converge)) |
 
 🤖 **Claude Code** — 코드가 명세와 다를 때
 
@@ -338,7 +338,7 @@ localStorage.removeItem('my-todo:todos'); location.reload();
 
 ## 8단계: (도전) 마감일 기능 써 보기
 
-[GUIDE.md 8단계](GUIDE.md#8-단계-도전-두-번째-기능-추가--명세부터-다시)에서 마감일 기능(`specs/002-…`)을 구현했다면 아래를 확인한다. 서버를 다시 켜고 **⌘ + Shift + R** (강력 새로 고침)로 연다.
+[GUIDE-claude-mac.md 8단계](GUIDE-claude-mac.md#8-단계-도전-두-번째-기능-추가--명세부터-다시)에서 마감일 기능(`specs/002-…`)을 구현했다면 아래를 확인한다. 서버를 다시 켜고 **⌘ + Shift + R** (강력 새로 고침)로 연다.
 
 | # | 이렇게 해 본다 | 이렇게 되어야 한다 |
 | --- | --- | --- |

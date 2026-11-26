@@ -1,7 +1,7 @@
 # Spec Kit × Codex 가이드 (Windows) — Windows PC에서 Codex CLI로 하는 스펙 주도 개발
 
-> 이 문서는 [GUIDE-codex.md](GUIDE-codex.md)(macOS/Linux)와 **같은 할 일 앱을 같은 순서로** 만들되, **Windows 10/11 PC** 에서 하는 방법을 안내한다.
-> SDD 개념과 각 문서의 자세한 설명은 [GUIDE.md](GUIDE.md), Codex에서 달라지는 점(`$speckit-…`, 샌드박스 권한)은 [GUIDE-codex.md 개념](GUIDE-codex.md#개념--claude-code-버전과-무엇이-다른가) 과 같다. 여기서는 **Windows에서 달라지는 설치·실행·명령**을 중심으로 처음부터 끝까지 따라 할 수 있게 정리했다.
+> 이 문서는 [GUIDE-codex-mac.md](GUIDE-codex-mac.md)(macOS/Linux)와 **같은 할 일 앱을 같은 순서로** 만들되, **Windows 10/11 PC** 에서 하는 방법을 안내한다.
+> SDD 개념과 각 문서의 자세한 설명은 [GUIDE-claude-mac.md](GUIDE-claude-mac.md), Codex에서 달라지는 점(`$speckit-…`, 샌드박스 권한)은 [GUIDE-codex-mac.md 개념](GUIDE-codex-mac.md#개념--claude-code-버전과-무엇이-다른가) 과 같다. 여기서는 **Windows에서 달라지는 설치·실행·명령**을 중심으로 처음부터 끝까지 따라 할 수 있게 정리했다.
 > 검증 기준: `specify-cli` **v1.1.3** · `specify init --integration codex --script ps` · Codex CLI (Windows 네이티브) · Windows 11 + PowerShell 7
 
 ---
@@ -10,7 +10,7 @@
 
 Spec Kit 단계(`$speckit-constitution` … `$speckit-converge`)와 산출물(`.specify/`, `.agents/skills/`, `specs/001-…/`)은 **macOS와 똑같다.** 달라지는 것은 다음이다.
 
-| 항목 | macOS ([GUIDE-codex.md](GUIDE-codex.md)) | **Windows (이 문서)** |
+| 항목 | macOS ([GUIDE-codex-mac.md](GUIDE-codex-mac.md)) | **Windows (이 문서)** |
 | --- | --- | --- |
 | 터미널 | 터미널 앱 (zsh) | **Windows Terminal + PowerShell 7** (권장) |
 | 도구 설치 | `brew install …` | **`winget install …`** |
@@ -23,7 +23,7 @@ Spec Kit 단계(`$speckit-constitution` … `$speckit-converge`)와 산출물(`.
 | 숨김 폴더 보기 | `ls -a`, Finder `⌘ + Shift + .` | `Get-ChildItem -Force` (`ls -Force`), 탐색기 **보기 › 표시 › 숨긴 항목** |
 | 단축키 | `⌘` | `Ctrl` (개발자 도구 `F12`) |
 
-> 💡 **WSL(리눅스)을 이미 쓰고 있다면** WSL 안의 Ubuntu에서 [GUIDE-codex.md](GUIDE-codex.md)(macOS/Linux 버전)를 그대로 따라 해도 된다. 처음이라면 이 문서의 **Windows 네이티브** 방식이 설치할 것이 적다.
+> 💡 **WSL(리눅스)을 이미 쓰고 있다면** WSL 안의 Ubuntu에서 [GUIDE-codex-mac.md](GUIDE-codex-mac.md)(macOS/Linux 버전)를 그대로 따라 해도 된다. 처음이라면 이 문서의 **Windows 네이티브** 방식이 설치할 것이 적다.
 
 ## 이 가이드의 단계
 
@@ -255,7 +255,7 @@ Set up the Codex agent sandbox to protect your files and control network access.
 
 # 3 단계: 헌법 — `$speckit-constitution`
 
-**목적** — 모든 단계가 검사 기준으로 삼을 프로젝트 원칙을 정한다. (자세한 규칙: [GUIDE.md 2단계](GUIDE.md#2-단계-헌법constitution--프로젝트-원칙-정하기))
+**목적** — 모든 단계가 검사 기준으로 삼을 프로젝트 원칙을 정한다. (자세한 규칙: [GUIDE-claude-mac.md 2단계](GUIDE-claude-mac.md#2-단계-헌법constitution--프로젝트-원칙-정하기))
 
 **입력** — 🤖 Codex
 
@@ -288,7 +288,7 @@ $speckit-constitution 이 프로젝트는 초보자 학습용 할 일 관리 웹
 
 # 4 단계: 명세 — `$speckit-specify`
 
-**목적** — 만들 기능을 "무엇을·왜" 로만 설명해 기능 명세를 만든다. (자세한 규칙: [GUIDE.md 3단계](GUIDE.md#3-단계-명세specify--무엇을-왜-만드는가))
+**목적** — 만들 기능을 "무엇을·왜" 로만 설명해 기능 명세를 만든다. (자세한 규칙: [GUIDE-claude-mac.md 3단계](GUIDE-claude-mac.md#3-단계-명세specify--무엇을-왜-만드는가))
 
 **입력** — 🤖 Codex (새 대화로 시작하면 깔끔하다)
 
@@ -325,7 +325,7 @@ specs/001-todo-list-app/        ← 이름은 Codex가 정하므로 조금 다�
 
 # 5 단계: 명확화 — `$speckit-clarify`
 
-**목적** — 계획 전에 명세의 빈틈을 Codex가 질문하고 답을 명세에 반영한다. (자세한 규칙: [GUIDE.md 4단계](GUIDE.md#4-단계-명확화clarify--모호함-없애기))
+**목적** — 계획 전에 명세의 빈틈을 Codex가 질문하고 답을 명세에 반영한다. (자세한 규칙: [GUIDE-claude-mac.md 4단계](GUIDE-claude-mac.md#4-단계-명확화clarify--모호함-없애기))
 
 **입력** — 🤖 Codex
 
@@ -353,7 +353,7 @@ $speckit-clarify 할 일 입력 규칙(빈 값, 최대 길이, 중복 허용 여
 
 # 6 단계: 계획 — `$speckit-plan` (+ `$speckit-checklist`)
 
-**목적** — 기술 스택과 구조를 정하고, 헌법을 어기지 않는지 검사한다. (자세한 규칙: [GUIDE.md 5단계](GUIDE.md#5-단계-계획plan--어떻게-만들-것인가))
+**목적** — 기술 스택과 구조를 정하고, 헌법을 어기지 않는지 검사한다. (자세한 규칙: [GUIDE-claude-mac.md 5단계](GUIDE-claude-mac.md#5-단계-계획plan--어떻게-만들-것인가))
 
 **입력** — 🤖 Codex
 
@@ -386,7 +386,7 @@ $speckit-checklist 사용자 경험(UX)과 데이터 보존 요구사항이 빠�
 
 # 7 단계: 작업 분해와 일관성 점검 — `$speckit-tasks`, `$speckit-analyze`
 
-**목적** — 설계를 실행 가능한 작업 목록으로 쪼개고, 구현 전에 문서 간 모순을 점검한다. (자세한 규칙: [GUIDE.md 6단계](GUIDE.md#6-단계-작업-분해tasks와-일관성-점검analyze))
+**목적** — 설계를 실행 가능한 작업 목록으로 쪼개고, 구현 전에 문서 간 모순을 점검한다. (자세한 규칙: [GUIDE-claude-mac.md 6단계](GUIDE-claude-mac.md#6-단계-작업-분해tasks와-일관성-점검analyze))
 
 **입력** — 🤖 Codex
 
@@ -413,7 +413,7 @@ $speckit-analyze
 
 # 8 단계: 구현과 수렴 — `$speckit-implement`, `$speckit-converge`
 
-**목적** — 작업 순서대로 코드를 만들고, 코드가 명세를 모두 만족하는지 검증한다. (자세한 규칙: [GUIDE.md 7단계](GUIDE.md#7-단계-구현implement과-수렴converge))
+**목적** — 작업 순서대로 코드를 만들고, 코드가 명세를 모두 만족하는지 검증한다. (자세한 규칙: [GUIDE-claude-mac.md 7단계](GUIDE-claude-mac.md#7-단계-구현implement과-수렴converge))
 
 **입력** — 🤖 Codex
 
@@ -491,7 +491,7 @@ my-todo-codex\
 
 # 9 단계: (도전) 두 번째 기능 — 마감일
 
-**목적** — 변경도 명세에서 시작한다. 새 기능 폴더 `specs/002-…` 로 4~8단계를 반복한다. (자세한 규칙: [GUIDE.md 8단계](GUIDE.md#8-단계-도전-두-번째-기능-추가--명세부터-다시))
+**목적** — 변경도 명세에서 시작한다. 새 기능 폴더 `specs/002-…` 로 4~8단계를 반복한다. (자세한 규칙: [GUIDE-claude-mac.md 8단계](GUIDE-claude-mac.md#8-단계-도전-두-번째-기능-추가--명세부터-다시))
 
 **입력** — 🤖 Codex, 순서대로 (단계 사이에 `/new` 해도 된다)
 

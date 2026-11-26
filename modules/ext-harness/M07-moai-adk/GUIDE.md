@@ -312,6 +312,6 @@ moai doctor
 - [SPEC 기반 개발](https://adk.mo.ai.kr/ko/core-concepts/spec-based-dev) — 요구사항을 문서로 정의하는 방법
 - [MoAI-ADK 개발 방법론(DDD)](https://adk.mo.ai.kr/ko/core-concepts/ddd) — 기존 코드를 안전하게 개선하는 방법
 - [TRUST 5 품질](https://adk.mo.ai.kr/ko/core-concepts/trust-5) — 코드 품질 자동 검증 방법
-- [MoAI Memory](https://adk.mo.ai.kr/ko/core-concepts/moai-memory) — 세션 간 컨텍스트 보존 방식
+- [컨텍스트와 메모리](https://adk.mo.ai.kr/ko/claude-code/context-memory) — 세션 간 컨텍스트 보존 방식
 - [CLI 레퍼런스](https://adk.mo.ai.kr/ko/getting-started/cli) — 전체 명령어 목록
 

@@ -338,7 +338,7 @@ localStorage.clear(); location.reload();
 
 ## 8단계: (도전) 마감일 기능 써 보기
 
-[GUIDE.md 9단계](GUIDE.md#9-단계-도전-마감일-기능-빠르게-추가--gsd-quick)에서 `/gsd-quick --full` 로 마감일 기능을 추가했다면 아래를 확인한다. 서버를 다시 켜고 **⌘ + Shift + R** (강력 새로 고침)로 연다.
+[GUIDE.md 9단계](GUIDE.md#9-단계-도전-마감일-기능-추가--스펙-갱신--bmad-build)에서 `/gsd-quick --full` 로 마감일 기능을 추가했다면 아래를 확인한다. 서버를 다시 켜고 **⌘ + Shift + R** (강력 새로 고침)로 연다.
 
 | # | 이렇게 해 본다 | 이렇게 되어야 한다 |
 | --- | --- | --- |
