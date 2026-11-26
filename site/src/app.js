@@ -10,6 +10,8 @@
   const still = matchMedia('(prefers-reduced-motion: reduce)');
   const narrow = matchMedia('(max-width: 999px)');
   const DONE_KEY = 'kosta-roadmap-done';
+  // 공개한 날을 포함해 이 날수 동안 NEW를, 내용이 바뀐 날을 포함해 이 날수 동안 업데이트를 붙인다.
+  const FRESH_DAYS = 14;
 
   /** 요소를 만든다. props: class, text, data, vars(CSS 변수), on(이벤트), 그 밖은 속성. */
   const h = (tag, props, ...kids) => {
@@ -23,7 +25,7 @@
       else if (k === 'on') for (const [n, fn] of Object.entries(v)) e.addEventListener(n, fn);
       else e.setAttribute(k, v === true ? '' : String(v));
     }
-    for (const c of kids.flat()) if (c != null && c !== false) e.append(c);
+    for (const c of R.flatKids(kids)) e.append(c);
     return e;
   };
   const icon = (cls, box, d) => {
@@ -44,7 +46,18 @@
   const goRoute = () => $('#route').scrollIntoView({ behavior: smooth(), block: 'start' });
   const goStage = i => { const e = $('#stn-' + i); if (e) e.scrollIntoView({ behavior: smooth(), block: 'start' }); };
 
-  let data, items, lines, done = new Set(), cur = { line: null, item: null };
+  let data, items, lines, dates = {}, done = new Set(), cur = { line: null, item: null };
+  // 방문자 기준의 날짜(YYYY-MM-DD). 자료 날짜와 견주어 NEW·업데이트를 정한다.
+  const today = (() => { const n = new Date(); return n.getFullYear() + '-' + String(n.getMonth() + 1).padStart(2, '0') + '-' + String(n.getDate()).padStart(2, '0'); })();
+  /** NEW·업데이트 표시. 해당하지 않으면 null. */
+  const badge = id => { const f = R.freshness(dates[id], today, FRESH_DAYS); return f ? h('span', { class: 'badge badge--' + f, text: f === 'new' ? 'NEW' : '업데이트' }) : null; };
+  /** 자료 한 줄에 붙는 날짜. NEW인 동안과 내용이 바뀐 적이 없을 때는 공개한 날, 그 밖에는 마지막으로 바뀐 날. */
+  const stamp = id => {
+    const d = dates[id];
+    if (!d) return null;
+    const changed = d.updated !== d.added && R.freshness(d, today, FRESH_DAYS) !== 'new';
+    return h('time', { class: 'exit__d', datetime: changed ? d.updated : d.added, text: changed ? d.updated + ' 업데이트' : d.added + ' 공개' });
+  };
   const loadDone = () => { try { return new Set(JSON.parse(localStorage.getItem(DONE_KEY) || '[]')); } catch { return new Set(); } };
   const saveDone = () => { try { localStorage.setItem(DONE_KEY, JSON.stringify([...done])); } catch { /* 저장할 수 없는 환경에서는 화면에만 표시한다 */ } };
 
@@ -109,10 +122,10 @@
       h('span', { class: 'stn__seg' }), h('span', { class: 'stn__mark' }, shape(l)),
       h('div', { class: 'stn__head' }, h('span', { class: 'stn__no', text: no(i) }), h('h3', { class: 'stn__t', text: s.title }), h('p', { class: 'stn__d', text: s.summary }), s.note ? h('p', { class: 'stn__note', text: s.note }) : null),
       h('ul', { class: 'exits' }, s.items.map(id => {
-        const m = items.get(id), soon = !R.isOpen(m);
+        const m = items.get(id), soon = !R.isOpen(m), when = stamp(id);
         return h('li', null, h('button', { class: 'exit' + (soon ? ' is-soon' : ''), type: 'button', data: { id }, on: { click: () => { select(l.id, id); if (narrow.matches) openSheet(); } } },
           h('span', { class: 'exit__k', text: data.kinds[m.kind] }),
-          h('span', null, h('span', { class: 'exit__t', text: m.title }), h('span', { class: 'exit__m', text: soon ? '담당 ' + m.by : m.by + ', ' + m.meta })),
+          h('span', null, h('span', { class: 'exit__t' }, m.title, badge(id)), h('span', { class: 'exit__m' }, soon ? '담당 ' + m.by : m.by + ', ' + m.meta, when ? ', ' : null, when)),
           check()));
       })))));
     if (l.next) {
@@ -153,9 +166,10 @@
           open('모듈 폴더 보기', R.repoUrl(data, { path: m.path, kind: 'dir' }), 'GitHub에서 열기'),
           open('이 자리를 함께 채우기', R.repoUrl(data, { path: 'CONTRIBUTING.md' }), '기여 안내'))];
     } else {
-      const marked = done.has(m.id);
-      body = [h('p', { class: 'sign__k', text: data.kinds[m.kind] }), h('h2', { class: 'sign__t', text: m.title }), h('p', { class: 'sign__sum', text: m.summary }),
-        h('dl', { class: 'facts' }, fact('만든 사람', m.by), fact('구성', m.meta), fact('대상', m.audience), fact('선수 지식', m.prerequisite), fact('원제', m.original)),
+      const marked = done.has(m.id), d = dates[m.id] || {};
+      body = [h('p', { class: 'sign__k' }, data.kinds[m.kind], badge(m.id)), h('h2', { class: 'sign__t', text: m.title }), h('p', { class: 'sign__sum', text: m.summary }),
+        h('dl', { class: 'facts' }, fact('만든 사람', m.by), fact('구성', m.meta), fact('대상', m.audience), fact('선수 지식', m.prerequisite), fact('원제', m.original),
+          fact('공개한 날', d.added), fact('업데이트한 날', d.updated !== d.added ? d.updated : null)),
         m.learn ? [h('h3', { text: '배우는 것' }), h('ul', { class: 'pts' }, m.learn.map(t => h('li', { text: t })))] : null,
         h('h3', { text: '이용 순서' }), h('ol', { class: 'steps' }, m.how.map(t => h('li', { text: t }))),
         h('h3', { text: '자료 열기' }), h('div', { class: 'opens' }, m.links.map(k => open(k.label, R.repoUrl(data, k), 'GitHub에서 열기'))),
@@ -227,12 +241,13 @@
       p.groups.map(g => [h('h4', { text: g.label + ' ' + g.items.length + '개' }), h('ul', null, g.items.map(id => {
         const l = R.lineOfItem(data, id);
         return h('li', null, h('button', { class: 'plink', type: 'button', data: { line: l.id }, on: { click: () => { select(l.id, id); goStage(R.stageIndex(l, id)); if (narrow.matches) openSheet(); } } },
-          shape(l), h('span', { text: items.get(id).title })));
+          shape(l), h('span', { class: 'plink__t' }, items.get(id).title, badge(id))));
       }))]))));
   }
 
-  function start(json) {
+  function start(json, dated) {
     data = json; ({ items, lines } = R.index(data)); done = loadDone();
+    dates = (dated && dated.items) || {};
     renderNet(); renderTabs(); renderPeople();
     const from = R.parseHash(location.hash, data);
     select(from.line || data.lines[0].id, from.item);
@@ -248,8 +263,10 @@
       h('a', { href: 'https://github.com/kosta-ai-lab/ai-native-sdlc/blob/main/courses/README.md', text: 'GitHub 저장소의 강의 목록' }), '에서 자료를 직접 열어 주세요.'));
   }
 
+  // 날짜는 빌드가 git 이력에서 만든 파일이다. 없거나 못 읽어도 로드맵은 그대로 보여 준다.
+  const dated = fetch(new URL('data/dates.json', document.baseURI)).then(r => (r.ok ? r.json() : null)).catch(() => null);
   fetch(new URL('data/roadmap.json', document.baseURI))
     .then(r => { if (!r.ok) throw new Error('HTTP ' + r.status); return r.json(); })
-    .then(start)
+    .then(json => dated.then(d => start(json, d)))
     .catch(fail);
 })();
