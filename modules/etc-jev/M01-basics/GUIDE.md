@@ -24,12 +24,6 @@
 
 터미널(Windows는 PowerShell)을 열고 Python 버전을 확인합니다.
 
-Windows:
-```powershell
-py --version
-```
-
-macOS / Linux:
 ```bash
 python3 --version
 ```
