@@ -117,4 +117,5 @@ else:
 - 공식 문서: https://docs.typesafe.ai (Quickstart: `/introduction/quickstart`, 신뢰도: `/confidence`, API: `/api`)
 - 콘솔 (API 키 발급): https://console.typesafe.ai
 - 평가 결과: https://evals.typesafe.ai
+- 다음 모듈: [M03-grid-agent](../M03-grid-agent/README.md) — 격자 게임으로 배우는 결정 루프
 - LLM으로 같은 인터페이스를 흉내 내는 어댑터 (비교용, Jev 아님): https://github.com/typesafe-ai/system-one-adapter-python
