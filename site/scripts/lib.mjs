@@ -16,6 +16,9 @@ export const BASE_PATH = '/ai-native-sdlc/';
 export const REPO_URL = 'https://github.com/kosta-ai-lab/ai-native-sdlc';
 export const ORG_URL = 'https://github.com/kosta-ai-lab';
 export const MARKER = '.site-build';
+// 자료 날짜: 빌드가 git 이력에서 만들어 dist에만 쓴다(site/data에는 두지 않는다). 날짜는 한국 시간 기준이다.
+export const DATES_FILE = 'data/dates.json';
+export const DATES_TZ = 'Asia/Seoul';
 
 // 배포 화면 파일. 스크립트 실행 순서는 index.html이 정한다(core → app).
 export const SRC_FILES = ['index.html', 'app.css', 'fonts.css', 'core.js', 'app.js', 'favicon.svg'];
@@ -38,7 +41,7 @@ export function copyPlan(siteDir = SITE_DIR) {
     ...dataFiles(siteDir).map((n) => ({ from: 'data/' + n, to: 'data/' + n }))
   ];
 }
-export const GENERATED = ['.nojekyll', MARKER];
+export const GENERATED = ['.nojekyll', MARKER, DATES_FILE];
 export function distAllowlist(siteDir = SITE_DIR) {
   return [...copyPlan(siteDir).map((c) => c.to), ...GENERATED].sort();
 }
@@ -56,6 +59,62 @@ export function repoUrl(repoPath, kind = 'file', ref = 'main') {
 export function gitTrackedFiles(root = REPO_ROOT) {
   const out = execFileSync('git', ['-C', root, 'ls-files', '-z'], { encoding: 'utf8', maxBuffer: 64 * 1024 * 1024 });
   return out.split('\0').filter(Boolean);
+}
+
+/** 자료마다 날짜를 읽을 경로: 안내 문서(source)와 '자료 열기'에 연결한 파일·폴더. 준비 중 자료는 없다. */
+export function watchedPaths(data) {
+  return (data.items || []).filter((i) => i.kind !== 'soon' && typeof i.source === 'string').map((i) => {
+    const links = (i.links || []).filter((k) => k && typeof k.path === 'string');
+    return {
+      id: i.id,
+      files: new Set([i.source, ...links.filter((k) => k.kind !== 'dir').map((k) => k.path)]),
+      dirs: links.filter((k) => k.kind === 'dir').map((k) => k.path.replace(/\/+$/, '') + '/')
+    };
+  });
+}
+
+/**
+ * git log --name-status 출력(커밋마다 '@날짜' 한 줄과 '상태<탭>경로' 줄들)에서 자료마다 두 날짜를 읽는다.
+ *  - added: 그 자료의 경로가 처음 올라온 날. 옮긴 파일은 옛 경로까지 따라간다.
+ *  - updated: 내용이 마지막으로 바뀐 날. 내용이 그대로인 이동(R100)은 세지 않는다.
+ * watch의 files에는 따라간 옛 경로가 더해진다(watchedPaths로 새로 만든 값을 넘긴다).
+ */
+export function readHistory(log, watch) {
+  const found = {};
+  let date = '';
+  for (const line of log.split('\n')) {
+    if (line.startsWith('@')) { date = line.slice(1).trim(); continue; }
+    const [status, from, to] = line.split('\t');
+    if (!from || !date) continue;
+    const now = to || from;
+    for (const w of watch) {
+      if (!w.files.has(now) && !w.dirs.some((d) => now.startsWith(d))) continue;
+      if (to) w.files.add(from);
+      const e = found[w.id] || (found[w.id] = { added: date, updated: '' });
+      if (date < e.added) e.added = date;
+      if (status !== 'R100' && date > e.updated) e.updated = date;
+    }
+  }
+  const out = {};
+  for (const id of Object.keys(found).sort()) out[id] = { added: found[id].added, updated: found[id].updated || found[id].added };
+  return out;
+}
+
+/**
+ * 저장소 이력에서 자료 날짜를 모은다. main에 들어온 날을 쓰려고 첫 부모만 따라간다(--first-parent).
+ * 이력이 온전하지 않으면(얕은 복제, git 없음) 틀린 날짜를 내지 않고 { complete: false, items: {} }를 돌려준다.
+ */
+export function collectDates({ repoRoot = REPO_ROOT, data } = {}) {
+  const git = (args) => execFileSync('git', ['-C', repoRoot, ...args], {
+    encoding: 'utf8', maxBuffer: 64 * 1024 * 1024, stdio: ['ignore', 'pipe', 'ignore'], env: { ...process.env, TZ: DATES_TZ }
+  });
+  try {
+    if (git(['rev-parse', '--is-shallow-repository']).trim() !== 'false') return { complete: false, items: {} };
+    const log = git(['-c', 'core.quotePath=false', 'log', '--first-parent', '-m', '-M', '--name-status', '--date=format-local:%Y-%m-%d', '--format=@%cd', 'HEAD']);
+    return { complete: true, items: readHistory(log, watchedPaths(data)) };
+  } catch {
+    return { complete: false, items: {} };
+  }
 }
 
 function isInside(child, parent) {
@@ -135,6 +194,13 @@ export function cleanPreviousBuild(outDir) {
 export function build(outArg, opts = {}) {
   const outDir = resolveOutDir(outArg, opts);
   const siteDir = opts.siteDir || SITE_DIR;
+  // 자료 날짜는 원본에 두지 않고 빌드가 만든다. 같은 커밋에서 다시 빌드하면 같은 내용이 나온다. 아무것도 쓰기 전에 확인한다.
+  const dates = opts.dates || collectDates({ repoRoot: opts.repoRoot || REPO_ROOT, data: readJSON(path.join(siteDir, 'data', 'roadmap.json')) });
+  if (opts.requireHistory && !dates.complete) {
+    const e = new Error('git 이력이 온전하지 않아 자료 날짜를 만들 수 없음(얕은 복제면 git fetch --unshallow, Actions면 checkout에 fetch-depth: 0)');
+    e.code = 'EHISTORY';
+    throw e;
+  }
   fs.mkdirSync(outDir, { recursive: true });
   // 아무것도 지우기 전에, 빌드가 만들지 않은 파일이 있는지 먼저 확인한다.
   const plan = copyPlan(siteDir);
@@ -154,9 +220,11 @@ export function build(outArg, opts = {}) {
     fs.copyFileSync(src, dest);
   }
   fs.writeFileSync(path.join(outDir, '.nojekyll'), '');
+  fs.mkdirSync(path.join(outDir, 'data'), { recursive: true });
+  fs.writeFileSync(path.join(outDir, DATES_FILE), JSON.stringify(dates, null, 1) + '\n');
   const files = allow.slice();
   fs.writeFileSync(path.join(outDir, MARKER), JSON.stringify({ tool: 'kosta-ai-lab roadmap build', files }, null, 2) + '\n');
-  return { outDir, files };
+  return { outDir, files, dates };
 }
 
 /** dist 안의 모든 파일(상대 경로)을 나열한다. */

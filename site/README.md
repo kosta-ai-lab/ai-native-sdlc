@@ -6,7 +6,7 @@
 
 ```bash
 cd site
-node scripts/build.mjs          # site/dist 생성 (허용 목록 파일만)
+node scripts/build.mjs          # site/dist 생성 (허용 목록 파일만, 자료 날짜는 git 이력에서)
 node scripts/check.mjs --dist   # 데이터와 원본 대조, 화면 원본·CSP·글꼴·워크플로·산출물 검사
 node scripts/test.mjs           # 계산·검사·빌드·서버 시험
 node scripts/serve.mjs --port 0 # http://127.0.0.1:<빈 포트>/ai-native-sdlc/  (루트로 보려면 --base /)
@@ -15,6 +15,7 @@ node scripts/serve.mjs --port 0 # http://127.0.0.1:<빈 포트>/ai-native-sdlc/ 
 Node.js 18.17 이상이 필요하며 설치할 의존성은 없습니다. 자세한 내용은 [운영 안내](../docs/LEARNING_SITE_OPERATIONS.md)와 [화면 명세](../docs/LEARNING_SITE_DESIGN.md)를 참고하세요.
 
 - 로드맵·단계·자료의 내용: `data/roadmap.json`
+- 자료 날짜와 NEW·업데이트 표시: 손으로 적지 않고 빌드가 git 이력에서 읽습니다(`dist/data/dates.json`)
 - 고정 문구·메타데이터·meta CSP: `src/index.html`
 - 화면: `src/app.css`(스타일), `src/core.js`(계산), `src/app.js`(화면 동작)
 - 글꼴: `src/fonts/`, `src/fonts.css`. `scripts/fonts.py`가 만드는 생성 파일입니다.
