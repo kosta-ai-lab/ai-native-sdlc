@@ -72,7 +72,7 @@ const isList = (v) => Array.isArray(v) && v.length > 0;
 export function visibleStrings(data) {
   const out = [];
   const push = (...xs) => { for (const x of xs.flat()) if (typeof x === 'string') out.push(x); };
-  push(Object.values(data.kinds || {}));
+  push(Object.values(data.kinds || {}), Object.values(data.names || {}));
   for (const l of data.lines || []) {
     push(l.name, l.who, l.lead, l.next && l.next.text);
     for (const s of l.stages || []) push(s.title, s.short, s.summary, s.note);
@@ -110,6 +110,17 @@ export function collectProblems({ dist = null, repoRoot = REPO_ROOT, siteDir = S
   if (data.repository !== REPO_URL.replace('https://github.com/', '')) bad('roadmap.json: repository는 ' + REPO_URL.replace('https://github.com/', ''));
   if (data.ref !== 'main') bad('roadmap.json: ref는 main');
   for (const k of KINDS) if (!isText(data.kinds && data.kinds[k])) bad(`roadmap.json: kinds.${k} 이름 없음`);
+  // 화면 표기(names): 원문의 이름을 화면에서 어떻게 보일지 정한 표. 값은 그 이름으로 시작하고, 쓰이지 않는 이름은 두지 않는다.
+  if (data.names != null) {
+    if (typeof data.names !== 'object' || Array.isArray(data.names)) bad('roadmap.json: names는 이름과 화면 표기의 표');
+    else {
+      const written = [...(data.items || []).map((i) => i.by), ...(data.people || []).map((p) => p.name)].flatMap((s) => String(s).split(/\s*,\s*/));
+      for (const [name, shown] of Object.entries(data.names)) {
+        if (!isText(name) || !isText(shown) || !shown.startsWith(name)) bad(`roadmap.json: names의 화면 표기는 그 이름으로 시작해야 함 — ${name}: ${shown}`);
+        else if (!written.some((w) => w === name || w.startsWith(name + ' '))) bad(`roadmap.json: names에 쓰이지 않는 이름 — ${name}`);
+      }
+    }
+  }
   if (!isList(data.lines) || !isList(data.items) || !isList(data.people)) {
     bad('roadmap.json: lines, items, people이 비어 있음');
     return { problems, notes };
