@@ -190,21 +190,6 @@ code{font-family:var(--mono);font-size:.86em;background:var(--tint);padding:1px 
 .chain__c.is-off{opacity:.45}
 .chain__lb{display:none;font-size:12.5px;font-weight:600;color:var(--muted)}
 
-/* 돌아보기 */
-.grid{margin-top:40px;display:grid}
-.grid__row{display:grid;grid-template-columns:minmax(220px,1.1fr) auto minmax(0,1.6fr);gap:0 30px;align-items:center;padding:18px 0;border-bottom:1px solid var(--rule)}
-.grid__row--hd{padding:0 0 10px;border-bottom:3px solid var(--ink);align-items:end;font-size:13px;font-weight:600;color:var(--muted)}
-.grid__p{display:flex;gap:10px;align-items:flex-start;font-size:16px;font-weight:700;letter-spacing:-.02em;line-height:1.5}
-.grid__cells{display:grid;grid-template-columns:repeat(var(--n,9),38px)}
-.grid__cells span,.grid__cells button{display:grid;place-items:center;width:38px;height:38px}
-.grid__row--hd .grid__cells span{height:auto;font-family:var(--mono);font-size:13px;font-weight:400;letter-spacing:0}
-.grid__cells span::before{content:"";width:5px;height:5px;border-radius:50%;background:var(--rule)}
-.grid__row--hd .grid__cells span::before{content:none}
-.grid__cells button{border:0;background:none;padding:0;border-radius:50%}
-.grid__cells button b{display:grid;place-items:center;width:25px;height:25px;border-radius:50%;background:var(--ink);color:#fff;font-family:var(--mono);font-size:12.5px;font-weight:400;letter-spacing:0;line-height:1;transition:transform .2s var(--out)}
-.grid__cells button:hover b{transform:scale(1.2)}
-.grid__t{font-size:14.5px;line-height:1.62;color:var(--muted)}
-
 .foot{padding:40px 0 70px;border-top:1px solid var(--rule);font-size:14px;color:var(--muted)}
 .foot p+p{margin-top:8px}
 
@@ -219,8 +204,6 @@ code{font-family:var(--mono);font-size:.86em;background:var(--tint);padding:1px 
   .chain__c:not(.is-last)::after{content:none}
   .chain__c.is-first{margin-top:30px}
   .chain__c.is-first.is-top{margin-top:10px}
-  .grid__row{grid-template-columns:1fr;gap:10px}
-  .grid__row--hd{display:none}
   .duo{grid-template-columns:1fr}
   .duo__mid{width:auto;grid-auto-flow:column;justify-content:start;justify-items:start;text-align:left}
   .duo__mid::before{transform:rotate(90deg);width:34px}
@@ -241,8 +224,6 @@ code{font-family:var(--mono);font-size:.86em;background:var(--tint);padding:1px 
   .lane{padding:20px 18px 22px}
   .prs{grid-template-columns:1fr}
   .sec{padding:54px 0}
-  .grid__cells{grid-template-columns:repeat(var(--n,9),minmax(0,1fr));max-width:342px}
-  .grid__cells span,.grid__cells button{width:100%}
 }
 @media (prefers-reduced-motion:reduce){
   html{scroll-behavior:auto}
